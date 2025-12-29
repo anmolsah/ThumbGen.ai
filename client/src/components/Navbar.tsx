@@ -1,0 +1,172 @@
+import { MenuIcon, XIcon } from "lucide-react";
+import { useState } from "react";
+import { motion } from "motion/react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
+export default function Navbar() {
+  const { isLoggedIn, user, logout } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // Redirect to login if not logged in
+  const handleProtectedClick = (path: string) => {
+    if (!isLoggedIn) {
+      navigate("/login");
+    } else {
+      navigate(path);
+    }
+  };
+
+  return (
+    <>
+      <motion.nav
+        className="fixed top-0 z-50 flex items-center justify-between w-full py-4 px-6 md:px-16 lg:px-24 xl:px-32 backdrop-blur"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1 }}
+      >
+        <Link to="/">
+          <img src="/logo.svg" alt="logo" className="h-8.5 w-auto" />
+        </Link>
+
+        <div className="hidden md:flex items-center gap-8 transition duration-500">
+          <Link to="/" className="hover:text-teal-300 transition">
+            Home
+          </Link>
+          <button
+            onClick={() => handleProtectedClick("/generate")}
+            className="hover:text-teal-300 transition"
+          >
+            Generate
+          </button>
+          <button
+            onClick={() => handleProtectedClick("/my-generation")}
+            className="hover:text-teal-300 transition"
+          >
+            My Generations
+          </button>
+          <button
+            onClick={() => {
+              navigate("/");
+              setTimeout(() => {
+                document
+                  .getElementById("pricing")
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }, 100);
+            }}
+            className="hover:text-teal-300 transition"
+          >
+            Pricing
+          </button>
+        </div>
+        <div className="flex items-center gap-2">
+          {isLoggedIn ? (
+            <div className="relative group">
+              <button
+                onClick={() => navigate("/profile")}
+                className="rounded-full size-8 bg-teal-600 border-2 border-teal-500 hover:border-teal-400 transition"
+              >
+                {user?.name.charAt(0).toUpperCase()}
+              </button>
+              <div className="absolute hidden group-hover:block top-8 right-0 pt-2 min-w-32">
+                <div className="bg-gray-900 border border-white/10 rounded-lg overflow-hidden shadow-xl">
+                  <Link
+                    to="/profile"
+                    className="block px-4 py-2 hover:bg-white/10 transition"
+                  >
+                    Profile
+                  </Link>
+                  <button
+                    onClick={() => logout()}
+                    className="w-full text-left px-4 py-2 hover:bg-white/10 transition text-red-400"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => navigate("/login")}
+              className="hidden md:block px-6 py-2.5 bg-teal-600 hover:bg-teal-700 active:scale-95 transition-all rounded-full"
+            >
+              Get Started
+            </button>
+          )}
+          <button onClick={() => setIsOpen(true)} className="md:hidden">
+            <MenuIcon size={26} className="active:scale-90 transition" />
+          </button>
+        </div>
+      </motion.nav>
+
+      {/* Mobile Menu */}
+      <div
+        className={`fixed inset-0 z-100 bg-black/40 backdrop-blur flex flex-col items-center justify-center text-lg gap-8 md:hidden transition-transform duration-400 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <Link onClick={() => setIsOpen(false)} to="/">
+          Home
+        </Link>
+        <button
+          onClick={() => {
+            setIsOpen(false);
+            handleProtectedClick("/generate");
+          }}
+        >
+          Generate
+        </button>
+        <button
+          onClick={() => {
+            setIsOpen(false);
+            handleProtectedClick("/my-generation");
+          }}
+        >
+          My Generations
+        </button>
+        <button
+          onClick={() => {
+            setIsOpen(false);
+            navigate("/");
+            setTimeout(() => {
+              document
+                .getElementById("pricing")
+                ?.scrollIntoView({ behavior: "smooth" });
+            }, 100);
+          }}
+        >
+          Pricing
+        </button>
+        {isLoggedIn ? (
+          <>
+            <Link onClick={() => setIsOpen(false)} to="/profile">
+              Profile
+            </Link>
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                logout();
+              }}
+              className="text-red-400"
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <Link onClick={() => setIsOpen(false)} to="/login">
+            Login
+          </Link>
+        )}
+
+        <button
+          onClick={() => setIsOpen(false)}
+          className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-teal-600 hover:bg-teal-700 transition text-white rounded-md flex"
+        >
+          <XIcon />
+        </button>
+      </div>
+    </>
+  );
+}
