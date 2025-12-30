@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import logo from "../assets/logo.png";
 
 export default function Navbar() {
   const { isLoggedIn, user, logout } = useAuth();
@@ -28,7 +29,7 @@ export default function Navbar() {
         transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1 }}
       >
         <Link to="/">
-          <img src="/logo.svg" alt="logo" className="h-8.5 w-auto" />
+          <img src={logo} alt="logo" className="h-14 w-auto" />
         </Link>
 
         <div className="hidden md:flex items-center gap-8 transition duration-500">

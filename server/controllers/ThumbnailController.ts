@@ -8,6 +8,48 @@ import {
 } from "@google/genai";
 import ai from "../configs/ai.js";
 import { v2 as cloudinary } from "cloudinary";
+import sharp from "sharp";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const WATERMARK_PATH = path.join(__dirname, "../assets/logo.png");
+
+// Helper function to add watermark to image buffer
+const addWatermark = async (imageBuffer: Buffer): Promise<Buffer> => {
+  const image = sharp(imageBuffer);
+  const metadata = await image.metadata();
+  const imageWidth = metadata.width || 1280;
+  const imageHeight = metadata.height || 720;
+
+  // Resize watermark to 15% of image width
+  const watermarkWidth = Math.round(imageWidth * 0.15);
+  const watermark = await sharp(WATERMARK_PATH)
+    .resize(watermarkWidth)
+    .toBuffer();
+
+  // Get watermark dimensions after resize
+  const watermarkMeta = await sharp(watermark).metadata();
+  const wmWidth = watermarkMeta.width || watermarkWidth;
+  const wmHeight = watermarkMeta.height || watermarkWidth;
+
+  // Position watermark at bottom-right corner with padding
+  const padding = 20;
+  const left = imageWidth - wmWidth - padding;
+  const top = imageHeight - wmHeight - padding;
+
+  // Composite watermark onto image
+  return await image
+    .composite([
+      {
+        input: watermark,
+        left,
+        top,
+      },
+    ])
+    .toBuffer();
+};
 
 const CREDITS_PER_THUMBNAIL = 5;
 
@@ -157,6 +199,11 @@ export const generateThumbnail = async (req: Request, res: Response) => {
 
     if (!finalBuffer) {
       throw new Error("Failed to generate image");
+    }
+
+    // Add watermark for free plan users
+    if (user.plan === "free") {
+      finalBuffer = await addWatermark(finalBuffer);
     }
 
     const base64Image = `data:image/png;base64,${finalBuffer.toString(
