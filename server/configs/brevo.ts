@@ -2,9 +2,9 @@ import * as Brevo from "@getbrevo/brevo";
 
 const apiInstance = new Brevo.TransactionalEmailsApi();
 
-// Set API key authentication
-const apiKey = apiInstance.authentications["apiKey"];
-apiKey.apiKey = process.env.BREVO_API_KEY as string;
+// Set API key authentication (cast to any for TypeScript compatibility per Brevo docs)
+(apiInstance as any).authentications.apiKey.apiKey = process.env
+  .BREVO_API_KEY as string;
 
 export const sendOtpEmail = async (
   email: string,
