@@ -169,8 +169,8 @@ const Generate = () => {
         <SoftBackdrop />
         <div className="pt-24 min-h-screen flex items-center justify-center px-4">
           <div className="max-w-md w-full text-center bg-white/6 border border-white/10 rounded-2xl p-8">
-            <div className="size-16 bg-teal-900 rounded-full flex items-center justify-center mx-auto mb-4">
-              <SparklesIcon className="size-8 text-teal-400" />
+            <div className="size-16 bg-brand-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <SparklesIcon className="size-8 text-brand-400" />
             </div>
             <h1 className="text-2xl font-bold mb-2">Choose a Plan</h1>
             <p className="text-gray-400 mb-6">
@@ -179,7 +179,7 @@ const Generate = () => {
             </p>
             <Link
               to="/profile"
-              className="block w-full py-3 bg-teal-600 hover:bg-teal-700 rounded-xl font-medium transition"
+              className="block w-full py-3 bg-brand-500 hover:bg-brand-600 rounded-xl font-medium transition"
             >
               Select a Plan
             </Link>
@@ -227,7 +227,7 @@ const Generate = () => {
           {user && (
             <div className="mb-6 flex items-center justify-between bg-white/6 border border-white/10 rounded-xl px-4 py-3">
               <span className="text-sm text-gray-400">Credits remaining</span>
-              <span className="font-bold text-teal-400">
+              <span className="font-bold text-brand-400">
                 {user.credits} / {user.totalCredits}
               </span>
             </div>
@@ -258,7 +258,7 @@ const Generate = () => {
                       onChange={(e) => setTitle(e.target.value)}
                       maxLength={100}
                       placeholder="e.g., 10 Tips for Better Sleep"
-                      className="w-full px-4 py-3 rounded-lg border border-white/12  bg-black/20  text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      className="w-full px-4 py-3 rounded-lg border border-white/12  bg-black/20  text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
                     />
                     <div className="flex justify-end">
                       <span className="text-xs text-zinc-400">
@@ -297,7 +297,7 @@ const Generate = () => {
                       onChange={(e) => setAdditionalDetails(e.target.value)}
                       rows={3}
                       placeholder="Add any specific elements, mood, or style preferences..."
-                      className="w-full px-4 py-3 rounded-lg border border-white/10 bg-white/6  text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
+                      className="w-full px-4 py-3 rounded-lg border border-white/10 bg-white/6  text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
                     />
                   </div>
 
@@ -346,7 +346,7 @@ const Generate = () => {
                         ) : (
                           <button
                             onClick={() => fileInputRef.current?.click()}
-                            className="w-full py-6 rounded-lg border-2 border-dashed border-white/20 hover:border-teal-500/50 bg-white/5 hover:bg-white/8 transition flex flex-col items-center gap-2"
+                            className="w-full py-6 rounded-lg border-2 border-dashed border-white/20 hover:border-brand-500/50 bg-white/5 hover:bg-white/8 transition flex flex-col items-center gap-2"
                           >
                             <UploadIcon className="size-6 text-zinc-400" />
                             <span className="text-sm text-zinc-400">
@@ -375,13 +375,13 @@ const Generate = () => {
                     <button
                       onClick={handleGenerate}
                       disabled={loading}
-                      className="text-[15px] w-full py-3.5 rounded-xl font-medium bg-linear-to-b from-teal-500 to-teal-600 hover:from-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="text-[15px] w-full py-3.5 rounded-xl font-medium bg-linear-to-b from-brand-500 to-brand-600 hover:from-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {loading ? "Generating..." : "Generate Thumbnail"}
                     </button>
                     <p className="text-center text-xs text-zinc-500">
                       This will use{" "}
-                      <span className="text-teal-400 font-medium">
+                      <span className="text-brand-400 font-medium">
                         {creditsCost} credits
                       </span>
                       {referenceImage && canUploadImage && (

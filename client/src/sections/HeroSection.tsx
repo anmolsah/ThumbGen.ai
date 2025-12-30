@@ -15,10 +15,10 @@ export default function HeroSection() {
 
   return (
     <div className="relative flex flex-col items-center justify-center px-4 md:px-16 lg:px-24 xl:px-32">
-      <div className="absolute top-30 -z-10 left-1/4 size-72 bg-teal-600 blur-[300px]"></div>
+      <div className="absolute top-30 -z-10 left-1/4 size-72 bg-brand-600 blur-[300px]"></div>
       <motion.a
         href="https://prebuiltui.com?utm_source=pixels"
-        className="group flex items-center gap-2 rounded-full p-1 pr-3 mt-44 text-teal-100 bg-teal-200/15"
+        className="group flex items-center gap-2 rounded-full p-1 pr-3 mt-44 text-brand-100 bg-brand-200/15"
         initial={{ y: -20, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         viewport={{ once: true }}
@@ -30,7 +30,7 @@ export default function HeroSection() {
           mass: 1,
         }}
       >
-        <span className="bg-teal-700 text-white text-xs px-3.5 py-1 rounded-full">
+        <span className="bg-brand-700 text-white text-xs px-3.5 py-1 rounded-full">
           NEW
         </span>
         <p className="flex items-center gap-1">
@@ -78,11 +78,11 @@ export default function HeroSection() {
       >
         <button
           onClick={() => navigate("/generate")}
-          className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-7 h-11"
+          className="bg-brand-500 hover:bg-brand-600 text-white rounded-full px-7 h-11"
         >
           Generate now
         </button>
-        <button className="flex items-center gap-2 border border-teal-700 hover:bg-teal-950/50 transition rounded-full px-6 h-11">
+        <button className="flex items-center gap-2 border border-brand-600 hover:bg-brand-900/50 transition rounded-full px-6 h-11">
           <VideoIcon strokeWidth={1} />
           <span>See how it works</span>
         </button>
@@ -98,7 +98,7 @@ export default function HeroSection() {
             viewport={{ once: true }}
             transition={{ delay: index * 0.2, duration: 0.3 }}
           >
-            <CheckIcon className="size-5 text-teal-500" />
+            <CheckIcon className="size-5 text-brand-500" />
             <span className="text-slate-400">{feature}</span>
           </motion.p>
         ))}

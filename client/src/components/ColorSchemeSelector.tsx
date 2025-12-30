@@ -19,7 +19,7 @@ const ColorSchemeSelector = ({
             key={scheme.id}
             onClick={() => onChange(scheme.id)}
             className={`relative rounded-lg transition-all ${
-              value === scheme.id && "ring-2 ring-teal-500"
+              value === scheme.id && "ring-2 ring-brand-500"
             }`}
             title={scheme.name}
           >

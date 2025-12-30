@@ -50,7 +50,7 @@ const PaymentStatus = () => {
       <div className="max-w-md w-full text-center">
         {status === "loading" && (
           <div className="bg-white/6 border border-white/10 rounded-2xl p-8">
-            <Loader2Icon className="size-16 text-teal-400 animate-spin mx-auto mb-4" />
+            <Loader2Icon className="size-16 text-brand-400 animate-spin mx-auto mb-4" />
             <h1 className="text-2xl font-bold mb-2">Verifying Payment</h1>
             <p className="text-gray-400">
               Please wait while we confirm your payment...
@@ -59,11 +59,11 @@ const PaymentStatus = () => {
         )}
 
         {status === "success" && (
-          <div className="bg-white/6 border border-teal-800 rounded-2xl p-8">
-            <div className="size-20 bg-teal-900 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle2Icon className="size-12 text-teal-400" />
+          <div className="bg-white/6 border border-brand-700 rounded-2xl p-8">
+            <div className="size-20 bg-brand-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2Icon className="size-12 text-brand-400" />
             </div>
-            <h1 className="text-2xl font-bold mb-2 text-teal-400">
+            <h1 className="text-2xl font-bold mb-2 text-brand-400">
               Payment Successful!
             </h1>
             <p className="text-gray-400 mb-6">
@@ -73,7 +73,7 @@ const PaymentStatus = () => {
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => navigate("/profile")}
-                className="w-full py-3 bg-teal-600 hover:bg-teal-700 rounded-xl font-medium transition"
+                className="w-full py-3 bg-brand-500 hover:bg-brand-600 rounded-xl font-medium transition"
               >
                 View Profile
               </button>

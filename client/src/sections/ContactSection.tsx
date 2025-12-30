@@ -23,7 +23,7 @@ export default function ContactSection() {
           transition={{ type: "spring", stiffness: 320, damping: 70, mass: 1 }}
         >
           <p className="mb-2 font-medium">Your name</p>
-          <div className="flex items-center pl-3 rounded-lg border border-slate-700 focus-within:border-teal-500">
+          <div className="flex items-center pl-3 rounded-lg border border-slate-700 focus-within:border-brand-500">
             <UserIcon className="size-5" />
             <input
               name="name"
@@ -41,7 +41,7 @@ export default function ContactSection() {
           transition={{ type: "spring", stiffness: 280, damping: 70, mass: 1 }}
         >
           <p className="mb-2 font-medium">Email id</p>
-          <div className="flex items-center pl-3 rounded-lg border border-slate-700 focus-within:border-teal-500">
+          <div className="flex items-center pl-3 rounded-lg border border-slate-700 focus-within:border-brand-500">
             <MailIcon className="size-5" />
             <input
               name="email"
@@ -64,13 +64,13 @@ export default function ContactSection() {
             name="message"
             rows={8}
             placeholder="Enter your message"
-            className="focus:border-teal-500 resize-none w-full p-3 outline-none rounded-lg border border-slate-700"
+            className="focus:border-brand-500 resize-none w-full p-3 outline-none rounded-lg border border-slate-700"
           />
         </motion.div>
 
         <motion.button
           type="submit"
-          className="w-max flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-10 py-3 rounded-full"
+          className="w-max flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white px-10 py-3 rounded-full"
           initial={{ y: 150, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           viewport={{ once: true }}

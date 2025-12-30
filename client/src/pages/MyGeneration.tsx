@@ -162,19 +162,19 @@ const MyGeneration = () => {
                   >
                     <TrashIcon
                       onClick={() => handleDelete(thumb._id)}
-                      className="size-6 bg-black/50 p-1 rounded hover:bg-teal-600 transition-all"
+                      className="size-6 bg-black/50 p-1 rounded hover:bg-brand-600 transition-all"
                     />
 
                     <DownloadIcon
                       onClick={() => handleDownlaod(thumb.image_url!)}
-                      className="size-6 bg-black/50 p-1 rounded hover:bg-teal-600 transition-all"
+                      className="size-6 bg-black/50 p-1 rounded hover:bg-brand-600 transition-all"
                     />
 
                     <Link
                       target="_blank"
                       to={`/preview?thumbnail_url=${thumb.image_url}&title=${thumb.title}`}
                     >
-                      <ArrowUpRightIcon className="size-6 bg-black/50 p-1 rounded hover:bg-teal-600 transition-all" />
+                      <ArrowUpRightIcon className="size-6 bg-black/50 p-1 rounded hover:bg-brand-600 transition-all" />
                     </Link>
                   </div>
                 </div>

@@ -3,6 +3,17 @@
 
 @theme {
   --font-poppins: "Poppins", sans-serif;
+
+  /* Brand Colors */
+  --color-brand-900: #0d2240;
+  --color-brand-800: #143258;
+  --color-brand-700: #1c4270;
+  --color-brand-600: #28659c;
+  --color-brand-500: #3d8fca;
+  --color-brand-400: #5ba3d6;
+  --color-brand-300: #7bb7e2;
+  --color-brand-200: #a8d1ee;
+  --color-brand-100: #d4e8f7;
 }
 
 body {
@@ -10,7 +21,7 @@ body {
 }
 
 body::selection {
-  @apply bg-teal-500 text-white;
+  @apply bg-brand-500 text-white;
 }
 
 button {
@@ -20,8 +31,8 @@ button {
 .move-gradient {
   background-image: linear-gradient(
     to right,
-    var(--color-teal-400),
-    var(--color-cyan-300)
+    var(--color-brand-500),
+    var(--color-brand-300)
   );
   background-size: 200% 100%;
   animation: movegradient 5s infinite;

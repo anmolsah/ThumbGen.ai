@@ -19,7 +19,7 @@ export default function FeaturesSection() {
             key={index}
             className={`${
               index === 1
-                ? "p-px rounded-[13px] bg-linear-to-br from-teal-500 to-slate-800"
+                ? "p-px rounded-[13px] bg-linear-to-br from-brand-500 to-slate-800"
                 : ""
             }`}
             initial={{ y: 150, opacity: 0 }}
@@ -46,7 +46,7 @@ export default function FeaturesSection() {
         ))}
       </div>
       <div className="mt-40 relative mx-auto max-w-5xl">
-        <div className="absolute -z-50 size-100 -top-10 -left-20 aspect-square rounded-full bg-teal-500/40 blur-3xl"></div>
+        <div className="absolute -z-50 size-100 -top-10 -left-20 aspect-square rounded-full bg-brand-500/40 blur-3xl"></div>
         <motion.p
           className="text-slate-300 text-lg text-left max-w-3xl"
           initial={{ y: 150, opacity: 0 }}
@@ -107,7 +107,7 @@ export default function FeaturesSection() {
             </p>
             <a
               href="https://prebuiltui.com"
-              className="group flex items-center gap-2 mt-4 text-teal-500 hover:text-teal-600 transition"
+              className="group flex items-center gap-2 mt-4 text-brand-500 hover:text-brand-600 transition"
             >
               Start generating free
               <ArrowUpRight className="size-5 group-hover:translate-x-0.5 transition duration-300" />

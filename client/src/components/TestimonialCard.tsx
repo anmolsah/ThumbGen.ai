@@ -7,7 +7,7 @@ export default function TestimonialCard({
 }: TestimonialCardProps) {
   return (
     <motion.div
-      className="p-4 rounded-lg mx-4 w-72 shrink-0 bg-teal-950/30 border border-teal-900"
+      className="p-4 rounded-lg mx-4 w-72 shrink-0 bg-brand-900/30 border border-brand-800"
       initial={{ y: 150, opacity: 0 }}
       whileInView={{ y: 0, opacity: 1 }}
       viewport={{ once: true }}

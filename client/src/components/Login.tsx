@@ -137,10 +137,10 @@ const Login = () => {
         {state === "otp" ? (
           // OTP Verification Screen
           <div className="w-full sm:w-96 text-center bg-white/6 border border-white/10 rounded-2xl px-8 py-10">
-            <div className="size-16 mx-auto mb-4 rounded-full bg-teal-500/20 flex items-center justify-center">
+            <div className="size-16 mx-auto mb-4 rounded-full bg-brand-500/20 flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="size-8 text-teal-400"
+                className="size-8 text-brand-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -159,7 +159,7 @@ const Login = () => {
             <p className="text-gray-400 text-sm mt-2">
               We've sent a 6-digit code to
               <br />
-              <span className="text-teal-400">{formData.email}</span>
+              <span className="text-brand-400">{formData.email}</span>
             </p>
 
             {/* OTP Input */}
@@ -176,7 +176,7 @@ const Login = () => {
                   value={value}
                   onChange={(e) => handleOtpChange(index, e.target.value)}
                   onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                  className="w-11 h-13 text-center text-xl font-semibold bg-white/5 border-2 border-white/10 rounded-lg focus:border-teal-500 focus:outline-none text-white transition-all"
+                  className="w-11 h-13 text-center text-xl font-semibold bg-white/5 border-2 border-white/10 rounded-lg focus:border-brand-500 focus:outline-none text-white transition-all"
                   disabled={loading}
                 />
               ))}
@@ -186,7 +186,7 @@ const Login = () => {
             <button
               onClick={handleVerifyOtp}
               disabled={loading || otpValues.some((v) => !v)}
-              className="mt-8 w-full h-11 rounded-full text-white bg-teal-600 hover:bg-teal-500 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center gap-2"
+              className="mt-8 w-full h-11 rounded-full text-white bg-brand-500 hover:bg-brand-400 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -207,7 +207,7 @@ const Login = () => {
                 <button
                   onClick={handleResendOtp}
                   disabled={loading}
-                  className="text-teal-400 hover:underline disabled:opacity-50"
+                  className="text-brand-400 hover:underline disabled:opacity-50"
                 >
                   Resend OTP
                 </button>
@@ -241,7 +241,7 @@ const Login = () => {
             </p>
 
             {state !== "login" && (
-              <div className="flex items-center mt-6 w-full bg-white/5 ring-2 ring-white/10 focus-within:ring-teal-500/60 h-12 rounded-full overflow-hidden pl-6 gap-2 transition-all">
+              <div className="flex items-center mt-6 w-full bg-white/5 ring-2 ring-white/10 focus-within:ring-brand-500/60 h-12 rounded-full overflow-hidden pl-6 gap-2 transition-all">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -269,7 +269,7 @@ const Login = () => {
               </div>
             )}
 
-            <div className="flex items-center w-full mt-4 bg-white/5 ring-2 ring-white/10 focus-within:ring-teal-500/60 h-12 rounded-full overflow-hidden pl-6 gap-2 transition-all">
+            <div className="flex items-center w-full mt-4 bg-white/5 ring-2 ring-white/10 focus-within:ring-brand-500/60 h-12 rounded-full overflow-hidden pl-6 gap-2 transition-all">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="14"
@@ -296,7 +296,7 @@ const Login = () => {
               />
             </div>
 
-            <div className="flex items-center mt-4 w-full bg-white/5 ring-2 ring-white/10 focus-within:ring-teal-500/60 h-12 rounded-full overflow-hidden pl-6 gap-2 transition-all">
+            <div className="flex items-center mt-4 w-full bg-white/5 ring-2 ring-white/10 focus-within:ring-brand-500/60 h-12 rounded-full overflow-hidden pl-6 gap-2 transition-all">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="14"
@@ -327,7 +327,7 @@ const Login = () => {
               <div className="mt-4 text-left">
                 <button
                   type="button"
-                  className="text-sm text-teal-400 hover:underline"
+                  className="text-sm text-brand-400 hover:underline"
                 >
                   Forget password?
                 </button>
@@ -337,7 +337,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="mt-4 w-full h-11 rounded-full text-white bg-teal-600 hover:bg-teal-500 disabled:opacity-50 transition flex items-center justify-center gap-2"
+              className="mt-4 w-full h-11 rounded-full text-white bg-brand-500 hover:bg-brand-400 disabled:opacity-50 transition flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -360,7 +360,7 @@ const Login = () => {
               {state === "login"
                 ? "Don't have an account?"
                 : "Already have an account?"}
-              <span className="text-teal-400 hover:underline ml-1">
+              <span className="text-brand-400 hover:underline ml-1">
                 click here
               </span>
             </p>

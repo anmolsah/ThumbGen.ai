@@ -33,18 +33,18 @@ export default function Navbar() {
         </Link>
 
         <div className="hidden md:flex items-center gap-8 transition duration-500">
-          <Link to="/" className="hover:text-teal-300 transition">
+          <Link to="/" className="hover:text-brand-300 transition">
             Home
           </Link>
           <button
             onClick={() => handleProtectedClick("/generate")}
-            className="hover:text-teal-300 transition"
+            className="hover:text-brand-300 transition"
           >
             Generate
           </button>
           <button
             onClick={() => handleProtectedClick("/my-generation")}
-            className="hover:text-teal-300 transition"
+            className="hover:text-brand-300 transition"
           >
             My Generations
           </button>
@@ -57,7 +57,7 @@ export default function Navbar() {
                   ?.scrollIntoView({ behavior: "smooth" });
               }, 100);
             }}
-            className="hover:text-teal-300 transition"
+            className="hover:text-brand-300 transition"
           >
             Pricing
           </button>
@@ -67,7 +67,7 @@ export default function Navbar() {
             <div className="relative group">
               <button
                 onClick={() => navigate("/profile")}
-                className="rounded-full size-8 bg-teal-600 border-2 border-teal-500 hover:border-teal-400 transition"
+                className="rounded-full size-8 bg-brand-600 border-2 border-brand-500 hover:border-brand-400 transition"
               >
                 {user?.name.charAt(0).toUpperCase()}
               </button>
@@ -80,7 +80,10 @@ export default function Navbar() {
                     Profile
                   </Link>
                   <button
-                    onClick={() => logout()}
+                    onClick={() => {
+                      logout();
+                      navigate("/");
+                    }}
                     className="w-full text-left px-4 py-2 hover:bg-white/10 transition text-red-400"
                   >
                     Logout
@@ -91,7 +94,7 @@ export default function Navbar() {
           ) : (
             <button
               onClick={() => navigate("/login")}
-              className="hidden md:block px-6 py-2.5 bg-teal-600 hover:bg-teal-700 active:scale-95 transition-all rounded-full"
+              className="hidden md:block px-6 py-2.5 bg-brand-500 hover:bg-brand-600 active:scale-95 transition-all rounded-full"
             >
               Get Started
             </button>
@@ -149,6 +152,7 @@ export default function Navbar() {
               onClick={() => {
                 setIsOpen(false);
                 logout();
+                navigate("/");
               }}
               className="text-red-400"
             >
@@ -163,7 +167,7 @@ export default function Navbar() {
 
         <button
           onClick={() => setIsOpen(false)}
-          className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-teal-600 hover:bg-teal-700 transition text-white rounded-md flex"
+          className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-brand-500 hover:bg-brand-600 transition text-white rounded-md flex"
         >
           <XIcon />
         </button>

@@ -65,7 +65,7 @@ export default function TiltedImage({ rotateAmplitude = 3 }) {
       >
         <motion.img
           src="/Thumbgen.png"
-          className="broderb bg-linear-180 from-teal-500 to-transparent p-1 w-full rounded-[15px] will-change-transform transform-[translateZ(0)]"
+          className="broderb bg-linear-180 from-brand-500 to-transparent p-1 w-full rounded-[15px] will-change-transform transform-[translateZ(0)]"
           alt="hero section showcase"
         />
       </motion.div>

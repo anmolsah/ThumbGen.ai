@@ -126,8 +126,8 @@ export default function PricingSection() {
         {pricingData.map((plan: IPricing, index: number) => (
           <motion.div
             key={index}
-            className={`w-72 text-center border border-teal-900 p-6 pb-16 rounded-xl ${
-              plan.mostPopular ? "bg-teal-900 relative" : "bg-teal-950/30"
+            className={`w-72 text-center border border-brand-800 p-6 pb-16 rounded-xl ${
+              plan.mostPopular ? "bg-brand-800 relative" : "bg-brand-900/30"
             }`}
             initial={{ y: 150, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -141,7 +141,7 @@ export default function PricingSection() {
             }}
           >
             {plan.mostPopular && (
-              <p className="absolute px-3 text-sm -top-3.5 left-3.5 py-1 bg-teal-400 text-teal-950 rounded-full">
+              <p className="absolute px-3 text-sm -top-3.5 left-3.5 py-1 bg-brand-500 text-brand-900 rounded-full">
                 Most Popular
               </p>
             )}
@@ -157,7 +157,7 @@ export default function PricingSection() {
             <ul className="list-none text-slate-300 mt-6 space-y-2">
               {plan.features.map((feature, idx) => (
                 <li key={idx} className="flex items-center gap-2">
-                  <CheckIcon className="size-4.5 text-teal-400" />
+                  <CheckIcon className="size-4.5 text-brand-500" />
                   <p>{feature}</p>
                 </li>
               ))}
@@ -170,8 +170,8 @@ export default function PricingSection() {
               }
               className={`w-full py-2.5 rounded-md font-medium mt-7 transition-all disabled:opacity-50 ${
                 plan.mostPopular
-                  ? "bg-white text-teal-600 hover:bg-slate-200"
-                  : "bg-teal-500 hover:bg-teal-600"
+                  ? "bg-white text-brand-600 hover:bg-slate-200"
+                  : "bg-brand-500 hover:bg-brand-600"
               }`}
             >
               {getButtonText(plan)}

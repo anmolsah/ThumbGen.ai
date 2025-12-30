@@ -25,7 +25,7 @@ export default function Footer() {
                 <li key={index}>
                   <Link
                     to={link.href}
-                    className="hover:text-teal-400 transition"
+                    className="hover:text-brand-400 transition"
                   >
                     {link.name}
                   </Link>

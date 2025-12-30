@@ -28,8 +28,8 @@ const PLANS = {
   creator: {
     name: "Creator Plan",
     icon: ZapIcon,
-    color: "text-teal-400",
-    bgColor: "bg-teal-900",
+    color: "text-brand-400",
+    bgColor: "bg-brand-800",
   },
   pro: {
     name: "Pro Plan",
@@ -119,7 +119,7 @@ const Profile = () => {
           <div className="bg-white/6 border border-white/10 rounded-2xl p-6 md:p-8">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
               {/* Avatar */}
-              <div className="size-20 rounded-full bg-teal-600 flex items-center justify-center text-3xl font-bold">
+              <div className="size-20 rounded-full bg-brand-600 flex items-center justify-center text-3xl font-bold">
                 {user.name.charAt(0).toUpperCase()}
               </div>
 
@@ -145,7 +145,7 @@ const Profile = () => {
               <div className="mt-8 p-6 bg-black/20 rounded-xl">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-semibold">Credits</h3>
-                  <span className="text-2xl font-bold text-teal-400">
+                  <span className="text-2xl font-bold text-brand-400">
                     {user.credits}{" "}
                     <span className="text-gray-500 text-base font-normal">
                       / {user.totalCredits}
@@ -156,7 +156,7 @@ const Profile = () => {
                 {/* Progress Bar */}
                 <div className="h-3 bg-gray-800 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-teal-500 to-cyan-400 rounded-full transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-brand-500 to-brand-300 rounded-full transition-all duration-500"
                     style={{ width: `${creditsPercentage}%` }}
                   />
                 </div>
@@ -226,14 +226,14 @@ const Profile = () => {
                 </div>
 
                 {/* Creator Plan */}
-                <div className="bg-white/6 border border-teal-800 rounded-2xl p-6 hover:border-teal-600 transition relative">
-                  <div className="absolute top-4 right-4 px-3 py-1 bg-teal-500 text-teal-950 text-xs font-bold rounded-full">
+                <div className="bg-white/6 border border-brand-700 rounded-2xl p-6 hover:border-brand-500 transition relative">
+                  <div className="absolute top-4 right-4 px-3 py-1 bg-brand-500 text-brand-900 text-xs font-bold rounded-full">
                     POPULAR
                   </div>
 
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-teal-900 rounded-lg">
-                      <ZapIcon className="size-6 text-teal-400" />
+                    <div className="p-2 bg-brand-800 rounded-lg">
+                      <ZapIcon className="size-6 text-brand-400" />
                     </div>
                     <div>
                       <h3 className="font-bold text-lg">Creator Plan</h3>
@@ -258,7 +258,7 @@ const Profile = () => {
                   <button
                     onClick={() => handleUpgrade("creator")}
                     disabled={loading !== null}
-                    className="w-full py-3 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 rounded-xl font-medium transition flex items-center justify-center gap-2"
+                    className="w-full py-3 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 rounded-xl font-medium transition flex items-center justify-center gap-2"
                   >
                     {loading === "creator" ? (
                       <>
@@ -327,10 +327,10 @@ const Profile = () => {
 
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Creator Plan */}
-                <div className="bg-white/6 border border-teal-800 rounded-2xl p-6 hover:border-teal-600 transition">
+                <div className="bg-white/6 border border-brand-700 rounded-2xl p-6 hover:border-brand-500 transition">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-teal-900 rounded-lg">
-                      <ZapIcon className="size-6 text-teal-400" />
+                    <div className="p-2 bg-brand-800 rounded-lg">
+                      <ZapIcon className="size-6 text-brand-400" />
                     </div>
                     <div>
                       <h3 className="font-bold text-lg">Creator Plan</h3>
@@ -357,7 +357,7 @@ const Profile = () => {
                   <button
                     onClick={() => handleUpgrade("creator")}
                     disabled={loading !== null}
-                    className="w-full py-3 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 rounded-xl font-medium transition flex items-center justify-center gap-2"
+                    className="w-full py-3 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 rounded-xl font-medium transition flex items-center justify-center gap-2"
                   >
                     {loading === "creator" ? (
                       <>
