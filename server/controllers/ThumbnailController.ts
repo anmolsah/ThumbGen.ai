@@ -47,6 +47,7 @@ const addWatermark = async (imageBuffer: Buffer): Promise<Buffer> => {
 };
 
 const CREDITS_PER_THUMBNAIL = 5;
+const CREDITS_WITH_REFERENCE_IMAGE = 15;
 
 const stylePrompts = {
   "Bold & Graphic":
@@ -89,6 +90,7 @@ export const generateThumbnail = async (req: Request, res: Response) => {
       aspect_ratio,
       color_scheme,
       text_overlay,
+      reference_image, // Base64 encoded image from paid users
     } = req.body;
 
     // Check if user has a plan and credits
@@ -103,10 +105,26 @@ export const generateThumbnail = async (req: Request, res: Response) => {
         .json({ message: "Please select a plan to generate thumbnails" });
     }
 
-    if (user.credits < CREDITS_PER_THUMBNAIL) {
-      return res
-        .status(403)
-        .json({ message: "Insufficient credits. Please upgrade your plan." });
+    // Check if reference image is allowed (only for creator and pro plans)
+    const canUseReferenceImage = user.plan === "creator" || user.plan === "pro";
+    const usingReferenceImage = reference_image && canUseReferenceImage;
+    const creditsRequired = usingReferenceImage
+      ? CREDITS_WITH_REFERENCE_IMAGE
+      : CREDITS_PER_THUMBNAIL;
+
+    if (reference_image && !canUseReferenceImage) {
+      return res.status(403).json({
+        message:
+          "Reference images are only available for Creator and Pro plans",
+      });
+    }
+
+    if (user.credits < creditsRequired) {
+      return res.status(403).json({
+        message: usingReferenceImage
+          ? `Insufficient credits. Reference image generation requires ${CREDITS_WITH_REFERENCE_IMAGE} credits.`
+          : "Insufficient credits. Please upgrade your plan.",
+      });
     }
 
     const thumbnail = await Thumbnail.create({
@@ -122,7 +140,6 @@ export const generateThumbnail = async (req: Request, res: Response) => {
     });
 
     const model = "imagen-4.0-ultra-generate-001";
-    //const model = "gemini-3-pro-image-preview";
 
     let prompt = `Create a ${
       stylePrompts[style as keyof typeof stylePrompts]
@@ -140,17 +157,93 @@ export const generateThumbnail = async (req: Request, res: Response) => {
       prompt += ` Additional details: ${user_prompt}.`;
     }
 
+    // Add reference image instruction to prompt if provided
+    if (reference_image && canUseReferenceImage) {
+      prompt += ` Incorporate the person/subject from the reference image prominently in the thumbnail, maintaining their likeness and features.`;
+    }
+
     prompt += ` The thumbnail should be ${aspect_ratio}, visually stunning, and designed to maximize click-through rate. Make it bold, professional, and impossible to ignore.`;
 
-    // Generate the image using Imagen 4.0
-    const response = await ai.models.generateImages({
-      model,
-      prompt,
-      config: {
-        numberOfImages: 1,
-        aspectRatio: aspect_ratio || "16:9",
-      },
-    });
+    // Build the generation config
+    let response;
+
+    if (reference_image && canUseReferenceImage) {
+      // For reference images, use Gemini's multimodal image generation
+      // Extract base64 data from data URL if present
+      const base64Data = reference_image.includes("base64,")
+        ? reference_image.split("base64,")[1]
+        : reference_image;
+
+      // Get mime type from data URL
+      const mimeType = reference_image.includes("data:")
+        ? reference_image.split(";")[0].split(":")[1]
+        : "image/jpeg";
+
+      // Use Gemini for multimodal generation with reference image
+      const geminiModel = "gemini-3-pro-image-preview";
+
+      const geminiResponse: any = await ai.models.generateContent({
+        model: geminiModel,
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                inlineData: {
+                  mimeType,
+                  data: base64Data,
+                },
+              },
+              {
+                text: `Using the person/subject from this reference image, ${prompt} Make sure to incorporate the person's likeness and features prominently in the generated thumbnail.`,
+              },
+            ],
+          },
+        ],
+        config: {
+          responseModalities: ["TEXT", "IMAGE"],
+        },
+      });
+
+      // Extract image from Gemini response
+      if (!geminiResponse?.candidates?.[0]?.content?.parts) {
+        throw new Error("Failed to generate image with reference");
+      }
+
+      const parts = geminiResponse.candidates[0].content.parts;
+      let imageData: string | null = null;
+
+      for (const part of parts) {
+        if (part.inlineData?.data) {
+          imageData = part.inlineData.data;
+          break;
+        }
+      }
+
+      if (!imageData) {
+        throw new Error("Failed to generate image");
+      }
+
+      response = {
+        generatedImages: [
+          {
+            image: {
+              imageBytes: imageData,
+            },
+          },
+        ],
+      };
+    } else {
+      // Standard Imagen generation without reference image
+      response = await ai.models.generateImages({
+        model,
+        prompt,
+        config: {
+          numberOfImages: 1,
+          aspectRatio: aspect_ratio || "16:9",
+        },
+      });
+    }
 
     // Check if the response is valid
     if (!response?.generatedImages?.[0]?.image?.imageBytes) {
@@ -180,7 +273,7 @@ export const generateThumbnail = async (req: Request, res: Response) => {
     await thumbnail.save();
 
     // Deduct credits only after successful generation
-    user.credits -= CREDITS_PER_THUMBNAIL;
+    user.credits -= creditsRequired;
     await user.save();
 
     res.json({

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
 import {
   colorSchemes,
@@ -14,7 +14,13 @@ import PreviewPanel from "../components/PreviewPanel";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import api from "../configs/api";
-import { SparklesIcon, AlertCircleIcon } from "lucide-react";
+import {
+  SparklesIcon,
+  AlertCircleIcon,
+  UploadIcon,
+  XIcon,
+  ImageIcon,
+} from "lucide-react";
 
 const Generate = () => {
   const { id } = useParams();
@@ -36,8 +42,45 @@ const Generate = () => {
 
   const [styleDropdownOpen, setStyleDropdownOpen] = useState(false);
 
+  const [referenceImage, setReferenceImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const hasNoPlan = !user || user.plan === "none";
   const hasNoCredits = user && user.credits <= 0;
+  const canUploadImage = user?.plan === "creator" || user?.plan === "pro";
+
+  // Calculate credits cost based on reference image usage
+  const creditsCost = referenceImage && canUploadImage ? 15 : 5;
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 5MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setReferenceImage(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeReferenceImage = () => {
+    setReferenceImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const handleGenerate = async () => {
     if (!isLoggedIn) return toast.error("Please login to generate thumbnails");
@@ -48,7 +91,7 @@ const Generate = () => {
     setLoading(true);
 
     try {
-      const api_payload = {
+      const api_payload: any = {
         title,
         prompt: additionalDetails,
         style,
@@ -56,6 +99,11 @@ const Generate = () => {
         color_scheme: colorSchemeId,
         text_overlay: true,
       };
+
+      // Add reference image if uploaded (only for paid plans)
+      if (referenceImage && canUploadImage) {
+        api_payload.reference_image = referenceImage;
+      }
 
       const { data } = await api.post("/api/thumbnail/generate", api_payload);
       if (data.thumbnail) {
@@ -252,17 +300,98 @@ const Generate = () => {
                       className="w-full px-4 py-3 rounded-lg border border-white/10 bg-white/6  text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
                     />
                   </div>
+
+                  {/* Reference Image Upload - Only for Creator and Pro plans */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-sm font-medium">
+                        Reference Image{" "}
+                        <span className="text-zinc-400 text-xs">
+                          {canUploadImage
+                            ? "(optional)"
+                            : "(Creator & Pro only)"}
+                        </span>
+                      </label>
+                      {canUploadImage && (
+                        <span className="text-xs text-amber-400">
+                          +10 credits
+                        </span>
+                      )}
+                    </div>
+
+                    {canUploadImage ? (
+                      <>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="hidden"
+                        />
+
+                        {referenceImage ? (
+                          <div className="relative">
+                            <img
+                              src={referenceImage}
+                              alt="Reference"
+                              className="w-full h-32 object-cover rounded-lg border border-white/10"
+                            />
+                            <button
+                              onClick={removeReferenceImage}
+                              className="absolute top-2 right-2 p-1 bg-red-500 hover:bg-red-600 rounded-full transition"
+                            >
+                              <XIcon className="size-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => fileInputRef.current?.click()}
+                            className="w-full py-6 rounded-lg border-2 border-dashed border-white/20 hover:border-teal-500/50 bg-white/5 hover:bg-white/8 transition flex flex-col items-center gap-2"
+                          >
+                            <UploadIcon className="size-6 text-zinc-400" />
+                            <span className="text-sm text-zinc-400">
+                              Upload your photo to include in thumbnail
+                            </span>
+                            <span className="text-xs text-zinc-500">
+                              PNG, JPG up to 5MB
+                            </span>
+                          </button>
+                        )}
+                      </>
+                    ) : (
+                      <div className="w-full py-4 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center gap-2 opacity-60">
+                        <ImageIcon className="size-5 text-zinc-500" />
+                        <span className="text-sm text-zinc-500">
+                          Upgrade to Creator or Pro to upload reference images
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* BUTTON */}
                 {!id && (
-                  <button
-                    onClick={handleGenerate}
-                    disabled={loading}
-                    className="text-[15px] w-full py-3.5 rounded-xl font-medium bg-linear-to-b from-teal-500 to-teal-600 hover:from-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {loading ? "Generating..." : "Generate Thumbnail"}
-                  </button>
+                  <div className="space-y-2">
+                    <button
+                      onClick={handleGenerate}
+                      disabled={loading}
+                      className="text-[15px] w-full py-3.5 rounded-xl font-medium bg-linear-to-b from-teal-500 to-teal-600 hover:from-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {loading ? "Generating..." : "Generate Thumbnail"}
+                    </button>
+                    <p className="text-center text-xs text-zinc-500">
+                      This will use{" "}
+                      <span className="text-teal-400 font-medium">
+                        {creditsCost} credits
+                      </span>
+                      {referenceImage && canUploadImage && (
+                        <span className="text-zinc-600">
+                          {" "}
+                          (includes reference image)
+                        </span>
+                      )}
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
