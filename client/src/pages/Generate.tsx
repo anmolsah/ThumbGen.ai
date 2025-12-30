@@ -20,7 +20,7 @@ const Generate = () => {
   const { id } = useParams();
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, setUser } = useAuth();
 
   const [title, setTitle] = useState("");
   const [additionalDetails, setAdditionalDetails] = useState("");
@@ -59,6 +59,10 @@ const Generate = () => {
 
       const { data } = await api.post("/api/thumbnail/generate", api_payload);
       if (data.thumbnail) {
+        // Update user credits in state
+        if (user && data.credits !== undefined) {
+          setUser({ ...user, credits: data.credits });
+        }
         navigate("/generate/" + data.thumbnail._id);
         toast.success(data.message);
       }
