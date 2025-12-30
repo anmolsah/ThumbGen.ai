@@ -77,8 +77,9 @@ const Profile = () => {
       }
 
       console.log("Loading Cashfree SDK...");
-      // Initialize Cashfree
-      const cashfree = await load({ mode: "sandbox" }); // Change to "production" for live
+      // Initialize Cashfree - use production mode based on environment
+      const cashfreeMode = import.meta.env.PROD ? "production" : "sandbox";
+      const cashfree = await load({ mode: cashfreeMode });
       console.log("Cashfree SDK loaded:", cashfree);
 
       console.log("Opening checkout with sessionId:", data.paymentSessionId);

@@ -70,7 +70,8 @@ export default function PricingSection() {
         return;
       }
 
-      const cashfree = await load({ mode: "sandbox" });
+      const cashfreeMode = import.meta.env.PROD ? "production" : "sandbox";
+      const cashfree = await load({ mode: cashfreeMode });
 
       await cashfree.checkout({
         paymentSessionId: data.paymentSessionId,
