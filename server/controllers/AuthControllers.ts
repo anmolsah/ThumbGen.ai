@@ -97,11 +97,18 @@ export const verifyOtpAndRegister = async (req: Request, res: Response) => {
 
     // Set session
     req.session.isLoggedIn = true;
-    req.session.userId = newUser._id;
+    req.session.userId = newUser._id.toString();
 
-    return res.json({
-      message: "Account created successfully",
-      user: formatUserResponse(newUser),
+    // Explicitly save session before responding
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).json({ message: "Session error" });
+      }
+      return res.json({
+        message: "Account created successfully",
+        user: formatUserResponse(newUser),
+      });
     });
   } catch (error: any) {
     console.log(error);
@@ -160,11 +167,17 @@ export const registerUser = async (req: Request, res: Response) => {
     await newUser.save();
 
     req.session.isLoggedIn = true;
-    req.session.userId = newUser._id;
+    req.session.userId = newUser._id.toString();
 
-    return res.json({
-      message: "Account created successfully",
-      user: formatUserResponse(newUser),
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).json({ message: "Session error" });
+      }
+      return res.json({
+        message: "Account created successfully",
+        user: formatUserResponse(newUser),
+      });
     });
   } catch (error: any) {
     console.log(error);
@@ -187,11 +200,18 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 
     req.session.isLoggedIn = true;
-    req.session.userId = user._id;
+    req.session.userId = user._id.toString();
 
-    return res.json({
-      message: "Login successful",
-      user: formatUserResponse(user),
+    // Explicitly save session before responding
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).json({ message: "Session error" });
+      }
+      return res.json({
+        message: "Login successful",
+        user: formatUserResponse(user),
+      });
     });
   } catch (error: any) {
     console.log(error);

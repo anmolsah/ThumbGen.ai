@@ -44,9 +44,11 @@ export const createOrder = async (req: Request, res: Response) => {
       order_note: `${planDetails.name} subscription`,
     };
 
+    console.log("Creating Cashfree order:", orderRequest);
     const response = await cashfree.PGCreateOrder(orderRequest);
+    console.log("Cashfree response:", JSON.stringify(response.data, null, 2));
 
-    if (response.data) {
+    if (response.data && response.data.payment_session_id) {
       // Save payment record
       const payment = new Payment({
         userId,
@@ -65,10 +67,16 @@ export const createOrder = async (req: Request, res: Response) => {
       });
     }
 
-    return res.status(500).json({ message: "Failed to create order" });
+    return res.status(500).json({
+      message: "Failed to create order",
+      details: response.data,
+    });
   } catch (error: any) {
-    console.error("Create order error:", error);
-    res.status(500).json({ message: error.message });
+    console.error("Create order error:", error?.response?.data || error);
+    res.status(500).json({
+      message: error?.response?.data?.message || error.message,
+      code: error?.response?.data?.code,
+    });
   }
 };
 

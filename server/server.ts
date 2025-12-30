@@ -61,6 +61,15 @@ app.use(express.json());
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is Live!");
 });
+
+// Debug endpoint to check session
+app.get("/api/debug/session", (req: Request, res: Response) => {
+  res.json({
+    sessionId: req.sessionID,
+    session: req.session,
+    cookies: req.headers.cookie,
+  });
+});
 app.use("/api/auth", AuthRouter);
 app.use("/api/thumbnail", ThumbnailRouter);
 app.use("/api/user", UserRouter);
