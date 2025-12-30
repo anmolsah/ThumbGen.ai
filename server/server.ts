@@ -8,6 +8,10 @@ import AuthRouter from "./routes/AuthRoutes.js";
 import ThumbnailRouter from "./routes/ThumbnailRoutes.js";
 import UserRouter from "./routes/UserRoutes.js";
 import PaymentRouter from "./routes/PaymentRoutes.js";
+import "./configs/cloudinary.js";
+
+// Initialize worker (runs in same process for simplicity)
+import "./workers/thumbnailWorker.js";
 
 declare module "express-session" {
   interface SessionData {
