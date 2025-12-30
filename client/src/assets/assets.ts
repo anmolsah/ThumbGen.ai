@@ -5,6 +5,10 @@ import thumb_4 from "./thumb_4.jpg";
 import thumb_5 from "./thumb_5.jpg";
 import thumb_6 from "./thumb_6.jpg";
 import thumb_7 from "./thumb_7.jpg";
+import thumb_8 from "./1.png";
+import thumb_9 from "./2.png";
+import thumb_10 from "./3.jpg";
+import thumb_11 from "./5.png";
 
 export const aspectRatios = ["16:9", "1:1", "9:16"];
 export type AspectRatio = (typeof aspectRatios)[number];

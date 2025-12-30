@@ -134,3 +134,22 @@ export const deleteThumbnail = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Get showcase thumbnails for homepage (public, no auth required)
+export const getShowcaseThumbnails = async (req: Request, res: Response) => {
+  try {
+    // Get latest 12 completed thumbnails for showcase
+    const thumbnails = await Thumbnail.find({
+      isGenerating: false,
+      image_url: { $exists: true, $ne: "" },
+    })
+      .select("title image_url style")
+      .sort({ createdAt: -1 })
+      .limit(12);
+
+    res.json({ thumbnails });
+  } catch (error: any) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+};
