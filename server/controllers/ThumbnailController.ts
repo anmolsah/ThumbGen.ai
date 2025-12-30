@@ -1,11 +1,6 @@
 import { Request, Response } from "express";
 import Thumbnail from "../models/Thumbnail.js";
 import User from "../models/User.js";
-import {
-  GenerateContentConfig,
-  HarmBlockThreshold,
-  HarmCategory,
-} from "@google/genai";
 import ai from "../configs/ai.js";
 import { v2 as cloudinary } from "cloudinary";
 import sharp from "sharp";
@@ -126,43 +121,15 @@ export const generateThumbnail = async (req: Request, res: Response) => {
       isGenerating: true,
     });
 
-    const model = "gemini-3-pro-image-preview";
-
-    const generationConfig: GenerateContentConfig = {
-      maxOutputTokens: 32768,
-      temperature: 1,
-      topP: 0.95,
-      responseModalities: ["IMAGE"],
-      imageConfig: {
-        aspectRatio: aspect_ratio || "16:9",
-        imageSize: "1K",
-      },
-      safetySettings: [
-        {
-          category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-          threshold: HarmBlockThreshold.OFF,
-        },
-        {
-          category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-          threshold: HarmBlockThreshold.OFF,
-        },
-        {
-          category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-          threshold: HarmBlockThreshold.OFF,
-        },
-        {
-          category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-          threshold: HarmBlockThreshold.OFF,
-        },
-      ],
-    };
+    const model = "imagen-4.0-ultra-generate-001";
+    //const model = "gemini-3-pro-image-preview";
 
     let prompt = `Create a ${
       stylePrompts[style as keyof typeof stylePrompts]
     } for: "${title}"`;
 
     if (color_scheme) {
-      prompt += `Use a ${
+      prompt += ` Use a ${
         colorSchemeDescriptions[
           color_scheme as keyof typeof colorSchemeDescriptions
         ]
@@ -170,36 +137,30 @@ export const generateThumbnail = async (req: Request, res: Response) => {
     }
 
     if (user_prompt) {
-      prompt += `Additional details: ${user_prompt}. `;
+      prompt += ` Additional details: ${user_prompt}.`;
     }
 
-    prompt += `The thumbnail should be ${aspect_ratio}, visually stunning, and designed to maximize click-through rate. Make it bold, professional, and impossible to ignore.`;
+    prompt += ` The thumbnail should be ${aspect_ratio}, visually stunning, and designed to maximize click-through rate. Make it bold, professional, and impossible to ignore.`;
 
-    // Generate the image using the ai model
-    const response: any = await ai.models.generateContent({
+    // Generate the image using Imagen 4.0
+    const response = await ai.models.generateImages({
       model,
-      contents: [prompt],
-      config: generationConfig,
+      prompt,
+      config: {
+        numberOfImages: 1,
+        aspectRatio: aspect_ratio || "16:9",
+      },
     });
 
     // Check if the response is valid
-    if (!response?.candidates?.[0]?.content?.parts) {
-      throw new Error("Unexpected response");
-    }
-
-    const parts = response.candidates[0].content.parts;
-
-    let finalBuffer: Buffer | null = null;
-
-    for (const part of parts) {
-      if (part.inlineData?.data) {
-        finalBuffer = Buffer.from(part.inlineData.data, "base64");
-      }
-    }
-
-    if (!finalBuffer) {
+    if (!response?.generatedImages?.[0]?.image?.imageBytes) {
       throw new Error("Failed to generate image");
     }
+
+    let finalBuffer: Buffer = Buffer.from(
+      response.generatedImages[0].image.imageBytes,
+      "base64"
+    );
 
     // Add watermark for free plan users
     if (user.plan === "free") {
