@@ -126,7 +126,20 @@ const Generate = () => {
     try {
       const { data } = await api.get(`/api/user/thumbnail/${id}`);
       setThumbnail(data?.thumbnail as IThumbnail);
-      setLoading(!data?.thumbnail?.image_url);
+
+      const isComplete =
+        !data?.thumbnail?.isGenerating && data?.thumbnail?.image_url;
+      setLoading(!isComplete);
+
+      // Update credits when thumbnail is fetched (credits deducted after generation)
+      if (user && data.credits !== undefined) {
+        setUser({
+          ...user,
+          credits: data.credits,
+          totalCredits: data.totalCredits,
+        });
+      }
+
       setAdditionalDetails(data?.thumbnail?.user_prompt);
       setTitle(data?.thumbnail?.title);
       setColorSchemeId(data?.thumbnail?.color_scheme);
