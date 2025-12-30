@@ -10,6 +10,8 @@ import YtPreview from "./pages/YtPreview";
 import Login from "./components/Login";
 import Profile from "./pages/Profile";
 import PaymentStatus from "./pages/PaymentStatus";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 
@@ -34,6 +36,8 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/payment/status" element={<PaymentStatus />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsConditions />} />
       </Routes>
       <Footer />
     </>
