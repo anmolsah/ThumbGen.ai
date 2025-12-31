@@ -12,6 +12,7 @@ import Profile from "./pages/Profile";
 import PaymentStatus from "./pages/PaymentStatus";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
+import HowItWorks from "./pages/HowItWorks";
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/payment/status" element={<PaymentStatus />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsConditions />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
       </Routes>
       <Footer />
     </>

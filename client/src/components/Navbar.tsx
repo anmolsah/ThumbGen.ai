@@ -19,6 +19,11 @@ export default function Navbar() {
     }
   };
 
+  const handleLogoClick = () => {
+    navigate("/");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <>
       <motion.nav
@@ -28,9 +33,9 @@ export default function Navbar() {
         viewport={{ once: true }}
         transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1 }}
       >
-        <Link to="/">
+        <button onClick={handleLogoClick}>
           <img src={logo} alt="logo" className="h-14 w-auto" />
-        </Link>
+        </button>
 
         <div className="hidden md:flex items-center gap-8 transition duration-500">
           <Link to="/" className="hover:text-brand-300 transition">

@@ -3,9 +3,19 @@ import { CheckIcon, ChevronRightIcon, SparklesIcon } from "lucide-react";
 import TiltedImage from "../components/TiltImage";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function HeroSection() {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
+
+  const handleGenerateClick = () => {
+    if (isLoggedIn) {
+      navigate("/generate");
+    } else {
+      navigate("/login");
+    }
+  };
 
   const specialFeatures = [
     "No design skills needed",
@@ -47,7 +57,7 @@ export default function HeroSection() {
 
       {/* Badge */}
       <motion.div
-        className="group flex items-center gap-2 rounded-full p-1 pr-4 mt-44 bg-gradient-to-r from-[#143258]/40 to-[#28659C]/30 border border-[#28659C]/40 backdrop-blur-sm cursor-pointer hover:border-[#3D8FCA]/60 transition-all duration-300"
+        className="group flex items-center gap-1.5 sm:gap-2 rounded-full p-1 pr-3 sm:pr-4 mt-28 sm:mt-36 md:mt-44 bg-gradient-to-r from-[#143258]/40 to-[#28659C]/30 border border-[#28659C]/40 backdrop-blur-sm cursor-pointer hover:border-[#3D8FCA]/60 transition-all duration-300"
         initial={{ y: -20, opacity: 0, scale: 0.9 }}
         whileInView={{ y: 0, opacity: 1, scale: 1 }}
         viewport={{ once: true }}
@@ -60,15 +70,18 @@ export default function HeroSection() {
           mass: 1,
         }}
       >
-        <span className="bg-gradient-to-r from-[#3D8FCA] to-[#28659C] text-white text-xs font-semibold px-3.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg shadow-[#3D8FCA]/25">
-          <SparklesIcon size={12} className="animate-pulse" />
+        <span className="bg-gradient-to-r from-[#3D8FCA] to-[#28659C] text-white text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full flex items-center gap-1 sm:gap-1.5 shadow-lg shadow-[#3D8FCA]/25">
+          <SparklesIcon size={10} className="sm:size-3 animate-pulse" />
           NEW
         </span>
-        <p className="flex items-center gap-1 text-sm text-white/90">
-          <span>Generate your first thumbnail for free</span>
+        <p className="flex items-center gap-1 text-xs sm:text-sm text-white/90">
+          <span className="hidden xs:inline">
+            Generate your first thumbnail for free
+          </span>
+          <span className="xs:hidden">Free thumbnail</span>
           <ChevronRightIcon
-            size={16}
-            className="group-hover:translate-x-1 transition-transform duration-300 text-[#3D8FCA]"
+            size={14}
+            className="sm:size-4 group-hover:translate-x-1 transition-transform duration-300 text-[#3D8FCA]"
           />
         </p>
       </motion.div>
@@ -134,7 +147,7 @@ export default function HeroSection() {
         transition={{ type: "spring", stiffness: 320, damping: 70, mass: 1 }}
       >
         <motion.button
-          onClick={() => navigate("/generate")}
+          onClick={handleGenerateClick}
           className="relative group bg-gradient-to-r from-[#3D8FCA] to-[#28659C] text-white font-semibold rounded-full px-8 h-12 shadow-lg shadow-[#3D8FCA]/30 hover:shadow-xl hover:shadow-[#3D8FCA]/40 transition-all duration-300"
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.98 }}
@@ -147,6 +160,7 @@ export default function HeroSection() {
         </motion.button>
 
         <motion.button
+          onClick={() => navigate("/how-it-works")}
           className="group flex items-center gap-2 border-2 border-[#28659C]/50 hover:border-[#3D8FCA] bg-[#143258]/30 hover:bg-[#143258]/50 backdrop-blur-sm transition-all duration-300 rounded-full px-7 h-12 text-white/90 hover:text-white"
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.98 }}
