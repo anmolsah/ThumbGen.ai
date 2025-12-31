@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { CheckCircle2Icon, XCircleIcon, Loader2Icon } from "lucide-react";
 import api from "../configs/api";
 import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 const PaymentStatus = () => {
   const [searchParams] = useSearchParams();
@@ -13,6 +14,8 @@ const PaymentStatus = () => {
     "loading" | "success" | "failed" | "pending"
   >("loading");
   const orderId = searchParams.get("order_id");
+  const retryCount = useRef(0);
+  const maxRetries = 2; // Will check twice (initial + 1 retry after 3 seconds)
 
   useEffect(() => {
     const verifyPayment = async () => {
@@ -34,7 +37,20 @@ const PaymentStatus = () => {
         } else if (data.status === "failed") {
           setStatus("failed");
         } else {
+          // Payment is pending
           setStatus("pending");
+          retryCount.current += 1;
+
+          // If we've retried enough, redirect to profile
+          if (retryCount.current >= maxRetries) {
+            setTimeout(() => {
+              toast.error("Payment was not completed");
+              navigate("/profile");
+            }, 3000);
+          } else {
+            // Retry after 3 seconds
+            setTimeout(verifyPayment, 3000);
+          }
         }
       } catch (error) {
         console.error(error);
@@ -43,7 +59,7 @@ const PaymentStatus = () => {
     };
 
     verifyPayment();
-  }, [orderId]);
+  }, [orderId, navigate, setUser]);
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
@@ -125,14 +141,8 @@ const PaymentStatus = () => {
               Payment Pending
             </h1>
             <p className="text-gray-400 mb-6">
-              Your payment is being processed. This may take a few moments.
+              Checking payment status... Redirecting shortly.
             </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="w-full py-3 bg-amber-600 hover:bg-amber-700 rounded-xl font-medium transition"
-            >
-              Check Status
-            </button>
           </div>
         )}
       </div>
