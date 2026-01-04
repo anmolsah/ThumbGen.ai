@@ -14,6 +14,7 @@ import PreviewPanel from "../components/PreviewPanel";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import api from "../configs/api";
+import SEO from "../components/SEO";
 import {
   SparklesIcon,
   AlertCircleIcon,
@@ -233,6 +234,11 @@ const Generate = () => {
 
   return (
     <>
+      <SEO
+        title="Generate Thumbnail"
+        description="Create your AI-powered YouTube thumbnail. Describe your video, choose a style, and get professional thumbnails in seconds."
+        url="https://thumbgen.online/generate"
+      />
       <SoftBackdrop />
       <div className="pt-24 min-h-screen">
         <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-28 lg:pb-8">

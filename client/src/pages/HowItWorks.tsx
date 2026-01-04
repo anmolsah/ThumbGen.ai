@@ -11,6 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import SoftBackdrop from "../components/SoftBackdrop";
+import SEO from "../components/SEO";
 
 const steps = [
   {
@@ -66,6 +67,11 @@ export default function HowItWorks() {
 
   return (
     <>
+      <SEO
+        title="How It Works"
+        description="Learn how ThumbGen creates AI-powered YouTube thumbnails in 4 simple steps. No design skills needed - just describe your video and get professional thumbnails."
+        url="https://thumbgen.online/how-it-works"
+      />
       <SoftBackdrop />
       <div className="min-h-screen pt-24 sm:pt-28 md:pt-32 pb-16 md:pb-20 px-4 sm:px-6 md:px-16 lg:px-24 xl:px-32">
         <div className="max-w-6xl mx-auto">
