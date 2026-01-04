@@ -1,55 +1,65 @@
-import { Helmet } from "react-helmet-async";
+import { useEffect } from "react";
 
 interface SEOProps {
   title?: string;
   description?: string;
-  keywords?: string;
-  image?: string;
-  url?: string;
 }
 
-const defaultSEO = {
-  title: "ThumbGen - AI YouTube Thumbnail Generator",
-  description:
-    "Generate high-converting YouTube thumbnails with AI. No design skills needed. Create professional, click-worthy thumbnails in seconds.",
-  keywords:
-    "YouTube thumbnail generator, AI thumbnail maker, thumbnail creator, YouTube thumbnail design",
-  image: "https://thumbgen.online/Thumbgen.png",
-  url: "https://thumbgen.online",
-};
+const defaultTitle = "ThumbGen - AI YouTube Thumbnail Generator";
+const defaultDescription =
+  "Generate high-converting YouTube thumbnails with AI. No design skills needed. Create professional, click-worthy thumbnails in seconds.";
 
-export default function SEO({
-  title,
-  description,
-  keywords,
-  image,
-  url,
-}: SEOProps) {
-  const seo = {
-    title: title ? `${title} | ThumbGen` : defaultSEO.title,
-    description: description || defaultSEO.description,
-    keywords: keywords || defaultSEO.keywords,
-    image: image || defaultSEO.image,
-    url: url || defaultSEO.url,
-  };
+export default function SEO({ title, description }: SEOProps) {
+  useEffect(() => {
+    // Update title
+    document.title = title ? `${title} | ThumbGen` : defaultTitle;
 
-  return (
-    <Helmet>
-      <title>{seo.title}</title>
-      <meta name="description" content={seo.description} />
-      <meta name="keywords" content={seo.keywords} />
-      <link rel="canonical" href={seo.url} />
+    // Update meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute(
+        "content",
+        description || defaultDescription
+      );
+    }
 
-      {/* Open Graph */}
-      <meta property="og:title" content={seo.title} />
-      <meta property="og:description" content={seo.description} />
-      <meta property="og:image" content={seo.image} />
-      <meta property="og:url" content={seo.url} />
+    // Update OG tags
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute(
+        "content",
+        title ? `${title} | ThumbGen` : defaultTitle
+      );
+    }
 
-      {/* Twitter */}
-      <meta name="twitter:title" content={seo.title} />
-      <meta name="twitter:description" content={seo.description} />
-      <meta name="twitter:image" content={seo.image} />
-    </Helmet>
-  );
+    const ogDescription = document.querySelector(
+      'meta[property="og:description"]'
+    );
+    if (ogDescription) {
+      ogDescription.setAttribute("content", description || defaultDescription);
+    }
+
+    // Update Twitter tags
+    const twitterTitle = document.querySelector(
+      'meta[property="twitter:title"]'
+    );
+    if (twitterTitle) {
+      twitterTitle.setAttribute(
+        "content",
+        title ? `${title} | ThumbGen` : defaultTitle
+      );
+    }
+
+    const twitterDescription = document.querySelector(
+      'meta[property="twitter:description"]'
+    );
+    if (twitterDescription) {
+      twitterDescription.setAttribute(
+        "content",
+        description || defaultDescription
+      );
+    }
+  }, [title, description]);
+
+  return null;
 }
