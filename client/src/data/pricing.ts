@@ -5,14 +5,14 @@ export const pricingData: IPricing[] = [
     name: "Free Plan",
     price: 0,
     period: "trial",
-    features: ["25 Credits", "5 Thumbnails", "Standard Quality", "Watermarked"],
+    features: ["25 Credits", "5 Thumbnails", "Ultra 4K Quality", "Watermarked"],
     mostPopular: false,
   },
   {
     name: "Creator Plan",
     price: 299,
     period: "month",
-    features: ["200 Credits", "40 Thumbnails", "High Quality", "No Watermark"],
+    features: ["200 Credits", "40 Thumbnails", "Ultra 4K Quality", "No Watermark"],
     mostPopular: true,
   },
   {
