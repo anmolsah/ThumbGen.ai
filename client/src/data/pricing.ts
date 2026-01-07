@@ -12,7 +12,13 @@ export const pricingData: IPricing[] = [
     name: "Creator Plan",
     price: 699,
     period: "one-time",
-    features: ["200 Credits", "40 Thumbnails", "Ultra 4K Quality", "No Watermark"],
+    features: [
+      "200 Credits",
+      "40 Thumbnails",
+      "Ultra 4K Quality",
+      "No Watermark",
+      "Image Refrencing",
+    ],
     mostPopular: true,
   },
   {
@@ -24,8 +30,8 @@ export const pricingData: IPricing[] = [
       "160 Thumbnails",
       "Ultra 4K Quality",
       "No Watermark",
+      "Image Refrencing",
     ],
     mostPopular: false,
   },
 ];
-
