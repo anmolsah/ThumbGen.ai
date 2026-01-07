@@ -13,48 +13,16 @@ import toast from "react-hot-toast";
 
 export default function PricingSection() {
   const navigate = useNavigate();
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const [loading, setLoading] = useState<string | null>(null);
 
-  const getPlanType = (planName: string): "free" | "creator" | "pro" => {
-    if (planName.toLowerCase().includes("free")) return "free";
+  const getPlanType = (planName: string): "starter" | "creator" | "pro" => {
+    if (planName.toLowerCase().includes("starter")) return "starter";
     if (planName.toLowerCase().includes("creator")) return "creator";
     return "pro";
   };
 
-  const handleFreePlan = async () => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-
-    // Check if user already has a plan (handle undefined/null as "none")
-    if (user.plan && user.plan !== "none") {
-      toast.error("You already have an active plan");
-      navigate("/profile");
-      return;
-    }
-
-    try {
-      setLoading("free");
-      const { data } = await api.post("/api/payment/activate-free");
-
-      if (data.success) {
-        setUser(data.user);
-        toast.success("Free plan activated! You have 25 credits.");
-        navigate("/generate");
-      }
-    } catch (error: any) {
-      console.error(error);
-      toast.error(
-        error?.response?.data?.message || "Failed to activate free plan"
-      );
-    } finally {
-      setLoading(null);
-    }
-  };
-
-  const handlePaidPlan = async (plan: "creator" | "pro") => {
+  const handlePlanPurchase = async (plan: "starter" | "creator" | "pro") => {
     if (!user) {
       navigate("/login");
       return;
@@ -87,12 +55,7 @@ export default function PricingSection() {
 
   const handlePlanClick = (plan: IPricing) => {
     const planType = getPlanType(plan.name);
-
-    if (planType === "free") {
-      handleFreePlan();
-    } else {
-      handlePaidPlan(planType);
-    }
+    handlePlanPurchase(planType);
   };
 
   const getButtonText = (plan: IPricing) => {
@@ -102,15 +65,12 @@ export default function PricingSection() {
       return (
         <>
           <Loader2Icon className="size-5 animate-spin inline mr-2" />
-          {planType === "free" ? "Activating..." : "Processing..."}
+          Processing...
         </>
       );
     }
 
-    // Show "Current Plan" if user already has this plan
-    if (user?.plan === planType) return "Current Plan";
-
-    if (planType === "free") return "Start Free";
+    if (planType === "starter") return "Get Starter";
     if (planType === "creator") return "Get Creator";
     return "Get Pro";
   };
@@ -120,7 +80,7 @@ export default function PricingSection() {
       <SectionTitle
         text1="Pricing"
         text2="Simple Pricing"
-        text3="Choose the plan that fits your creation schedule. Cancel anytime."
+        text3="Buy credits once, use them anytime. No subscriptions, no expiry."
       />
 
       <div className="flex flex-wrap items-center justify-center gap-8 mt-20">
@@ -148,12 +108,10 @@ export default function PricingSection() {
             )}
             <p className="font-semibold">{plan.name}</p>
             <h1 className="text-3xl font-semibold">
-              {plan.price === 0 ? "Free" : `₹${plan.price}`}
-              {plan.price > 0 && (
-                <span className="text-gray-500 font-normal text-sm">
-                  /{plan.period}
-                </span>
-              )}
+              ₹{plan.price}
+              <span className="text-gray-500 font-normal text-sm ml-1">
+                one-time
+              </span>
             </h1>
             <ul className="list-none text-slate-300 mt-6 space-y-2">
               {plan.features.map((feature, idx) => (
@@ -166,9 +124,7 @@ export default function PricingSection() {
             <button
               type="button"
               onClick={() => handlePlanClick(plan)}
-              disabled={
-                loading !== null || user?.plan === getPlanType(plan.name)
-              }
+              disabled={loading !== null}
               className={`w-full py-2.5 rounded-md font-medium mt-7 transition-all disabled:opacity-50 ${
                 plan.mostPopular
                   ? "bg-white text-brand-600 hover:bg-slate-200"

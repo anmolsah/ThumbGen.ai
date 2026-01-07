@@ -4,7 +4,7 @@ export interface IPayment extends Document {
   userId: mongoose.Types.ObjectId;
   orderId: string;
   paymentSessionId: string;
-  plan: "creator" | "pro";
+  plan: "starter" | "creator" | "pro";
   amount: number;
   status: "pending" | "paid" | "failed";
   cfPaymentId?: string;
@@ -21,7 +21,7 @@ const PaymentSchema = new mongoose.Schema<IPayment>(
     },
     orderId: { type: String, required: true, unique: true },
     paymentSessionId: { type: String },
-    plan: { type: String, enum: ["creator", "pro"], required: true },
+    plan: { type: String, enum: ["starter", "creator", "pro"], required: true },
     amount: { type: Number, required: true },
     status: {
       type: String,

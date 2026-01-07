@@ -4,7 +4,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password?: string;
-  plan: "none" | "free" | "creator" | "pro";
+  plan: "none" | "starter" | "creator" | "pro";
   credits: number;
   totalCredits: number;
   createdAt?: Date;
@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema<IUser>(
     password: { type: String, required: true },
     plan: {
       type: String,
-      enum: ["none", "free", "creator", "pro"],
+      enum: ["none", "starter", "creator", "pro"],
       default: "none",
     },
     credits: { type: Number, default: 0 },

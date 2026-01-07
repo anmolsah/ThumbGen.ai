@@ -6,7 +6,7 @@ import {
   SparklesIcon,
   ZapIcon,
   Loader2Icon,
-  GiftIcon,
+  RocketIcon,
 } from "lucide-react";
 import { load } from "@cashfreepayments/cashfree-js";
 import api from "../configs/api";
@@ -15,12 +15,12 @@ import toast from "react-hot-toast";
 const PLANS = {
   none: {
     name: "No Plan",
-    icon: GiftIcon,
+    icon: RocketIcon,
     color: "text-gray-400",
     bgColor: "bg-gray-800",
   },
-  free: {
-    name: "Free Plan",
+  starter: {
+    name: "Starter Plan",
     icon: SparklesIcon,
     color: "text-gray-400",
     bgColor: "bg-gray-800",
@@ -40,29 +40,10 @@ const PLANS = {
 };
 
 const Profile = () => {
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const [loading, setLoading] = useState<string | null>(null);
 
-  const handleActivateFreePlan = async () => {
-    try {
-      setLoading("free");
-      const { data } = await api.post("/api/payment/activate-free");
-
-      if (data.success) {
-        setUser(data.user);
-        toast.success("Free plan activated! You have 25 credits.");
-      }
-    } catch (error: any) {
-      console.error(error);
-      toast.error(
-        error?.response?.data?.message || "Failed to activate free plan"
-      );
-    } finally {
-      setLoading(null);
-    }
-  };
-
-  const handleUpgrade = async (plan: "creator" | "pro") => {
+  const handlePurchase = async (plan: "starter" | "creator" | "pro") => {
     try {
       setLoading(plan);
       console.log("Creating order for plan:", plan);
@@ -141,7 +122,7 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Credits Section - Only show if user has a plan */}
+            {/* Credits Section - Only show if user has credits */}
             {!hasNoPlan && (
               <div className="mt-8 p-6 bg-black/20 rounded-xl">
                 <div className="flex items-center justify-between mb-3">
@@ -167,304 +148,161 @@ const Profile = () => {
                     ? `You can generate approximately ${Math.floor(
                         user.credits / 5
                       )} more thumbnails`
-                    : "No credits remaining. Upgrade your plan to continue generating."}
+                    : "No credits remaining. Buy more credits to continue generating."}
                 </p>
               </div>
             )}
           </div>
 
-          {/* Plan Selection for New Users */}
-          {hasNoPlan && (
-            <div className="mt-8">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold">Choose Your Plan</h2>
-                <p className="text-gray-400 mt-2">
-                  Select a plan to start generating AI thumbnails
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-3 gap-6">
-                {/* Free Plan */}
-                <div className="bg-white/6 border border-gray-700 rounded-2xl p-6 hover:border-gray-500 transition">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-gray-800 rounded-lg">
-                      <SparklesIcon className="size-6 text-gray-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-lg">Free Plan</h3>
-                      <p className="text-gray-400 text-sm">Try it out</p>
-                    </div>
-                  </div>
-
-                  <div className="text-3xl font-bold mb-4">
-                    ₹0{" "}
-                    <span className="text-gray-500 text-base font-normal">
-                      /trial
-                    </span>
-                  </div>
-
-                  <ul className="space-y-2 mb-6 text-sm text-gray-300">
-                    <li>✓ 25 Credits</li>
-                    <li>✓ 5 Thumbnails</li>
-                    <li>✓ Standard Quality</li>
-                    <li className="text-gray-500">✗ Watermarked</li>
-                  </ul>
-
-                  <button
-                    onClick={handleActivateFreePlan}
-                    disabled={loading !== null}
-                    className="w-full py-3 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 rounded-xl font-medium transition flex items-center justify-center gap-2"
-                  >
-                    {loading === "free" ? (
-                      <>
-                        <Loader2Icon className="size-5 animate-spin" />
-                        Activating...
-                      </>
-                    ) : (
-                      "Start Free"
-                    )}
-                  </button>
-                </div>
-
-                {/* Creator Plan */}
-                <div className="bg-white/6 border border-brand-700 rounded-2xl p-6 hover:border-brand-500 transition relative">
-                  <div className="absolute top-4 right-4 px-3 py-1 bg-brand-500 text-brand-900 text-xs font-bold rounded-full">
-                    POPULAR
-                  </div>
-
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-brand-800 rounded-lg">
-                      <ZapIcon className="size-6 text-brand-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-lg">Creator Plan</h3>
-                      <p className="text-gray-400 text-sm">For creators</p>
-                    </div>
-                  </div>
-
-                  <div className="text-3xl font-bold mb-4">
-                    ₹299{" "}
-                    <span className="text-gray-500 text-base font-normal">
-                      /month
-                    </span>
-                  </div>
-
-                  <ul className="space-y-2 mb-6 text-sm text-gray-300">
-                    <li>✓ 200 Credits</li>
-                    <li>✓ 40 Thumbnails</li>
-                    <li>✓ High Quality</li>
-                    <li>✓ No Watermark</li>
-                  </ul>
-
-                  <button
-                    onClick={() => handleUpgrade("creator")}
-                    disabled={loading !== null}
-                    className="w-full py-3 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 rounded-xl font-medium transition flex items-center justify-center gap-2"
-                  >
-                    {loading === "creator" ? (
-                      <>
-                        <Loader2Icon className="size-5 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      "Get Creator"
-                    )}
-                  </button>
-                </div>
-
-                {/* Pro Plan */}
-                <div className="bg-white/6 border border-amber-800 rounded-2xl p-6 hover:border-amber-600 transition relative">
-                  <div className="absolute top-4 right-4 px-3 py-1 bg-amber-500 text-amber-950 text-xs font-bold rounded-full">
-                    BEST VALUE
-                  </div>
-
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-amber-900 rounded-lg">
-                      <CrownIcon className="size-6 text-amber-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-lg">Pro Plan</h3>
-                      <p className="text-gray-400 text-sm">For professionals</p>
-                    </div>
-                  </div>
-
-                  <div className="text-3xl font-bold mb-4">
-                    ₹799{" "}
-                    <span className="text-gray-500 text-base font-normal">
-                      /month
-                    </span>
-                  </div>
-
-                  <ul className="space-y-2 mb-6 text-sm text-gray-300">
-                    <li>✓ 800 Credits</li>
-                    <li>✓ 160 Thumbnails</li>
-                    <li>✓ Ultra 4K Quality</li>
-                    <li>✓ No Watermark</li>
-                  </ul>
-
-                  <button
-                    onClick={() => handleUpgrade("pro")}
-                    disabled={loading !== null}
-                    className="w-full py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 rounded-xl font-medium transition flex items-center justify-center gap-2"
-                  >
-                    {loading === "pro" ? (
-                      <>
-                        <Loader2Icon className="size-5 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      "Get Pro"
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Upgrade Section for Free Users */}
-          {user.plan === "free" && (
-            <div className="mt-8">
-              <h2 className="text-xl font-bold mb-6">Upgrade Your Plan</h2>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Creator Plan */}
-                <div className="bg-white/6 border border-brand-700 rounded-2xl p-6 hover:border-brand-500 transition">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-brand-800 rounded-lg">
-                      <ZapIcon className="size-6 text-brand-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-lg">Creator Plan</h3>
-                      <p className="text-gray-400 text-sm">
-                        For content creators
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="text-3xl font-bold mb-4">
-                    ₹299{" "}
-                    <span className="text-gray-500 text-base font-normal">
-                      /month
-                    </span>
-                  </div>
-
-                  <ul className="space-y-2 mb-6 text-sm text-gray-300">
-                    <li>✓ 200 Credits</li>
-                    <li>✓ 40 Thumbnails</li>
-                    <li>✓ High Quality</li>
-                    <li>✓ No Watermark</li>
-                  </ul>
-
-                  <button
-                    onClick={() => handleUpgrade("creator")}
-                    disabled={loading !== null}
-                    className="w-full py-3 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 rounded-xl font-medium transition flex items-center justify-center gap-2"
-                  >
-                    {loading === "creator" ? (
-                      <>
-                        <Loader2Icon className="size-5 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      "Upgrade to Creator"
-                    )}
-                  </button>
-                </div>
-
-                {/* Pro Plan */}
-                <div className="bg-white/6 border border-amber-800 rounded-2xl p-6 hover:border-amber-600 transition relative overflow-hidden">
-                  <div className="absolute top-4 right-4 px-3 py-1 bg-amber-500 text-amber-950 text-xs font-bold rounded-full">
-                    BEST VALUE
-                  </div>
-
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-amber-900 rounded-lg">
-                      <CrownIcon className="size-6 text-amber-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-lg">Pro Plan</h3>
-                      <p className="text-gray-400 text-sm">For professionals</p>
-                    </div>
-                  </div>
-
-                  <div className="text-3xl font-bold mb-4">
-                    ₹799{" "}
-                    <span className="text-gray-500 text-base font-normal">
-                      /month
-                    </span>
-                  </div>
-
-                  <ul className="space-y-2 mb-6 text-sm text-gray-300">
-                    <li>✓ 800 Credits</li>
-                    <li>✓ 160 Thumbnails</li>
-                    <li>✓ Ultra 4K Quality</li>
-                    <li>✓ No Watermark</li>
-                  </ul>
-
-                  <button
-                    onClick={() => handleUpgrade("pro")}
-                    disabled={loading !== null}
-                    className="w-full py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 rounded-xl font-medium transition flex items-center justify-center gap-2"
-                  >
-                    {loading === "pro" ? (
-                      <>
-                        <Loader2Icon className="size-5 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      "Upgrade to Pro"
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Already on Creator plan - show Pro upgrade */}
-          {user.plan === "creator" && (
-            <div className="mt-8 bg-white/6 border border-white/10 rounded-2xl p-6">
-              <h2 className="text-xl font-bold mb-2">Upgrade to Pro</h2>
-              <p className="text-gray-400 mb-4">
-                Get more credits and Ultra 4K quality thumbnails.
+          {/* Buy Credits Section */}
+          <div className="mt-8">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold">
+                {hasNoPlan ? "Get Started" : "Buy More Credits"}
+              </h2>
+              <p className="text-gray-400 mt-2">
+                {hasNoPlan
+                  ? "Choose a plan to start generating AI thumbnails"
+                  : "Top up your credits anytime. No expiry!"}
               </p>
-
-              <button
-                onClick={() => handleUpgrade("pro")}
-                disabled={loading !== null}
-                className="px-6 py-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 rounded-lg font-medium transition flex items-center gap-2"
-              >
-                {loading === "pro" ? (
-                  <>
-                    <Loader2Icon className="size-5 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <CrownIcon className="size-5" />
-                    Upgrade to Pro - ₹799/month
-                  </>
-                )}
-              </button>
             </div>
-          )}
 
-          {/* Pro plan - no upgrade needed */}
-          {user.plan === "pro" && (
-            <div className="mt-8 bg-white/6 border border-amber-800 rounded-2xl p-6">
-              <div className="flex items-center gap-3">
-                <CrownIcon className="size-8 text-amber-400" />
-                <div>
-                  <h2 className="text-xl font-bold text-amber-400">
-                    You're on Pro!
-                  </h2>
-                  <p className="text-gray-400">
-                    You have access to all premium features and Ultra 4K
-                    quality.
-                  </p>
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Starter Plan */}
+              <div className="bg-white/6 border border-gray-700 rounded-2xl p-6 hover:border-gray-500 transition">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-gray-800 rounded-lg">
+                    <SparklesIcon className="size-6 text-gray-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">Starter</h3>
+                    <p className="text-gray-400 text-sm">Get started</p>
+                  </div>
                 </div>
+
+                <div className="text-3xl font-bold mb-4">
+                  ₹59{" "}
+                  <span className="text-gray-500 text-base font-normal">
+                    one-time
+                  </span>
+                </div>
+
+                <ul className="space-y-2 mb-6 text-sm text-gray-300">
+                  <li>✓ 25 Credits</li>
+                  <li>✓ 5 Thumbnails</li>
+                  <li>✓ Ultra 4K Quality</li>
+                  <li className="text-gray-500">✗ Watermarked</li>
+                </ul>
+
+                <button
+                  onClick={() => handlePurchase("starter")}
+                  disabled={loading !== null}
+                  className="w-full py-3 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 rounded-xl font-medium transition flex items-center justify-center gap-2"
+                >
+                  {loading === "starter" ? (
+                    <>
+                      <Loader2Icon className="size-5 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Get Starter"
+                  )}
+                </button>
+              </div>
+
+              {/* Creator Plan */}
+              <div className="bg-white/6 border border-brand-700 rounded-2xl p-6 hover:border-brand-500 transition relative">
+                <div className="absolute top-4 right-4 px-3 py-1 bg-brand-500 text-brand-900 text-xs font-bold rounded-full">
+                  POPULAR
+                </div>
+
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-brand-800 rounded-lg">
+                    <ZapIcon className="size-6 text-brand-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">Creator</h3>
+                    <p className="text-gray-400 text-sm">For creators</p>
+                  </div>
+                </div>
+
+                <div className="text-3xl font-bold mb-4">
+                  ₹699{" "}
+                  <span className="text-gray-500 text-base font-normal">
+                    one-time
+                  </span>
+                </div>
+
+                <ul className="space-y-2 mb-6 text-sm text-gray-300">
+                  <li>✓ 200 Credits</li>
+                  <li>✓ 40 Thumbnails</li>
+                  <li>✓ Ultra 4K Quality</li>
+                  <li>✓ No Watermark</li>
+                </ul>
+
+                <button
+                  onClick={() => handlePurchase("creator")}
+                  disabled={loading !== null}
+                  className="w-full py-3 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 rounded-xl font-medium transition flex items-center justify-center gap-2"
+                >
+                  {loading === "creator" ? (
+                    <>
+                      <Loader2Icon className="size-5 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Get Creator"
+                  )}
+                </button>
+              </div>
+
+              {/* Pro Plan */}
+              <div className="bg-white/6 border border-amber-800 rounded-2xl p-6 hover:border-amber-600 transition relative">
+                <div className="absolute top-4 right-4 px-3 py-1 bg-amber-500 text-amber-950 text-xs font-bold rounded-full">
+                  BEST VALUE
+                </div>
+
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-amber-900 rounded-lg">
+                    <CrownIcon className="size-6 text-amber-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">Pro</h3>
+                    <p className="text-gray-400 text-sm">For professionals</p>
+                  </div>
+                </div>
+
+                <div className="text-3xl font-bold mb-4">
+                  ₹2999{" "}
+                  <span className="text-gray-500 text-base font-normal">
+                    one-time
+                  </span>
+                </div>
+
+                <ul className="space-y-2 mb-6 text-sm text-gray-300">
+                  <li>✓ 800 Credits</li>
+                  <li>✓ 160 Thumbnails</li>
+                  <li>✓ Ultra 4K Quality</li>
+                  <li>✓ No Watermark</li>
+                </ul>
+
+                <button
+                  onClick={() => handlePurchase("pro")}
+                  disabled={loading !== null}
+                  className="w-full py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 rounded-xl font-medium transition flex items-center justify-center gap-2"
+                >
+                  {loading === "pro" ? (
+                    <>
+                      <Loader2Icon className="size-5 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Get Pro"
+                  )}
+                </button>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </>

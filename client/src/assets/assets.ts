@@ -84,7 +84,7 @@ export interface IUser {
   _id: string;
   name: string;
   email: string;
-  plan: "none" | "free" | "creator" | "pro";
+  plan: "none" | "starter" | "creator" | "pro";
   credits: number;
   totalCredits: number;
   createdAt?: Date;

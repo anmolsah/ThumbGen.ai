@@ -15,7 +15,7 @@ export const createOrder = async (req: Request, res: Response) => {
     const { userId } = req.session;
     const { plan } = req.body;
 
-    if (!plan || !["creator", "pro"].includes(plan)) {
+    if (!plan || !["starter", "creator", "pro"].includes(plan)) {
       return res.status(400).json({ message: "Invalid plan selected" });
     }
 
@@ -41,7 +41,7 @@ export const createOrder = async (req: Request, res: Response) => {
       order_meta: {
         return_url: `${process.env.CLIENT_URL}/payment/status?order_id={order_id}`,
       },
-      order_note: `${planDetails.name} subscription`,
+      order_note: `${planDetails.name} credits purchase`,
     };
 
     console.log("Creating Cashfree order:", orderRequest);
@@ -111,12 +111,11 @@ export const verifyPayment = async (req: Request, res: Response) => {
         payment.cfPaymentId = latestPayment.cf_payment_id?.toString();
         await payment.save();
 
-        // Update user plan and credits
+        // Update user plan and add credits (top-up)
         const planDetails = PLANS[payment.plan as keyof typeof PLANS];
         await User.findByIdAndUpdate(payment.userId, {
           plan: payment.plan,
-          credits: planDetails.credits,
-          totalCredits: planDetails.credits,
+          $inc: { credits: planDetails.credits, totalCredits: planDetails.credits },
         });
 
         return res.json({ success: true, status: "paid" });
@@ -156,12 +155,11 @@ export const paymentWebhook = async (req: Request, res: Response) => {
       payment.cfPaymentId = data.payment.cf_payment_id?.toString();
       await payment.save();
 
-      // Update user plan and credits
+      // Update user plan and add credits (top-up)
       const planDetails = PLANS[payment.plan as keyof typeof PLANS];
       await User.findByIdAndUpdate(payment.userId, {
         plan: payment.plan,
-        credits: planDetails.credits,
-        totalCredits: planDetails.credits,
+        $inc: { credits: planDetails.credits, totalCredits: planDetails.credits },
       });
     } else if (paymentStatus === "FAILED") {
       payment.status = "failed";

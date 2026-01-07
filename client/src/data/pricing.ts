@@ -2,23 +2,23 @@ import type { IPricing } from "../types";
 
 export const pricingData: IPricing[] = [
   {
-    name: "Free Plan",
-    price: 0,
-    period: "trial",
+    name: "Starter Plan",
+    price: 59,
+    period: "one-time",
     features: ["25 Credits", "5 Thumbnails", "Ultra 4K Quality", "Watermarked"],
     mostPopular: false,
   },
   {
     name: "Creator Plan",
-    price: 299,
-    period: "month",
+    price: 699,
+    period: "one-time",
     features: ["200 Credits", "40 Thumbnails", "Ultra 4K Quality", "No Watermark"],
     mostPopular: true,
   },
   {
     name: "Pro Plan",
-    price: 799,
-    period: "month",
+    price: 2999,
+    period: "one-time",
     features: [
       "800 Credits",
       "160 Thumbnails",
@@ -28,3 +28,4 @@ export const pricingData: IPricing[] = [
     mostPopular: false,
   },
 ];
+

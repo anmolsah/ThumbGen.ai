@@ -166,8 +166,8 @@ const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
       "base64"
     );
 
-    // Add watermark for free plan
-    if (userPlan === "free") {
+    // Add watermark for starter plan
+    if (userPlan === "starter") {
       finalBuffer = await addWatermark(finalBuffer);
     }
 

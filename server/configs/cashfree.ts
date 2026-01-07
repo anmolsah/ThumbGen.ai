@@ -13,14 +13,20 @@ export { cashfree };
 
 // Plan configurations
 export const PLANS = {
+  starter: {
+    name: "Starter Plan",
+    price: 59,
+    credits: 25,
+  },
   creator: {
     name: "Creator Plan",
-    price: 299,
+    price: 699,
     credits: 200,
   },
   pro: {
     name: "Pro Plan",
-    price: 799,
+    price: 2999,
     credits: 800,
   },
 };
+
