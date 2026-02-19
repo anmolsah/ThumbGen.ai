@@ -57,11 +57,10 @@ export default function HeroSection() {
 
       {/* Badge */}
       <motion.div
-        className="group flex items-center gap-1.5 sm:gap-2 rounded-full p-1 pr-3 sm:pr-4 mt-28 sm:mt-36 md:mt-44 bg-gradient-to-r from-[#143258]/40 to-[#28659C]/30 border border-[#28659C]/40 backdrop-blur-sm cursor-pointer hover:border-[#3D8FCA]/60 transition-all duration-300"
+        className="flex items-center gap-1.5 sm:gap-2 rounded-full p-1 pr-3 sm:pr-4 mt-28 sm:mt-36 md:mt-44 bg-gradient-to-r from-[#143258]/40 to-[#28659C]/30 border border-[#28659C]/40 backdrop-blur-sm transition-all duration-300"
         initial={{ y: -20, opacity: 0, scale: 0.9 }}
         whileInView={{ y: 0, opacity: 1, scale: 1 }}
         viewport={{ once: true }}
-        whileHover={{ scale: 1.02 }}
         transition={{
           delay: 0.2,
           type: "spring",
@@ -79,10 +78,6 @@ export default function HeroSection() {
             Generate your first thumbnail for free
           </span>
           <span className="xs:hidden">Free thumbnail</span>
-          <ChevronRightIcon
-            size={14}
-            className="sm:size-4 group-hover:translate-x-1 transition-transform duration-300 text-[#3D8FCA]"
-          />
         </p>
       </motion.div>
 

@@ -4,8 +4,21 @@ import { ArrowUpRight } from "lucide-react";
 import { motion } from "motion/react";
 import { featuresData } from "../data/features";
 import type { IFeature } from "../types";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function FeaturesSection() {
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
+
+  const handleGenerateClick = () => {
+    if (isLoggedIn) {
+      navigate("/generate");
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <div id="features" className="px-4 md:px-16 lg:px-24 xl:px-32">
       <SectionTitle
@@ -17,11 +30,6 @@ export default function FeaturesSection() {
         {featuresData.map((feature: IFeature, index: number) => (
           <motion.div
             key={index}
-            className={`${
-              index === 1
-                ? "p-px rounded-[13px] bg-linear-to-br from-brand-500 to-slate-800"
-                : ""
-            }`}
             initial={{ y: 150, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true }}
@@ -105,13 +113,13 @@ export default function FeaturesSection() {
               Stop guessing and start ranking. Our AI creates designs proven to
               capture attention.
             </p>
-            <a
-              href="https://prebuiltui.com"
-              className="group flex items-center gap-2 mt-4 text-brand-500 hover:text-brand-600 transition"
+            <button
+              onClick={handleGenerateClick}
+              className="group flex items-center gap-2 mt-4 text-brand-500 hover:text-brand-600 transition cursor-pointer"
             >
-              Start generating free
+              Start generating for free
               <ArrowUpRight className="size-5 group-hover:translate-x-0.5 transition duration-300" />
-            </a>
+            </button>
           </motion.div>
         </div>
       </div>
