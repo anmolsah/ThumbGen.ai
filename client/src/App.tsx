@@ -13,6 +13,7 @@ import PaymentStatus from "./pages/PaymentStatus";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
 import HowItWorks from "./pages/HowItWorks";
+import MarketComparison from "./pages/MarketComparison";
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsConditions />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
+        <Route path="/market-comparison" element={<MarketComparison />} />
       </Routes>
       <Footer />
     </>

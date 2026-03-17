@@ -66,6 +66,9 @@ export default function Navbar() {
           >
             Pricing
           </button>
+          <Link to="/market-comparison" className="hover:text-brand-300 transition">
+            Compare
+          </Link>
         </div>
         <div className="flex items-center gap-2">
           {isLoggedIn ? (
@@ -148,6 +151,9 @@ export default function Navbar() {
         >
           Pricing
         </button>
+        <Link onClick={() => setIsOpen(false)} to="/market-comparison">
+          Compare
+        </Link>
         {isLoggedIn ? (
           <>
             <Link onClick={() => setIsOpen(false)} to="/profile">
