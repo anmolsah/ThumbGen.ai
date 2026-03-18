@@ -1,7 +1,7 @@
 import { footerData } from "../data/footer";
 import { motion } from "motion/react";
 import type { IFooterLink } from "../types";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 export default function Footer() {
@@ -23,8 +23,8 @@ export default function Footer() {
   };
 
   return (
-    <footer className="mt-20 sm:mt-32 md:mt-40 py-8 sm:py-10 px-4 sm:px-6 md:px-16 lg:px-24 xl:px-32 text-[13px] text-gray-500 border-t border-white/10">
-      <div className="max-w-7xl mx-auto">
+    <footer className="mt-20 sm:mt-32 md:mt-40 pt-8 sm:pt-10 border-t border-white/10 relative overflow-hidden flex flex-col items-center">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-16 lg:px-24 xl:px-32 text-[13px] text-gray-500 relative z-10">
         <div className="flex flex-col lg:flex-row justify-between gap-10 lg:gap-20">
           {/* Left Section - Logo and Links */}
           <motion.div
@@ -89,6 +89,25 @@ export default function Footer() {
           </motion.div>
         </div>
       </div>
+
+      {/* Massive Riverflow-style Footer Text */}
+      <motion.div
+        className="w-full mt-10 sm:mt-16 md:mt-20 pointer-events-none select-none flex justify-center overflow-hidden"
+        initial={{ y: 50, opacity: 0 }}
+        whileInView={{ y: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{
+          type: "spring",
+          stiffness: 280,
+          damping: 70,
+          mass: 1,
+          delay: 0.2,
+        }}
+      >
+        <span className="text-[20vw] font-black leading-none tracking-tighter bg-gradient-to-b from-white/[0.07] to-transparent bg-clip-text text-transparent transform translate-y-[20%]">
+          THUMBGEN
+        </span>
+      </motion.div>
     </footer>
   );
 }
