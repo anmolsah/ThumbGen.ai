@@ -9,7 +9,7 @@ export default function SectionTitle({
   return (
     <>
       <motion.p
-        className="text-center font-medium text-brand-400 mt-28 px-10 py-2 rounded-full bg-brand-900/70 border border-brand-700 w-max mx-auto"
+        className="text-center font-medium text-brand-400 mt-16 px-10 py-2 rounded-full bg-brand-900/70 border border-brand-700 w-max mx-auto"
         initial={{ y: 120, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         viewport={{ once: true }}
