@@ -1,24 +1,11 @@
 "use client";
 import SectionTitle from "../components/SectionTitle";
-import { ArrowUpRight } from "lucide-react";
+
 import { motion } from "motion/react";
 import { featuresData } from "../data/features";
 import type { IFeature } from "../types";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
 export default function FeaturesSection() {
-  const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
-
-  const handleGenerateClick = () => {
-    if (isLoggedIn) {
-      navigate("/generate");
-    } else {
-      navigate("/login");
-    }
-  };
-
   return (
     <div id="features" className="px-4 md:px-16 lg:px-24 xl:px-32">
       <SectionTitle
@@ -54,59 +41,46 @@ export default function FeaturesSection() {
         ))}
       </div>
       <div className="mt-40 relative mx-auto max-w-5xl">
-        <div className="absolute -z-50 size-100 -top-10 -left-20 aspect-square rounded-full bg-brand-500/40 blur-3xl"></div>
-        <motion.p
-          className="text-slate-300 text-lg text-left max-w-3xl"
-          initial={{ y: 150, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ type: "spring", stiffness: 320, damping: 70, mass: 1 }}
-        >
-          Our AI understands what makes a video go viral and designs thumbnails
-          accordingly.
-        </motion.p>
-        <div className="mt-16 overflow-hidden relative">
-          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black to-transparent z-10"></div>
-          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black to-transparent z-10"></div>
+        <div className="mt-16 overflow-visible relative min-h-[200px] md:min-h-[300px] flex items-center">
+          <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-black to-transparent z-10"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-black to-transparent z-10"></div>
           
-          <p className="text-center text-xs uppercase tracking-[0.3em] text-slate-500 font-bold mb-10">
-            Trusted by creators from
+          <p className="absolute top-0 left-1/2 -translate-x-1/2 text-xs md:text-sm uppercase tracking-[0.4em] text-brand-500 font-black mb-10 text-center w-full">
+            Trusted by studios
           </p>
           
-          <motion.div 
-            className="flex gap-12 whitespace-nowrap"
-            animate={{ x: [0, -1000] }}
-            transition={{ 
-              duration: 20, 
-              repeat: Infinity, 
-              ease: "linear" 
-            }}
-          >
-            {[
-              "Studio71", "Fullscreen", "Maker Studios", "Machinima", "BroadbandTV", 
-              "Vevo", "BuzzFeed", "T-Series", "MrBeast", "PewDiePie",
-              "Studio71", "Fullscreen", "Maker Studios", "Machinima", "BroadbandTV"
-            ].map((studio, i) => (
-              <span key={i} className="text-2xl md:text-3xl font-black text-slate-700 hover:text-brand-500 transition duration-300">
-                {studio}
-              </span>
-            ))}
-          </motion.div>
-          
-          <div className="mt-24 flex flex-col items-center text-center">
-            <h3 className="text-2xl md:text-3xl text-white font-semibold mb-4">
-              Boost your views with AI-optimized designs
-            </h3>
-            <p className="text-slate-400 max-w-xl mb-8">
-              Stop guessing and start ranking. Our AI creates designs proven to capture attention and drive clicks.
-            </p>
-            <button
-              onClick={handleGenerateClick}
-              className="px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white rounded-full font-bold transition flex items-center gap-2 shadow-lg shadow-brand-500/20"
+          <div className="flex w-full overflow-hidden py-10 md:py-20">
+            <motion.div 
+              className="flex gap-8 md:gap-20 whitespace-nowrap items-center"
+              animate={{ x: [0, -1200] }}
+              transition={{ 
+                duration: 30, 
+                repeat: Infinity, 
+                ease: "linear" 
+              }}
             >
-              Start generating for free
-              <ArrowUpRight className="size-5" />
-            </button>
+              {[
+                "Studio71", "Fullscreen", "Maker Studios", "Machinima", "BroadbandTV", 
+                "Vevo", "BuzzFeed", "T-Series", "MrBeast", "PewDiePie",
+                "Studio71", "Fullscreen", "Maker Studios", "Machinima", "BroadbandTV"
+              ].map((studio, i) => (
+                <motion.span 
+                  key={i} 
+                  className="text-2xl md:text-6xl font-black text-slate-800/80 hover:text-brand-500 transition-colors duration-500 cursor-default"
+                  animate={{ 
+                    y: [0, i % 2 === 0 ? -10 : 10, 0],
+                    rotate: [0, i % 2 === 0 ? 1 : -1, 0]
+                  }}
+                  transition={{
+                    duration: 4 + (i % 3),
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  {studio}
+                </motion.span>
+              ))}
+            </motion.div>
           </div>
         </div>
       </div>

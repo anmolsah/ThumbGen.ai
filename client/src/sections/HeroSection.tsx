@@ -50,35 +50,10 @@ export default function HeroSection() {
         ))}
       </div>
 
-      {/* Badge */}
-      <motion.div
-        className="flex items-center gap-1.5 sm:gap-2 rounded-full p-1 pr-3 sm:pr-4 mt-28 sm:mt-36 md:mt-44 bg-gradient-to-r from-[#143258]/40 to-[#28659C]/30 border border-[#28659C]/40 backdrop-blur-sm transition-all duration-300"
-        initial={{ y: -20, opacity: 0, scale: 0.9 }}
-        whileInView={{ y: 0, opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{
-          delay: 0.2,
-          type: "spring",
-          stiffness: 320,
-          damping: 70,
-          mass: 1,
-        }}
-      >
-        <span className="bg-gradient-to-r from-[#3D8FCA] to-[#28659C] text-white text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full flex items-center gap-1 sm:gap-1.5 shadow-lg shadow-[#3D8FCA]/25">
-          <SparklesIcon size={10} className="sm:size-3 animate-pulse" />
-          NEW
-        </span>
-        <p className="flex items-center gap-1 text-xs sm:text-sm text-white/90">
-          <span className="hidden xs:inline">
-            Generate your first thumbnail for free
-          </span>
-          <span className="xs:hidden">Free thumbnail</span>
-        </p>
-      </motion.div>
 
       {/* Main Heading */}
       <motion.h1
-        className="text-5xl/[1.15] md:text-6xl/[1.15] lg:text-7xl/[1.1] font-bold max-w-4xl text-center mt-8"
+        className="text-5xl/[1.15] md:text-6xl/[1.15] lg:text-7xl/[1.1] font-bold max-w-4xl text-center mt-28 md:mt-36 lg:mt-40"
         initial={{ y: 50, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         viewport={{ once: true }}
