@@ -1,5 +1,5 @@
 "use client";
-import { CheckIcon, ChevronRightIcon, SparklesIcon } from "lucide-react";
+import { ChevronRightIcon, SparklesIcon } from "lucide-react";
 import TiltedImage from "../components/TiltImage";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
@@ -17,11 +17,6 @@ export default function HeroSection() {
     }
   };
 
-  const specialFeatures = [
-    "No design skills needed",
-    "Fast generation",
-    "High CTR templates",
-  ];
 
   return (
     <div className="relative flex flex-col items-center justify-center px-4 md:px-16 lg:px-24 xl:px-32 overflow-hidden">
@@ -168,31 +163,6 @@ export default function HeroSection() {
         </motion.button>
       </motion.div>
 
-      {/* Features */}
-      <div className="flex flex-wrap justify-center items-center gap-6 md:gap-12 mt-14">
-        {specialFeatures.map((feature, index) => (
-          <motion.div
-            className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#143258]/30 border border-[#28659C]/30 backdrop-blur-sm"
-            key={index}
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 + index * 0.15, duration: 0.4 }}
-            whileHover={{
-              scale: 1.05,
-              borderColor: "rgba(61, 143, 202, 0.5)",
-              backgroundColor: "rgba(20, 50, 88, 0.5)",
-            }}
-          >
-            <div className="size-5 rounded-full bg-gradient-to-r from-[#3D8FCA] to-[#28659C] flex items-center justify-center">
-              <CheckIcon className="size-3 text-white" strokeWidth={3} />
-            </div>
-            <span className="text-sm text-slate-300 font-medium">
-              {feature}
-            </span>
-          </motion.div>
-        ))}
-      </div>
 
       <TiltedImage />
     </div>

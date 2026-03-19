@@ -65,62 +65,49 @@ export default function FeaturesSection() {
           Our AI understands what makes a video go viral and designs thumbnails
           accordingly.
         </motion.p>
-        <div className="grid grid-cols-1 md:grid-cols-3 mt-8 gap-10">
-          <motion.div
-            className="md:col-span-2"
-            initial={{ y: 150, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{
-              type: "spring",
-              stiffness: 240,
-              damping: 70,
-              mass: 1,
+        <div className="mt-16 overflow-hidden relative">
+          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black to-transparent z-10"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black to-transparent z-10"></div>
+          
+          <p className="text-center text-xs uppercase tracking-[0.3em] text-slate-500 font-bold mb-10">
+            Trusted by creators from
+          </p>
+          
+          <motion.div 
+            className="flex gap-12 whitespace-nowrap"
+            animate={{ x: [0, -1000] }}
+            transition={{ 
+              duration: 20, 
+              repeat: Infinity, 
+              ease: "linear" 
             }}
           >
-            <img
-              className="h-full w-auto"
-              src="/assets/features-showcase-1.png"
-              alt="features showcase"
-              width={1000}
-              height={500}
-            />
+            {[
+              "Studio71", "Fullscreen", "Maker Studios", "Machinima", "BroadbandTV", 
+              "Vevo", "BuzzFeed", "T-Series", "MrBeast", "PewDiePie",
+              "Studio71", "Fullscreen", "Maker Studios", "Machinima", "BroadbandTV"
+            ].map((studio, i) => (
+              <span key={i} className="text-2xl md:text-3xl font-black text-slate-700 hover:text-brand-500 transition duration-300">
+                {studio}
+              </span>
+            ))}
           </motion.div>
-          <motion.div
-            className="md:col-span-1"
-            initial={{ y: 150, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{
-              delay: 0.15,
-              type: "spring",
-              stiffness: 320,
-              damping: 70,
-              mass: 1,
-            }}
-          >
-            <img
-              src="/assets/features-showcase-2.png"
-              alt="features showcase"
-              width={1000}
-              height={500}
-              className="hover:-translate-y-0.5 transition duration-300"
-            />
-            <h3 className="text-[24px]/7.5 text-slate-300 font-medium mt-6">
-              boost your views with AI-optimized designs{" "}
+          
+          <div className="mt-24 flex flex-col items-center text-center">
+            <h3 className="text-2xl md:text-3xl text-white font-semibold mb-4">
+              Boost your views with AI-optimized designs
             </h3>
-            <p className="text-slate-300 mt-2">
-              Stop guessing and start ranking. Our AI creates designs proven to
-              capture attention.
+            <p className="text-slate-400 max-w-xl mb-8">
+              Stop guessing and start ranking. Our AI creates designs proven to capture attention and drive clicks.
             </p>
             <button
               onClick={handleGenerateClick}
-              className="group flex items-center gap-2 mt-4 text-brand-500 hover:text-brand-600 transition cursor-pointer"
+              className="px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white rounded-full font-bold transition flex items-center gap-2 shadow-lg shadow-brand-500/20"
             >
               Start generating for free
-              <ArrowUpRight className="size-5 group-hover:translate-x-0.5 transition duration-300" />
+              <ArrowUpRight className="size-5" />
             </button>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>
