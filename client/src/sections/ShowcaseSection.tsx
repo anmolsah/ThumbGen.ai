@@ -11,10 +11,10 @@ import thumb4 from "../assets/thumb_4.jpg";
 import thumb5 from "../assets/thumb_5.jpg";
 import thumb6 from "../assets/thumb_6.jpg";
 import thumb7 from "../assets/thumb_7.jpg";
-import thumb8 from "../assets/1.png";
-import thumb9 from "../assets/2.png";
-import thumb10 from "../assets/3.jpg";
-import thumb11 from "../assets/5.png";
+import thumb8 from "../assets/thumb_8.png";
+import thumb9 from "../assets/thumb_9.png";
+import thumb10 from "../assets/thumb_10.png";
+import thumb11 from "../assets/thumb_11.png";
 
 interface ShowcaseThumbnail {
   _id: string;
