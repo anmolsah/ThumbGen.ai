@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { cashfree, PLANS } from "../configs/cashfree.js";
+import { cashfree, PLANS, getCashfreeEnvironmentString } from "../configs/cashfree.js";
 import Payment from "../models/Payment.js";
 import User from "../models/User.js";
 import crypto from "crypto";
@@ -36,7 +36,7 @@ export const createOrder = async (req: Request, res: Response) => {
         customer_id: userId as string,
         customer_name: user.name,
         customer_email: user.email,
-        customer_phone: "9999999999", // Default phone, can be updated
+        customer_phone: getCashfreeEnvironmentString() === "production" ? "9876543210" : "9999999999", // Sandbox accepts 99s, prod might be stricter
       },
       order_meta: {
         return_url: `${process.env.CLIENT_URL}/payment/status?order_id={order_id}`,
@@ -64,6 +64,7 @@ export const createOrder = async (req: Request, res: Response) => {
         success: true,
         paymentSessionId: response.data.payment_session_id,
         orderId,
+        environment: getCashfreeEnvironmentString()
       });
     }
 

@@ -1,13 +1,15 @@
 import { Cashfree, CFEnvironment } from "cashfree-pg";
 
 // Initialize Cashfree (v5+ uses constructor pattern)
+const isProduction = process.env.CASHFREE_ENVIRONMENT === "PRODUCTION" || process.env.NODE_ENV === "production";
+
 const cashfree = new Cashfree(
-  process.env.NODE_ENV === "production"
-    ? CFEnvironment.PRODUCTION
-    : CFEnvironment.SANDBOX,
+  isProduction ? CFEnvironment.PRODUCTION : CFEnvironment.SANDBOX,
   process.env.CASHFREE_APP_ID as string,
   process.env.CASHFREE_SECRET_KEY as string
 );
+
+export const getCashfreeEnvironmentString = () => isProduction ? "production" : "sandbox";
 
 export { cashfree };
 

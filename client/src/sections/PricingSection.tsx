@@ -38,7 +38,7 @@ export default function PricingSection() {
         return;
       }
 
-      const cashfreeMode = import.meta.env.PROD ? "production" : "sandbox";
+      const cashfreeMode = data.environment || (import.meta.env.PROD ? "production" : "sandbox");
       const cashfree = await load({ mode: cashfreeMode });
 
       await cashfree.checkout({
