@@ -15,6 +15,7 @@ import TermsConditions from "./pages/TermsConditions";
 import HowItWorks from "./pages/HowItWorks";
 import MarketComparison from "./pages/MarketComparison";
 import { useEffect } from "react";
+import CookieConsent from "./components/CookieConsent";
 import { Toaster } from "react-hot-toast";
 
 export default function App() {
@@ -44,6 +45,7 @@ export default function App() {
         <Route path="/market-comparison" element={<MarketComparison />} />
       </Routes>
       <Footer />
+      <CookieConsent />
     </>
   );
 }

@@ -1,4 +1,5 @@
 import HeroSection from "../sections/HeroSection";
+import PlatformMarqueeSection from "../sections/PlatformMarqueeSection";
 import FeaturesSection from "../sections/FeaturesSection";
 import TestimonialSection from "../sections/TestimonialSection";
 import PricingSection from "../sections/PricingSection";
@@ -15,6 +16,7 @@ export default function HomePage() {
         url="https://thumbgen.online"
       />
       <HeroSection />
+      <PlatformMarqueeSection />
       <FeaturesSection />
       <TestimonialSection />
       <PricingSection />

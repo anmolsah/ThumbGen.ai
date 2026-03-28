@@ -3,6 +3,19 @@ import Thumbnail from "../models/Thumbnail.js";
 import User from "../models/User.js";
 import thumbnailQueue from "../queues/thumbnailQueue.js";
 
+// Extract YouTube video ID from various URL formats
+const extractYouTubeVideoId = (url: string): string | null => {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+    /^([a-zA-Z0-9_-]{11})$/, // bare video ID
+  ];
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
+};
+
 const CREDITS_PER_THUMBNAIL = 5;
 const CREDITS_WITH_REFERENCE_IMAGE = 15;
 
@@ -17,6 +30,9 @@ export const generateThumbnail = async (req: Request, res: Response) => {
       color_scheme,
       text_overlay,
       reference_image,
+      resolution = "2k",
+      platform,
+      youtube_reference_url,
     } = req.body;
 
     // Check if user has a plan and credits
@@ -31,14 +47,39 @@ export const generateThumbnail = async (req: Request, res: Response) => {
         .json({ message: "Please select a plan to generate thumbnails" });
     }
 
+    // Validate resolution — 4K is Pro-only
+    if (resolution === "4k" && user.plan !== "pro") {
+      return res.status(403).json({
+        message: "4K premium generation is only available for Pro plan users",
+      });
+    }
+
     // Check if reference image is allowed
     const canUseReferenceImage = user.plan === "creator" || user.plan === "pro";
-    const usingReferenceImage = reference_image && canUseReferenceImage;
+    // If YouTube URL provided, fetch the thumbnail and use as reference
+    let finalReferenceImage = reference_image;
+    if (youtube_reference_url && !finalReferenceImage) {
+      try {
+        const videoId = extractYouTubeVideoId(youtube_reference_url);
+        if (videoId) {
+          const ytThumbUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+          const response = await fetch(ytThumbUrl);
+          if (response.ok) {
+            const buffer = Buffer.from(await response.arrayBuffer());
+            finalReferenceImage = `data:image/jpeg;base64,${buffer.toString("base64")}`;
+          }
+        }
+      } catch (err) {
+        console.log("Failed to fetch YouTube thumbnail:", err);
+      }
+    }
+
+    const usingReferenceImage = finalReferenceImage && canUseReferenceImage;
     const creditsRequired = usingReferenceImage
       ? CREDITS_WITH_REFERENCE_IMAGE
       : CREDITS_PER_THUMBNAIL;
 
-    if (reference_image && !canUseReferenceImage) {
+    if (finalReferenceImage && !canUseReferenceImage) {
       return res.status(403).json({
         message:
           "Reference images are only available for Creator and Pro plans",
@@ -63,6 +104,9 @@ export const generateThumbnail = async (req: Request, res: Response) => {
       aspect_ratio,
       color_scheme,
       text_overlay,
+      resolution,
+      platform: platform || undefined,
+      youtube_reference_url: youtube_reference_url || undefined,
       isGenerating: true,
     });
 
@@ -78,7 +122,10 @@ export const generateThumbnail = async (req: Request, res: Response) => {
         aspect_ratio,
         color_scheme,
         text_overlay,
-        reference_image,
+        reference_image: finalReferenceImage,
+        resolution,
+        platform: platform || "",
+        youtube_reference_url: youtube_reference_url || "",
         userPlan: user.plan,
         creditsRequired,
       },

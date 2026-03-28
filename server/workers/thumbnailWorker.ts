@@ -3,6 +3,8 @@ import redisConnection from "../configs/redis.js";
 import Thumbnail from "../models/Thumbnail.js";
 import User from "../models/User.js";
 import ai from "../configs/ai.js";
+import xai from "../configs/xai.js";
+import { PLATFORM_CONFIG } from "../configs/platformConfig.js";
 import { v2 as cloudinary } from "cloudinary";
 import sharp from "sharp";
 import path from "path";
@@ -67,6 +69,55 @@ const colorSchemeDescriptions: Record<string, string> = {
     "soft pastel colors, low saturation, gentle tones, calm and friendly aesthetic",
 };
 
+// Generate image via Grok (xAI) — fast 2K generation
+const generateWithGrok = async (
+  prompt: string,
+  aspectRatio: string,
+  userPlan: string
+) => {
+  const model =
+    userPlan === "creator" || userPlan === "pro"
+      ? "grok-imagine-image-pro"
+      : "grok-imagine-image";
+
+  console.log(`Using Grok model: ${model}`);
+
+  const response = await xai.images.generate({
+    model,
+    prompt,
+    // @ts-expect-error — xAI-specific parameter not in OpenAI types
+    aspect_ratio: aspectRatio || "16:9",
+    response_format: "b64_json",
+    n: 1,
+  });
+
+  if (!response?.data?.[0]?.b64_json) {
+    throw new Error("Failed to generate image with Grok");
+  }
+
+  return response.data[0].b64_json;
+};
+
+// Generate image via Google Imagen Ultra — premium 4K generation
+const generateWithImagenUltra = async (
+  prompt: string,
+  aspectRatio: string
+) => {
+  console.log("Using Google Imagen 4.0 Ultra");
+
+  const response = await ai.models.generateImages({
+    model: "imagen-4.0-ultra-generate-001",
+    prompt,
+    config: { numberOfImages: 1, aspectRatio: aspectRatio || "16:9" },
+  });
+
+  if (!response?.generatedImages?.[0]?.image?.imageBytes) {
+    throw new Error("Failed to generate image with Imagen Ultra");
+  }
+
+  return response.generatedImages[0].image.imageBytes;
+};
+
 const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
   const {
     thumbnailId,
@@ -76,17 +127,22 @@ const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
     style,
     aspect_ratio,
     color_scheme,
+    resolution,
+    platform,
     reference_image,
     userPlan,
     creditsRequired,
   } = job.data;
 
-  console.log(`Processing thumbnail job: ${thumbnailId}`);
+  console.log(
+    `Processing thumbnail job: ${thumbnailId} | resolution: ${resolution} | platform: ${platform}`
+  );
 
   try {
     const canUseReferenceImage = userPlan === "creator" || userPlan === "pro";
     const usingReferenceImage = reference_image && canUseReferenceImage;
 
+    // Build prompt
     let prompt = `Create a ${
       stylePrompts[style] || stylePrompts["Bold & Graphic"]
     } for: "${title}"`;
@@ -103,11 +159,18 @@ const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
       prompt += ` Incorporate the person/subject from the reference image prominently in the thumbnail, maintaining their likeness and features.`;
     }
 
+    // Add platform-specific prompt enhancement
+    const platformSpec = platform ? PLATFORM_CONFIG[platform] : null;
+    if (platformSpec) {
+      prompt += ` ${platformSpec.promptHint}`;
+    }
+
     prompt += ` The thumbnail should be ${aspect_ratio}, visually stunning, and designed to maximize click-through rate. Make it bold, professional, and impossible to ignore.`;
 
-    let response;
+    let imageBase64: string;
 
     if (usingReferenceImage) {
+      // Reference image — always uses Gemini (unchanged)
       const base64Data = reference_image!.includes("base64,")
         ? reference_image!.split("base64,")[1]
         : reference_image;
@@ -147,24 +210,16 @@ const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
       }
 
       if (!imageData) throw new Error("Failed to generate image");
-
-      response = { generatedImages: [{ image: { imageBytes: imageData } }] };
+      imageBase64 = imageData;
+    } else if (resolution === "4k") {
+      // Premium 4K — Google Imagen Ultra (slow, best quality)
+      imageBase64 = await generateWithImagenUltra(prompt, aspect_ratio);
     } else {
-      response = await ai.models.generateImages({
-        model: "imagen-4.0-ultra-generate-001",
-        prompt,
-        config: { numberOfImages: 1, aspectRatio: aspect_ratio || "16:9" },
-      });
+      // Fast 2K — Grok (default)
+      imageBase64 = await generateWithGrok(prompt, aspect_ratio, userPlan);
     }
 
-    if (!response?.generatedImages?.[0]?.image?.imageBytes) {
-      throw new Error("Failed to generate image");
-    }
-
-    let finalBuffer: Buffer = Buffer.from(
-      response.generatedImages[0].image.imageBytes,
-      "base64"
-    );
+    let finalBuffer: Buffer = Buffer.from(imageBase64, "base64");
 
     // Add watermark for starter plan
     if (userPlan === "starter") {

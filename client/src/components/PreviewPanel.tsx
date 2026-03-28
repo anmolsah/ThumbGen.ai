@@ -2,11 +2,14 @@ import { DownloadIcon, ImageIcon, Loader2Icon } from 'lucide-react';
 import type { AspectRatio, IThumbnail } from '../assets/assets';
 
 const PreviewPanel = ({ thumbnail, isLoading, aspectRatio }: { thumbnail: IThumbnail | null; isLoading: boolean; aspectRatio: AspectRatio }) => {
-    const aspectClasses = {
+    const aspectClasses: Record<string, string> = {
         '16:9': 'aspect-video',
         '1:1': 'aspect-square',
         '9:16': 'aspect-[9/16]',
-    } as Record<AspectRatio, string>;
+        '4:5': 'aspect-[4/5]',
+        '2:3': 'aspect-[2/3]',
+        '1.91:1': 'aspect-[1.91/1]',
+    };
 
     const onDownload = () => {
         if (!thumbnail?.image_url) return;

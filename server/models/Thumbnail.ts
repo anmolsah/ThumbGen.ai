@@ -10,7 +10,7 @@ export interface IThumbnail extends Document {
     | "Minimalist"
     | "Photorealistic"
     | "Illustrated";
-  aspect_ratio?: "16:9" | "1:1" | "9:16";
+  aspect_ratio?: string;
   color_scheme?:
     | "vibrant"
     | "sunset"
@@ -20,6 +20,9 @@ export interface IThumbnail extends Document {
     | "monochrome"
     | "ocean"
     | "pastel";
+  resolution?: "2k" | "4k";
+  platform?: string;
+  youtube_reference_url?: string;
   text_overlay?: boolean;
   image_url?: string;
   prompt_used?: string;
@@ -47,7 +50,19 @@ const ThumbnailSchema = new mongoose.Schema<IThumbnail>({
   },
   aspect_ratio: {
     type: String,
-    enum: ["16:9", "1:1", "9:16"],
+    enum: [
+      "16:9",
+      "1:1",
+      "9:16",
+      "4:3",
+      "3:4",
+      "4:5",
+      "3:2",
+      "2:3",
+      "2:1",
+      "1:2",
+      "1.91:1",
+    ],
     default: "16:9",
   },
   color_scheme: {
@@ -61,6 +76,28 @@ const ThumbnailSchema = new mongoose.Schema<IThumbnail>({
       "monochrome",
       "ocean",
       "pastel",
+    ],
+  },
+  resolution: {
+    type: String,
+    enum: ["2k", "4k"],
+    default: "2k",
+  },
+  youtube_reference_url: { type: String },
+  platform: {
+    type: String,
+    enum: [
+      "youtube",
+      "youtube-shorts",
+      "instagram-post",
+      "instagram-portrait",
+      "instagram-story",
+      "tiktok",
+      "twitter",
+      "linkedin",
+      "facebook",
+      "pinterest",
+      "custom",
     ],
   },
   text_overlay: { type: Boolean, default: false },

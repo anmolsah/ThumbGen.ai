@@ -15,8 +15,32 @@ import thumb_11 from "./thumb_11.png";
 // import thumb_10 from "./3.jpg";
 // import thumb_11 from "./5.png";
 
-export const aspectRatios = ["16:9", "1:1", "9:16"];
+export const aspectRatios = ["16:9", "1:1", "9:16", "4:5", "2:3", "1.91:1"];
 export type AspectRatio = (typeof aspectRatios)[number];
+
+export const resolutions = ["2k", "4k"] as const;
+export type Resolution = (typeof resolutions)[number];
+
+export interface PlatformOption {
+  id: string;
+  label: string;
+  icon: string;
+  aspectRatio: AspectRatio;
+  dimensions: string;
+}
+
+export const platforms: PlatformOption[] = [
+  { id: "youtube", label: "YouTube", icon: "▶️", aspectRatio: "16:9", dimensions: "1280×720" },
+  { id: "youtube-shorts", label: "YT Shorts", icon: "📱", aspectRatio: "9:16", dimensions: "1080×1920" },
+  { id: "instagram-post", label: "IG Post", icon: "📸", aspectRatio: "1:1", dimensions: "1080×1080" },
+  { id: "instagram-portrait", label: "IG Portrait", icon: "📷", aspectRatio: "4:5", dimensions: "1080×1350" },
+  { id: "instagram-story", label: "IG Story", icon: "📖", aspectRatio: "9:16", dimensions: "1080×1920" },
+  { id: "tiktok", label: "TikTok", icon: "🎵", aspectRatio: "9:16", dimensions: "1080×1920" },
+  { id: "twitter", label: "X (Twitter)", icon: "𝕏", aspectRatio: "16:9", dimensions: "1200×675" },
+  { id: "linkedin", label: "LinkedIn", icon: "💼", aspectRatio: "1.91:1", dimensions: "1200×627" },
+  { id: "facebook", label: "Facebook", icon: "📘", aspectRatio: "1.91:1", dimensions: "1200×630" },
+  { id: "pinterest", label: "Pinterest", icon: "📌", aspectRatio: "2:3", dimensions: "1000×1500" },
+];
 
 export const thumbnailStyles = [
   "Bold & Graphic",
@@ -66,7 +90,7 @@ export interface IThumbnail {
     | "Minimalist"
     | "Photorealistic"
     | "Illustrated";
-  aspect_ratio?: "16:9" | "1:1" | "9:16";
+  aspect_ratio?: string;
   color_scheme?:
     | "vibrant"
     | "sunset"
@@ -76,6 +100,9 @@ export interface IThumbnail {
     | "monochrome"
     | "ocean"
     | "pastel";
+  resolution?: "2k" | "4k";
+  platform?: string;
+  youtube_reference_url?: string;
   text_overlay?: boolean;
   image_url?: string;
   prompt_used?: string;

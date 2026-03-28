@@ -26,6 +26,7 @@
         "express-session": "^1.18.2",
         "ioredis": "^5.8.2",
         "mongoose": "^9.0.2",
+        "openai": "^6.33.0",
         "sharp": "^0.34.5"
     },
     "devDependencies": {

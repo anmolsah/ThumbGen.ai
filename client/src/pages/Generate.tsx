@@ -2,7 +2,9 @@ import { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
 import {
   colorSchemes,
+  platforms,
   type AspectRatio,
+  type Resolution,
   type IThumbnail,
   type ThumbnailStyle,
 } from "../assets/assets";
@@ -10,6 +12,8 @@ import SoftBackdrop from "../components/SoftBackdrop";
 import AspectRatioSelector from "../components/AspectRatioSelector";
 import StyleSelector from "../components/StyleSelector";
 import ColorSchemeSelector from "../components/ColorSchemeSelector";
+import PlatformSelector from "../components/PlatformSelector";
+import ResolutionSelector from "../components/ResolutionSelector";
 import PreviewPanel from "../components/PreviewPanel";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
@@ -21,6 +25,7 @@ import {
   UploadIcon,
   XIcon,
   ImageIcon,
+  LinkIcon,
 } from "lucide-react";
 
 const Generate = () => {
@@ -41,17 +46,62 @@ const Generate = () => {
   );
   const [style, setStyle] = useState<ThumbnailStyle>("Bold & Graphic");
 
+  const [platform, setPlatform] = useState<string>("youtube");
+  const [resolution, setResolution] = useState<Resolution>("2k");
+
   const [styleDropdownOpen, setStyleDropdownOpen] = useState(false);
 
   const [referenceImage, setReferenceImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [ytThumbnailPreview, setYtThumbnailPreview] = useState<string | null>(null);
+
   const hasNoPlan = !user || user.plan === "none";
   const hasNoCredits = user && user.credits <= 0;
   const canUploadImage = user?.plan === "creator" || user?.plan === "pro";
+  const isPro = user?.plan === "pro";
 
   // Calculate credits cost based on reference image usage
-  const creditsCost = referenceImage && canUploadImage ? 15 : 5;
+  const hasReference = (referenceImage && canUploadImage) || (youtubeUrl && canUploadImage);
+  const creditsCost = hasReference ? 15 : 5;
+
+  // Extract YouTube video ID from URL
+  const extractVideoId = (url: string): string | null => {
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+      /^([a-zA-Z0-9_-]{11})$/,
+    ];
+    for (const p of patterns) {
+      const m = url.match(p);
+      if (m) return m[1];
+    }
+    return null;
+  };
+
+  const handleYoutubeUrlChange = (url: string) => {
+    setYoutubeUrl(url);
+    const videoId = extractVideoId(url.trim());
+    if (videoId) {
+      setYtThumbnailPreview(`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`);
+    } else {
+      setYtThumbnailPreview(null);
+    }
+  };
+
+  const clearYoutubeUrl = () => {
+    setYoutubeUrl("");
+    setYtThumbnailPreview(null);
+  };
+
+  // When platform changes, auto-set the aspect ratio
+  const handlePlatformChange = (newPlatform: string) => {
+    setPlatform(newPlatform);
+    const platformData = platforms.find((p) => p.id === newPlatform);
+    if (platformData) {
+      setAspectRatio(platformData.aspectRatio);
+    }
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -99,6 +149,9 @@ const Generate = () => {
         aspect_ratio: aspectRatio,
         color_scheme: colorSchemeId,
         text_overlay: true,
+        resolution,
+        platform,
+        youtube_reference_url: youtubeUrl.trim() || undefined,
       };
 
       // Add reference image if uploaded (only for paid plans)
@@ -146,6 +199,10 @@ const Generate = () => {
       setColorSchemeId(data?.thumbnail?.color_scheme);
       setAspectRatio(data?.thumbnail?.aspect_ratio);
       setStyle(data?.thumbnail?.style);
+      if (data?.thumbnail?.platform) setPlatform(data.thumbnail.platform);
+      if (data?.thumbnail?.resolution) setResolution(data.thumbnail.resolution);
+      if (data?.thumbnail?.youtube_reference_url)
+        handleYoutubeUrlChange(data.thumbnail.youtube_reference_url);
     } catch (error: any) {
       console.log(error);
       toast.error(error?.response?.data?.message || error.message);
@@ -285,6 +342,20 @@ const Generate = () => {
                       </span>
                     </div>
                   </div>
+
+                  {/* PlatformSelector */}
+                  <PlatformSelector
+                    value={platform}
+                    onChange={handlePlatformChange}
+                  />
+
+                  {/* ResolutionSelector */}
+                  <ResolutionSelector
+                    value={resolution}
+                    onChange={setResolution}
+                    isPro={!!isPro}
+                  />
+
                   {/* AspectRatioSelector */}
                   <AspectRatioSelector
                     value={aspectRatio}
@@ -386,6 +457,67 @@ const Generate = () => {
                       </div>
                     )}
                   </div>
+
+                  {/* Reference YouTube URL - Creator & Pro */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-sm font-medium">
+                        Reference YouTube URL{" "}
+                        <span className="text-zinc-400 text-xs">
+                          {canUploadImage
+                            ? "(optional)"
+                            : "(Creator & Pro only)"}
+                        </span>
+                      </label>
+                      {canUploadImage && (
+                        <span className="text-xs text-amber-400">
+                          +10 credits
+                        </span>
+                      )}
+                    </div>
+
+                    {canUploadImage ? (
+                      <div className="space-y-2">
+                        <div className="relative">
+                          <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
+                          <input
+                            type="text"
+                            value={youtubeUrl}
+                            onChange={(e) => handleYoutubeUrlChange(e.target.value)}
+                            placeholder="https://youtube.com/watch?v=..."
+                            className="w-full pl-9 pr-8 py-2.5 rounded-lg border border-white/12 bg-black/20 text-zinc-100 placeholder:text-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                          />
+                          {youtubeUrl && (
+                            <button
+                              onClick={clearYoutubeUrl}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 hover:bg-white/10 rounded"
+                            >
+                              <XIcon className="size-3.5 text-zinc-400" />
+                            </button>
+                          )}
+                        </div>
+                        {ytThumbnailPreview && (
+                          <div className="rounded-lg overflow-hidden border border-white/10">
+                            <img
+                              src={ytThumbnailPreview}
+                              alt="YouTube thumbnail preview"
+                              className="w-full h-24 object-cover"
+                            />
+                            <p className="text-[10px] text-zinc-500 px-2 py-1 bg-white/5">
+                              Will copy this thumbnail's style
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="w-full py-3 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center gap-2 opacity-60">
+                        <LinkIcon className="size-4 text-zinc-500" />
+                        <span className="text-xs text-zinc-500">
+                          Upgrade to Creator or Pro for YouTube URL reference
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* BUTTON */}
@@ -396,17 +528,27 @@ const Generate = () => {
                       disabled={loading}
                       className="text-[15px] w-full py-3.5 rounded-xl font-medium bg-linear-to-b from-brand-500 to-brand-600 hover:from-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
-                      {loading ? "Generating..." : "Generate Thumbnail"}
+                      {loading
+                        ? resolution === "4k"
+                          ? "👑 Premium generating... ~30–45s"
+                          : "⚡ Generating..."
+                        : "Generate Thumbnail"}
                     </button>
                     <p className="text-center text-xs text-zinc-500">
                       This will use{" "}
                       <span className="text-brand-400 font-medium">
                         {creditsCost} credits
                       </span>
-                      {referenceImage && canUploadImage && (
+                      {hasReference && (
                         <span className="text-zinc-600">
                           {" "}
-                          (includes reference image)
+                          (includes reference)
+                        </span>
+                      )}
+                      {resolution === "4k" && (
+                        <span className="text-amber-400/70">
+                          {" "}
+                          · 4K Premium Quality
                         </span>
                       )}
                     </p>

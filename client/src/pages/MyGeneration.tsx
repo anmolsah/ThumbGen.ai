@@ -15,6 +15,9 @@ const MyGeneration = () => {
     "16:9": "aspect-video",
     "1:1": "aspect-square",
     "9:16": "aspect-[9/16]",
+    "4:5": "aspect-[4/5]",
+    "2:3": "aspect-[2/3]",
+    "1.91:1": "aspect-[1.91/1]",
   };
 
   const [thumbnails, setThumbnails] = useState<IThumbnail[]>([]);

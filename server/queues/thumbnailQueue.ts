@@ -10,6 +10,9 @@ export interface ThumbnailJobData {
   aspect_ratio: string;
   color_scheme: string;
   text_overlay: boolean;
+  resolution: string;
+  platform: string;
+  youtube_reference_url?: string;
   reference_image?: string;
   userPlan: string;
   creditsRequired: number;
