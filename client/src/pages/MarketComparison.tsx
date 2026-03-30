@@ -13,7 +13,7 @@ import SEO from "../components/SEO";
 
 /* ─── Minimalist Data ─── */
 const competitors = [
-  { name: "ThumbGen",   isUs: true,  price: "$0.09/ea",  subscription: "No", quality: "Ultra 4K", watermark: "No" },
+  { name: "ThumbGen",   isUs: true,  price: "Starts at $9.00",  subscription: "No", quality: "Ultra 4K", watermark: "No" },
   { name: "ThumbnailTest", isUs: false, price: "$25.00/mo",  subscription: "Yes", quality: "High", watermark: "No" },
   { name: "Canva Pro",  isUs: false, price: "$15.00/mo",  subscription: "Yes", quality: "Medium", watermark: "Yes" },
   { name: "ThumbMachine", isUs: false, price: "$12.00/mo", subscription: "Yes", quality: "Medium", watermark: "Yes" },

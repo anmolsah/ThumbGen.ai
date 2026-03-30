@@ -41,7 +41,6 @@ export default function HowItWorks() {
       <SEO
         title="How It Works"
         description="Learn how ThumbGen creates AI-powered multi-platform thumbnails in 3 simple steps."
-        url="https://thumbgen.online/how-it-works"
       />
       <SoftBackdrop />
       <div className="min-h-screen pt-24 sm:pt-32 pb-16 px-4 sm:px-6 lg:px-8">
