@@ -13,19 +13,23 @@ const PaymentStatus = () => {
   const [status, setStatus] = useState<
     "loading" | "success" | "failed" | "pending"
   >("loading");
+  const paymentId = searchParams.get("payment_id");
   const orderId = searchParams.get("order_id");
   const retryCount = useRef(0);
-  const maxRetries = 2; // Will check twice (initial + 1 retry after 3 seconds)
+  const maxRetries = 2;
 
   useEffect(() => {
     const verifyPayment = async () => {
-      if (!orderId) {
+      if (!paymentId && !orderId) {
         setStatus("failed");
         return;
       }
 
       try {
-        const { data } = await api.post("/api/payment/verify", { orderId });
+        const { data } = await api.post("/api/payment/verify", {
+          paymentId,
+          orderId,
+        });
 
         if (data.success && data.status === "paid") {
           setStatus("success");

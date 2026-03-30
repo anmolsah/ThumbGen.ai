@@ -7,7 +7,6 @@ import { CheckIcon, Loader2Icon } from "lucide-react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { load } from "@cashfreepayments/cashfree-js";
 import api from "../configs/api";
 import toast from "react-hot-toast";
 
@@ -33,18 +32,13 @@ export default function PricingSection() {
 
       const { data } = await api.post("/api/payment/create-order", { plan });
 
-      if (!data.success) {
+      if (!data.success || !data.checkoutUrl) {
         toast.error("Failed to create order");
         return;
       }
 
-      const cashfreeMode = data.environment || (import.meta.env.PROD ? "production" : "sandbox");
-      const cashfree = await load({ mode: cashfreeMode });
-
-      await cashfree.checkout({
-        paymentSessionId: data.paymentSessionId,
-        redirectTarget: "_self",
-      });
+      // Redirect to Dodo Payments hosted checkout
+      window.location.href = data.checkoutUrl;
     } catch (error: any) {
       console.error("Payment error:", error);
       toast.error(error?.response?.data?.message || "Payment failed");
@@ -108,7 +102,7 @@ export default function PricingSection() {
             )}
             <p className="font-semibold">{plan.name}</p>
             <h1 className="text-3xl font-semibold">
-              ₹{plan.price}
+              ${plan.price}
               <span className="text-gray-500 font-normal text-sm ml-1">
                 one-time
               </span>

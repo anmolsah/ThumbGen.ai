@@ -64,16 +64,16 @@ export default function PrivacyPolicy() {
                   <strong className="text-gray-300">Payment Information:</strong>{" "}
                   When you subscribe to a paid plan, we collect billing details
                   required to process transactions. Payment processing is handled
-                  by our third-party payment processor, Cashfree Payments. We do
+                  by our third-party payment processor, Dodo Payments. We do
                   not store your credit card, debit card, or bank account
                   numbers on our servers. Please refer to{" "}
                   <a
-                    href="https://www.cashfree.com/privacy-policy"
+                    href="https://dodopayments.com/privacy"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-brand-400 hover:underline"
                   >
-                    Cashfree's Privacy Policy
+                    Dodo Payments' Privacy Policy
                   </a>{" "}
                   for details on how your payment data is handled.
                 </li>
@@ -207,7 +207,7 @@ export default function PrivacyPolicy() {
                       Cloudinary — for secure cloud-based image storage and
                       delivery
                     </li>
-                    <li>Cashfree Payments — for payment processing</li>
+                    <li>Dodo Payments — for payment processing</li>
                     <li>Brevo (Sendinblue) — for transactional email delivery</li>
                     <li>MongoDB Atlas — for database hosting</li>
                     <li>Upstash — for Redis-based queue management</li>

@@ -242,9 +242,9 @@ export default function TermsConditions() {
               </h3>
               <ul className="list-disc list-inside space-y-2 text-gray-400">
                 <li>
-                  All payments are processed securely through Cashfree Payments,
-                  our authorized third-party payment gateway. By making a
-                  payment, you agree to Cashfree's terms of service.
+                  All payments are processed securely through Dodo Payments,
+                  our payment gateway partner. By completing a
+                  payment, you agree to Dodo Payments' terms of service.
                 </li>
                 <li>
                   All prices are listed in Indian Rupees (INR) and are inclusive

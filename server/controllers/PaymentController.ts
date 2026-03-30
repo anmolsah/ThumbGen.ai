@@ -1,15 +1,16 @@
 import { Request, Response } from "express";
-import { cashfree, PLANS, getCashfreeEnvironmentString } from "../configs/cashfree.js";
+import { dodo, PLANS } from "../configs/dodo.js";
 import Payment from "../models/Payment.js";
 import User from "../models/User.js";
 import crypto from "crypto";
+import { Webhook } from "standardwebhooks";
 
 // Generate unique order ID
 const generateOrderId = () => {
   return `order_${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
 };
 
-// Create payment order
+// Create payment order → returns Dodo checkout URL
 export const createOrder = async (req: Request, res: Response) => {
   try {
     const { userId } = req.session;
@@ -27,56 +28,49 @@ export const createOrder = async (req: Request, res: Response) => {
     const planDetails = PLANS[plan as keyof typeof PLANS];
     const orderId = generateOrderId();
 
-    // Create Cashfree order
-    const orderRequest = {
-      order_id: orderId,
-      order_amount: planDetails.price,
-      order_currency: "INR",
-      customer_details: {
-        customer_id: userId as string,
-        customer_name: user.name,
-        customer_email: user.email,
-        customer_phone: getCashfreeEnvironmentString() === "production" ? "9876543210" : "9999999999", // Sandbox accepts 99s, prod might be stricter
+    // Create Dodo Payments checkout session
+    const session = await dodo.checkoutSessions.create({
+      customer: {
+        email: user.email,
+        name: user.name,
       },
-      order_meta: {
-        return_url: `${process.env.CLIENT_URL}/payment/status?order_id={order_id}`,
+      product_cart: [
+        {
+          product_id: planDetails.productId,
+          quantity: 1,
+        },
+      ],
+      return_url: `${process.env.CLIENT_URL}/payment/status?order_id=${orderId}`,
+      metadata: {
+        order_id: orderId,
+        user_id: userId as string,
+        plan: plan,
       },
-      order_note: `${planDetails.name} credits purchase`,
-    };
+    });
 
-    console.log("Creating Cashfree order:", orderRequest);
-    const response = await cashfree.PGCreateOrder(orderRequest);
-    console.log("Cashfree response:", JSON.stringify(response.data, null, 2));
+    console.log("Dodo Payments session created:", session);
 
-    if (response.data && response.data.payment_session_id) {
-      // Save payment record
-      const payment = new Payment({
-        userId,
-        orderId,
-        paymentSessionId: response.data.payment_session_id,
-        plan,
-        amount: planDetails.price,
-        status: "pending",
-      });
-      await payment.save();
+    // Save payment record
+    const payment = new Payment({
+      userId,
+      orderId,
+      paymentSessionId: session.session_id || "",
+      plan,
+      amount: planDetails.price,
+      currency: "USD",
+      status: "pending",
+    });
+    await payment.save();
 
-      return res.json({
-        success: true,
-        paymentSessionId: response.data.payment_session_id,
-        orderId,
-        environment: getCashfreeEnvironmentString()
-      });
-    }
-
-    return res.status(500).json({
-      message: "Failed to create order",
-      details: response.data,
+    return res.json({
+      success: true,
+      checkoutUrl: session.checkout_url,
+      orderId,
     });
   } catch (error: any) {
-    console.error("Create order error:", error?.response?.data || error);
+    console.error("Create order error:", error);
     res.status(500).json({
-      message: error?.response?.data?.message || error.message,
-      code: error?.response?.data?.code,
+      message: error?.message || "Failed to create order",
     });
   }
 };
@@ -84,13 +78,22 @@ export const createOrder = async (req: Request, res: Response) => {
 // Verify payment status
 export const verifyPayment = async (req: Request, res: Response) => {
   try {
-    const { orderId } = req.body;
+    const { orderId, paymentId } = req.body;
 
-    if (!orderId) {
-      return res.status(400).json({ message: "Order ID is required" });
+    if (!orderId && !paymentId) {
+      return res
+        .status(400)
+        .json({ message: "Order ID or Payment ID is required" });
     }
 
-    const payment = await Payment.findOne({ orderId });
+    // Find payment by orderId or by paymentSessionId (which stores dodo payment_id)
+    let payment;
+    if (orderId) {
+      payment = await Payment.findOne({ orderId });
+    } else {
+      payment = await Payment.findOne({ paymentSessionId: paymentId });
+    }
+
     if (!payment) {
       return res.status(404).json({ message: "Payment not found" });
     }
@@ -100,31 +103,41 @@ export const verifyPayment = async (req: Request, res: Response) => {
       return res.json({ success: true, status: "paid" });
     }
 
-    // Fetch order status from Cashfree
-    const response = await cashfree.PGOrderFetchPayments(orderId);
+    // Fetch payment status from Dodo
+    try {
+      console.log("Fetching Dodo payment status for:", payment.paymentSessionId);
+      const dodoSession = await dodo.checkoutSessions.retrieve(payment.paymentSessionId);
+      console.log("Dodo payment response:", JSON.stringify(dodoSession, null, 2));
 
-    if (response.data && response.data.length > 0) {
-      const latestPayment = response.data[0];
+      const status = (dodoSession.payment_status || "").toLowerCase();
 
-      if (latestPayment.payment_status === "SUCCESS") {
-        // Update payment record
+      if (status === "succeeded" || status === "completed" || status === "paid") {
         payment.status = "paid";
-        payment.cfPaymentId = latestPayment.cf_payment_id?.toString();
+        if (dodoSession.payment_id) {
+            payment.dodoPaymentId = dodoSession.payment_id;
+        }
         await payment.save();
 
-        // Update user plan and add credits (top-up)
+        // Update user plan and add credits
         const planDetails = PLANS[payment.plan as keyof typeof PLANS];
         await User.findByIdAndUpdate(payment.userId, {
           plan: payment.plan,
-          $inc: { credits: planDetails.credits, totalCredits: planDetails.credits },
+          $inc: {
+            credits: planDetails.credits,
+            totalCredits: planDetails.credits,
+          },
         });
 
         return res.json({ success: true, status: "paid" });
-      } else if (latestPayment.payment_status === "FAILED") {
+      } else if (status === "failed" || status === "cancelled" || status === "expired") {
         payment.status = "failed";
         await payment.save();
         return res.json({ success: false, status: "failed" });
+      } else {
+        console.log("Dodo payment status is:", status, "- treating as pending");
       }
+    } catch (fetchError: any) {
+      console.error("Error fetching Dodo payment status:", fetchError?.message || fetchError);
     }
 
     return res.json({ success: false, status: "pending" });
@@ -134,37 +147,70 @@ export const verifyPayment = async (req: Request, res: Response) => {
   }
 };
 
-// Cashfree webhook handler
+// Dodo Payments webhook handler
 export const paymentWebhook = async (req: Request, res: Response) => {
   try {
-    const { data } = req.body;
+    const webhookSecret = process.env.DODO_PAYMENTS_WEBHOOK_SECRET;
 
-    if (!data || !data.order || !data.payment) {
+    if (webhookSecret) {
+      // Verify webhook signature
+      const wh = new Webhook(webhookSecret);
+      const headers = {
+        "webhook-id": req.headers["webhook-id"] as string,
+        "webhook-signature": req.headers["webhook-signature"] as string,
+        "webhook-timestamp": req.headers["webhook-timestamp"] as string,
+      };
+      try {
+        wh.verify(JSON.stringify(req.body), headers);
+      } catch (verifyError) {
+        console.error("Webhook signature verification failed:", verifyError);
+        return res.status(401).json({ message: "Invalid signature" });
+      }
+    }
+
+    const { event_type, data } = req.body;
+
+    if (!data) {
       return res.status(400).json({ message: "Invalid webhook data" });
     }
 
-    const orderId = data.order.order_id;
-    const paymentStatus = data.payment.payment_status;
+    const paymentId = data.payment_id;
+    const metadata = data.metadata || {};
 
-    const payment = await Payment.findOne({ orderId });
+    // Find payment by paymentSessionId or by metadata.order_id
+    let payment;
+    if (paymentId) {
+      payment = await Payment.findOne({ paymentSessionId: paymentId });
+    }
+    if (!payment && metadata.order_id) {
+      payment = await Payment.findOne({ orderId: metadata.order_id });
+    }
+
     if (!payment) {
+      console.log("Webhook: Payment not found for:", { paymentId, metadata });
       return res.status(404).json({ message: "Payment not found" });
     }
 
-    if (paymentStatus === "SUCCESS" && payment.status !== "paid") {
+    if (event_type === "payment.succeeded" && payment.status !== "paid") {
       payment.status = "paid";
-      payment.cfPaymentId = data.payment.cf_payment_id?.toString();
+      payment.dodoPaymentId = paymentId;
       await payment.save();
 
       // Update user plan and add credits (top-up)
       const planDetails = PLANS[payment.plan as keyof typeof PLANS];
       await User.findByIdAndUpdate(payment.userId, {
         plan: payment.plan,
-        $inc: { credits: planDetails.credits, totalCredits: planDetails.credits },
+        $inc: {
+          credits: planDetails.credits,
+          totalCredits: planDetails.credits,
+        },
       });
-    } else if (paymentStatus === "FAILED") {
+
+      console.log("Webhook: Payment succeeded for order:", payment.orderId);
+    } else if (event_type === "payment.failed") {
       payment.status = "failed";
       await payment.save();
+      console.log("Webhook: Payment failed for order:", payment.orderId);
     }
 
     return res.json({ success: true });

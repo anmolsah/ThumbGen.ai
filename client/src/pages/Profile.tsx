@@ -8,7 +8,6 @@ import {
   Loader2Icon,
   RocketIcon,
 } from "lucide-react";
-import { load } from "@cashfreepayments/cashfree-js";
 import api from "../configs/api";
 import toast from "react-hot-toast";
 
@@ -46,30 +45,16 @@ const Profile = () => {
   const handlePurchase = async (plan: "starter" | "creator" | "pro") => {
     try {
       setLoading(plan);
-      console.log("Creating order for plan:", plan);
 
-      // Create order
       const { data } = await api.post("/api/payment/create-order", { plan });
-      console.log("Order response:", data);
 
-      if (!data.success) {
+      if (!data.success || !data.checkoutUrl) {
         toast.error("Failed to create order");
         return;
       }
 
-      console.log("Loading Cashfree SDK...");
-      // Initialize Cashfree - use production mode based on environment
-      const cashfreeMode = import.meta.env.PROD ? "production" : "sandbox";
-      const cashfree = await load({ mode: cashfreeMode });
-      console.log("Cashfree SDK loaded:", cashfree);
-
-      console.log("Opening checkout with sessionId:", data.paymentSessionId);
-      // Open payment checkout
-      const checkoutResult = await cashfree.checkout({
-        paymentSessionId: data.paymentSessionId,
-        redirectTarget: "_self",
-      });
-      console.log("Checkout result:", checkoutResult);
+      // Redirect to Dodo Payments hosted checkout
+      window.location.href = data.checkoutUrl;
     } catch (error: any) {
       console.error("Payment error:", error);
       toast.error(error?.response?.data?.message || "Payment failed");
@@ -181,7 +166,7 @@ const Profile = () => {
                 </div>
 
                 <div className="text-3xl font-bold mb-4">
-                  ₹59{" "}
+                  $9{" "}
                   <span className="text-gray-500 text-base font-normal">
                     one-time
                   </span>
@@ -227,7 +212,7 @@ const Profile = () => {
                 </div>
 
                 <div className="text-3xl font-bold mb-4">
-                  ₹699{" "}
+                  $29{" "}
                   <span className="text-gray-500 text-base font-normal">
                     one-time
                   </span>
@@ -273,7 +258,7 @@ const Profile = () => {
                 </div>
 
                 <div className="text-3xl font-bold mb-4">
-                  ₹2999{" "}
+                  $59{" "}
                   <span className="text-gray-500 text-base font-normal">
                     one-time
                   </span>
