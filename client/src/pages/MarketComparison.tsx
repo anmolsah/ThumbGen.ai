@@ -23,7 +23,7 @@ const competitors = [
     name: "ThumbGen",
     Icon: SparklesIcon,
     iconBg: "from-brand-500 to-cyan-500",
-    priceLabel: "₹11.8 – ₹18.7 ($0.14 – $0.22)",
+    priceLabel: "$0.09 – $0.15",
     subscription: false,
     quality: "Ultra 4K",
     noWatermark: true,
@@ -31,21 +31,21 @@ const competitors = [
     isUs: true,
   },
   {
-    name: "Midjourney",
+    name: "ThumbnailTest",
     Icon: Wand2Icon,
     iconBg: "from-purple-500 to-fuchsia-600",
-    priceLabel: "₹30 – ₹50 ($0.35 – $0.60)",
+    priceLabel: "$25.00/mo",
     subscription: true,
     quality: "High",
     noWatermark: true,
-    designSkills: true,
+    designSkills: false,
     isUs: false,
   },
   {
-    name: "Canva AI",
+    name: "Canva Pro",
     Icon: PaintbrushIcon,
     iconBg: "from-blue-500 to-cyan-600",
-    priceLabel: "₹20+ ($0.25+)",
+    priceLabel: "$15.00/mo",
     subscription: true,
     quality: "Medium",
     noWatermark: false,
@@ -53,10 +53,10 @@ const competitors = [
     isUs: false,
   },
   {
-    name: "ThumbnailAI",
+    name: "ThumbMachine",
     Icon: BotIcon,
     iconBg: "from-orange-500 to-amber-600",
-    priceLabel: "₹15 – ₹40 ($0.18 – $0.48)",
+    priceLabel: "$12.00/mo",
     subscription: true,
     quality: "Medium",
     noWatermark: false,
@@ -68,25 +68,25 @@ const competitors = [
 /* ─── Savings cards ─── */
 const savings = [
   {
-    vs: "Midjourney",
+    vs: "ThumbnailTest",
     Icon: Wand2Icon,
     iconBg: "from-purple-500 to-fuchsia-500",
-    save: "Up to 76% cheaper",
-    bar: 76,
+    save: "Up to 80% cheaper",
+    bar: 80,
   },
   {
-    vs: "Canva AI",
+    vs: "Canva Pro",
     Icon: PaintbrushIcon,
     iconBg: "from-blue-500 to-cyan-500",
     save: "Up to 55% cheaper",
     bar: 55,
   },
   {
-    vs: "ThumbnailAI",
+    vs: "ThumbMachine",
     Icon: BotIcon,
     iconBg: "from-orange-500 to-amber-500",
-    save: "Up to 70% cheaper",
-    bar: 70,
+    save: "Up to 40% cheaper",
+    bar: 40,
   },
 ];
 
@@ -116,7 +116,7 @@ export default function MarketComparison() {
     <>
       <SEO
         title="Market Comparison – ThumbGen"
-        description="Compare ThumbGen thumbnail pricing vs Midjourney, Canva AI and other tools. Save up to 76% per thumbnail."
+        description="Compare ThumbGen thumbnail pricing vs Canva Pro, ThumbnailTest and other tools. Save up to 80% per thumbnail."
       />
       <SoftBackdrop />
 
@@ -137,7 +137,7 @@ export default function MarketComparison() {
               transition={{ delay: 0.15, type: "spring", stiffness: 200 }}
             >
               <TrendingDownIcon className="size-4" />
-              Up to 76% cheaper than competitors
+              Up to 80% cheaper than competitors
             </motion.span>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3">

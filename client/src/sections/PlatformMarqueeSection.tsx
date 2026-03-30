@@ -68,6 +68,12 @@ const PlatformSection = () => {
                 y: -10,
                 transition: { type: "spring", stiffness: 400, damping: 10 }
               }}
+              whileTap={{ 
+                scale: 1.1, 
+                zIndex: 30,
+                y: -10,
+                transition: { type: "spring", stiffness: 400, damping: 10 }
+              }}
               className="relative group z-10 cursor-pointer"
             >
               <div 

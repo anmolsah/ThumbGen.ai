@@ -16,41 +16,41 @@ import SEO from "../components/SEO";
 const steps = [
   {
     icon: PenLineIcon,
-    title: "Describe Your Video",
+    title: "Describe or Reference",
     description:
-      "Enter your video title and a brief description. Tell us about the mood, style, and key elements you want in your thumbnail.",
+      "Enter your title and a description, or simply paste a Reference YouTube URL to instantly copy its visual style and mood.",
     color: "from-blue-500 to-cyan-500",
   },
   {
     icon: SparklesIcon,
-    title: "AI Generates Options",
+    title: "Customize & Configure",
     description:
-      "Our AI analyzes your input and generates multiple thumbnail options optimized for clicks and engagement.",
+      "Choose your target platform (YouTube, Instagram, etc.), select the perfect aspect ratio, and pick your custom brand colors.",
     color: "from-purple-500 to-pink-500",
   },
   {
     icon: ImageIcon,
-    title: "Preview & Choose",
+    title: "AI Generation",
     description:
-      "Review the generated thumbnails. Each one is designed to grab attention and increase your click-through rate.",
+      "Our AI analyzes your inputs and generates multiple stunning thumbnail options optimized specifically for maximum click-through rates.",
     color: "from-orange-500 to-red-500",
   },
   {
     icon: DownloadIcon,
-    title: "Download & Use",
+    title: "Download & Go Viral",
     description:
-      "Download your favorite thumbnail in high resolution. Upload it directly to YouTube and watch your views grow!",
+      "Download your favorite thumbnail in high resolution. Upload it to your platform of choice and watch your engagement soar!",
     color: "from-green-500 to-emerald-500",
   },
 ];
 
 const features = [
-  "No design skills required",
+  "Paste a Reference YouTube URL to match styles",
+  "Multi-platform support (IG, FB, LinkedIn, etc.)",
+  "Multiple aspect ratios (16:9, 1:1, 9:16, 4:5)",
   "Generate in under 60 seconds",
+  "Optimized for High CTR",
   "High-resolution 4K output",
-  "Optimized for YouTube CTR",
-  "Multiple style options",
-  "Unlimited revisions",
 ];
 
 export default function HowItWorks() {
@@ -69,7 +69,7 @@ export default function HowItWorks() {
     <>
       <SEO
         title="How It Works"
-        description="Learn how ThumbGen creates AI-powered YouTube thumbnails in 4 simple steps. No design skills needed - just describe your video and get professional thumbnails."
+        description="Learn how ThumbGen creates AI-powered thumbnails in 4 simple steps. No design skills needed - just describe your content or paste a reference URL and get professional thumbnails."
         url="https://thumbgen.online/how-it-works"
       />
       <SoftBackdrop />
@@ -90,7 +90,7 @@ export default function HowItWorks() {
               Works
             </h1>
             <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto px-2">
-              Create stunning YouTube thumbnails in 4 simple steps. No design
+              Create stunning multi-platform thumbnails in 4 simple steps. No design
               experience needed.
             </p>
           </motion.div>

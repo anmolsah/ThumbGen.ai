@@ -26,10 +26,12 @@
 
 - 🎨 **AI Image Generation** - Powered by Google Imagen 4.0 Ultra & Gemini
 - 🖼️ **Reference Image Support** - Upload your photo to include in thumbnails (Creator/Pro)
+- 🔗 **YouTube Style Reference** - Paste a YouTube URL to instantly copy its visual style and mood
 - 🎯 **Multiple Styles** - Bold & Graphic, Tech/Futuristic, Minimalististic, Illustrated
 - 🎨 **Color Schemes** - 8 curated palettes (Vibrant, Sunset, Neon, etc.)
-- 📐 **Aspect Ratios** - 16:9, 1:1, 9:16 support
-- 💳 **Payment Integration** - Cashfree payment gateway
+- 📐 **Multi-Platform Ratios** - YouTube (16:9), Instagram/Facebook (4:5, 1:1), Stories/Reels (9:16)
+- 💳 **Payment Integration** - Dodo Payments (Global USD transactions)
+- 🍪 **Cookie Consent** - GDPR compliant cookie consent integration
 - 🔐 **Email OTP Auth** - Secure authentication via Brevo
 - ⚡ **Background Processing** - Redis + BullMQ job queue for non-blocking generation
 - 🏷️ **Watermarking** - Automatic watermark for free plan users
@@ -58,7 +60,7 @@
 - **Google AI** - Imagen 4.0 & Gemini
 - **Upstash** - Redis hosting
 - **Brevo** - Email OTP
-- **Cashfree** - Payments
+- **Dodo Payments** - Global Payments
 
 ## Getting Started
 
@@ -70,7 +72,7 @@
 - Google Cloud account with Vertex AI enabled
 - Cloudinary account
 - Brevo account (for emails)
-- Cashfree account (for payments)
+- Dodo Payments account (for payments)
 
 ### Installation
 
@@ -141,9 +143,12 @@ CLOUDINARY_URL="cloudinary://api_key:api_secret@cloud_name"
 BREVO_API_KEY="your-brevo-api-key"
 BREVO_SENDER_EMAIL="noreply@yourdomain.com"
 
-# Cashfree (Payments)
-CASHFREE_APP_ID="your-app-id"
-CASHFREE_SECRET_KEY="your-secret-key"
+# Dodo Payments (Payments)
+DODO_PAYMENTS_API_KEY="your-api-key"
+DODO_PAYMENTS_WEBHOOK_SECRET="your-webhook-secret"
+DODO_PRODUCT_STARTER="product-id-1"
+DODO_PRODUCT_CREATOR="product-id-2"
+DODO_PRODUCT_PRO="product-id-3"
 CLIENT_URL="http://localhost:5173"
 ```
 
@@ -224,9 +229,10 @@ thumbgen-ai/
 
 | Plan | Price | Credits | Features |
 |------|-------|---------|----------|
-| Free | ₹0 | 25 | 5 thumbnails, watermarked |
-| Creator | ₹299/mo | 200 | 40 thumbnails, no watermark, reference images |
-| Pro | ₹799/mo | 800 | 160 thumbnails, no watermark, reference images, priority queue |
+| Free | $0 | 25 | 5 thumbnails, watermarked |
+| Starter | $9 | 100 | 20 thumbnails, no watermark, global styles |
+| Creator | $29 | 500 | 100 thumbnails, no watermark, reference images & URLs |
+| Pro | $59 | 1500 | 300 thumbnails, no watermark, reference images & URLs, priority queue |
 
 ## Scripts
 
