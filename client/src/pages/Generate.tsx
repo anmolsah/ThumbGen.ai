@@ -35,6 +35,7 @@ const Generate = () => {
   const { isLoggedIn, user, setUser } = useAuth();
 
   const [title, setTitle] = useState("");
+  const [titleError, setTitleError] = useState("");
   const [additionalDetails, setAdditionalDetails] = useState("");
 
   const [thumbnail, setThumbnail] = useState<IThumbnail | null>(null);
@@ -138,7 +139,15 @@ const Generate = () => {
     if (hasNoPlan) return toast.error("Please select a plan first");
     if (hasNoCredits)
       return toast.error("No credits remaining. Please upgrade your plan.");
-    if (!title.trim()) return toast.error("Title is required");
+
+    // Validate required fields
+    if (!title.trim()) {
+      setTitleError("Please enter a title or topic for your thumbnail");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("Title is required to generate a thumbnail");
+      return;
+    }
+    setTitleError("");
     setLoading(true);
 
     try {
@@ -326,17 +335,32 @@ const Generate = () => {
                   {/* TITLE INPUT */}
                   <div className="space-y-2">
                     <label className="block text-sm font-medium">
-                      Title or Topic
+                      Title or Topic{" "}
+                      <span className="text-red-400 text-xs">*</span>
                     </label>
                     <input
                       type="text"
                       value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      onChange={(e) => {
+                        setTitle(e.target.value);
+                        if (e.target.value.trim()) setTitleError("");
+                      }}
                       maxLength={100}
                       placeholder="e.g., 10 Tips for Better Sleep"
-                      className="w-full px-4 py-3 rounded-lg border border-white/12  bg-black/20  text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      className={`w-full px-4 py-3 rounded-lg border bg-black/20 text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 transition-colors ${
+                        titleError
+                          ? "border-red-500 focus:ring-red-500"
+                          : "border-white/12 focus:ring-brand-500"
+                      }`}
                     />
-                    <div className="flex justify-end">
+                    <div className="flex items-center justify-between">
+                      {titleError ? (
+                        <span className="text-xs text-red-400 flex items-center gap-1">
+                          <span>⚠</span> {titleError}
+                        </span>
+                      ) : (
+                        <span />
+                      )}
                       <span className="text-xs text-zinc-400">
                         {title.length}/100
                       </span>

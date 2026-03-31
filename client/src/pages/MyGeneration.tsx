@@ -155,7 +155,13 @@ const MyGeneration = () => {
                       </span>
                     </div>
                     <p className="text-xs text-zinc-500">
-                      {new Date(thumb.createdAt!).toDateString()}
+                      {thumb.createdAt
+                        ? new Date(thumb.createdAt).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })
+                        : "—"}
                     </p>
                   </div>
 

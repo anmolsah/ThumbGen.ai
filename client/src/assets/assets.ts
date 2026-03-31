@@ -116,6 +116,7 @@ export interface IUser {
   _id: string;
   name: string;
   email: string;
+  channelName?: string;
   plan: "none" | "starter" | "creator" | "pro";
   credits: number;
   totalCredits: number;
