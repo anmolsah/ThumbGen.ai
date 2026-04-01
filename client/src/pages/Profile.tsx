@@ -18,6 +18,8 @@ import {
 import api from "../configs/api";
 import toast from "react-hot-toast";
 import { load } from "@cashfreepayments/cashfree-js";
+import { createAvatar } from "@dicebear/core";
+import { lorelei } from "@dicebear/collection";
 
 const PLANS = {
   none: {
@@ -55,7 +57,7 @@ const PLAN_CARDS = [
     id: "starter" as const,
     name: "Starter",
     tagline: "Just getting started",
-    price: "₹59",
+    price: "$9",
     icon: SparklesIcon,
     iconColor: "text-gray-400",
     iconBg: "bg-gray-800",
@@ -70,7 +72,7 @@ const PLAN_CARDS = [
     id: "creator" as const,
     name: "Creator",
     tagline: "For serious creators",
-    price: "₹699",
+    price: "$29",
     icon: ZapIcon,
     iconColor: "text-brand-400",
     iconBg: "bg-brand-900",
@@ -85,7 +87,7 @@ const PLAN_CARDS = [
     id: "pro" as const,
     name: "Pro",
     tagline: "For professionals",
-    price: "₹2,999",
+    price: "$59",
     icon: CrownIcon,
     iconColor: "text-amber-400",
     iconBg: "bg-amber-950",
@@ -107,6 +109,7 @@ const Profile = () => {
   const [editName, setEditName] = useState("");
   const [editChannel, setEditChannel] = useState("");
   const [saving, setSaving] = useState(false);
+  const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
 
   const startEdit = (field: "name" | "channel") => {
     setEditingField(field);
@@ -134,6 +137,22 @@ const Profile = () => {
       toast.error(error?.response?.data?.message || "Failed to update");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const generateNewAvatar = async () => {
+    setIsGeneratingAvatar(true);
+    const newSeed = Math.random().toString(36).substring(7);
+    try {
+      const { data } = await api.put("/api/user/profile", { avatar: newSeed });
+      if (data.user && user) {
+        setUser({ ...user, ...data.user });
+      }
+      toast.success("Avatar updated!");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Failed to update avatar");
+    } finally {
+      setIsGeneratingAvatar(false);
     }
   };
 
@@ -179,6 +198,8 @@ const Profile = () => {
     .toUpperCase()
     .slice(0, 2);
 
+  const avatarImg = user.avatar ? createAvatar(lorelei, { seed: user.avatar }).toDataUri() : null;
+
   return (
     <>
       <SoftBackdrop />
@@ -192,10 +213,24 @@ const Profile = () => {
 
             <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
               {/* Avatar */}
-              <div className="relative shrink-0">
-                <div className="size-24 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-4xl font-bold text-white shadow-lg shadow-brand-900/50">
-                  {initials}
-                </div>
+              <div className="relative shrink-0 group">
+                {avatarImg ? (
+                  <img src={avatarImg} alt="Avatar" className="size-24 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 shadow-lg shadow-brand-900/50 object-cover" />
+                ) : (
+                  <div className="size-24 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-4xl font-bold text-white shadow-lg shadow-brand-900/50">
+                    {initials}
+                  </div>
+                )}
+                
+                <button 
+                  onClick={generateNewAvatar}
+                  disabled={isGeneratingAvatar}
+                  title="Generate New Avatar"
+                  className="absolute inset-0 bg-black/60 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 disabled:opacity-50"
+                >
+                  {isGeneratingAvatar ? <Loader2Icon className="size-6 text-white animate-spin" /> : <SparklesIcon className="size-6 text-white" />}
+                </button>
+
                 <div
                   className={`absolute -bottom-2 -right-2 p-1.5 rounded-full border-2 border-zinc-900 ${currentPlan.bgColor}`}
                 >

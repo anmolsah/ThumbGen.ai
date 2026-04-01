@@ -5,6 +5,7 @@ export interface IUser extends Document {
   email: string;
   password?: string;
   channelName?: string;
+  avatar?: string;
   plan: "none" | "starter" | "creator" | "pro";
   credits: number;
   totalCredits: number;
@@ -24,6 +25,7 @@ const UserSchema = new mongoose.Schema<IUser>(
     },
     password: { type: String, required: true },
     channelName: { type: String, trim: true, default: "" },
+    avatar: { type: String, trim: true, default: "" },
     plan: {
       type: String,
       enum: ["none", "starter", "creator", "pro"],

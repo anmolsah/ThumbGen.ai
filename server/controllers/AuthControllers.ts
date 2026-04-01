@@ -14,6 +14,8 @@ const formatUserResponse = (user: any) => ({
   _id: user._id,
   name: user.name,
   email: user.email,
+  channelName: user.channelName || "",
+  avatar: user.avatar || "",
   plan: user.plan,
   credits: user.credits,
   totalCredits: user.totalCredits,

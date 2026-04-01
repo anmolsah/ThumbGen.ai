@@ -2,15 +2,16 @@ import { Request, Response } from "express";
 import Thumbnail from "../models/Thumbnail.js";
 import User from "../models/User.js";
 
-// Update user profile (name, channelName)
+// Update user profile (name, channelName, avatar)
 export const updateProfile = async (req: Request, res: Response) => {
   try {
     const { userId } = req.session;
-    const { name, channelName } = req.body;
+    const { name, channelName, avatar } = req.body;
 
-    const updateFields: { name?: string; channelName?: string } = {};
+    const updateFields: { name?: string; channelName?: string; avatar?: string } = {};
     if (name && name.trim()) updateFields.name = name.trim();
     if (channelName !== undefined) updateFields.channelName = channelName.trim();
+    if (avatar !== undefined) updateFields.avatar = avatar.trim();
 
     const user = await User.findByIdAndUpdate(userId, updateFields, {
       new: true,
