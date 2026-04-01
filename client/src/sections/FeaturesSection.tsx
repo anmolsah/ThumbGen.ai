@@ -101,36 +101,35 @@ export default function FeaturesSection() {
           font-size: 0.9rem;
         }
 
-        @media (hover: hover) {
-          .feature-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 40px -5px rgba(61,143,202,0.15), 0 0 20px rgba(61,143,202,0.1);
-            border-color: rgba(61,143,202,0.3);
-          }
+        /* Let touch devices also trigger card hover styles by combining focus/active */
+        .feature-card:hover, .feature-card:focus-within {
+          transform: translateY(-5px) scale(1.02);
+          box-shadow: 0 20px 40px -5px rgba(61,143,202,0.15), 0 0 20px rgba(61,143,202,0.1);
+          border-color: rgba(61,143,202,0.3);
+        }
 
-          .feature-card:hover::before {
-            width: 100%;
-            opacity: 1;
-            transition: opacity 0.5s ease, width 0.5s ease;
-            transition-delay: 0s;
-          }
+        .feature-card:hover::before, .feature-card:focus-within::before {
+          width: 100%;
+          opacity: 1;
+          transition: opacity 0.5s ease, width 0.5s ease;
+          transition-delay: 0s;
+        }
 
-          .feature-card:hover::after {
-            width: 0;
-            opacity: 0;
-            transition: width 0s ease;
-          }
+        .feature-card:hover::after, .feature-card:focus-within::after {
+          width: 0;
+          opacity: 0;
+          transition: width 0s ease;
+        }
 
-          .feature-card:hover .logo {
-            margin-bottom: 0.5em;
-            background: rgba(61,143,202,0.1);
-          }
+        .feature-card:hover .logo, .feature-card:focus-within .logo {
+          margin-bottom: 0.5em;
+          background: rgba(61,143,202,0.1);
+        }
 
-          .feature-card:hover .hover_content {
-            max-height: 10em;
-            transform: none;
-            opacity: 1;
-          }
+        .feature-card:hover .hover_content, .feature-card:focus-within .hover_content {
+          max-height: 10em;
+          transform: none;
+          opacity: 1;
         }
       `}</style>
 
@@ -156,7 +155,7 @@ export default function FeaturesSection() {
             className="feature-container"
             style={{ width: "auto" }}
           >
-            <div className="feature-card group">
+            <div tabIndex={0} className="feature-card group outline-none">
               <div className="content">
                 <p className="logo">{feature.logoLabel}</p>
                 <div className="h6">{feature.title}</div>
@@ -171,10 +170,10 @@ export default function FeaturesSection() {
 
       <div className="mt-32 relative mx-auto max-w-5xl">
         <div className="overflow-visible relative min-h-[150px] md:min-h-[200px] flex items-center">
-          <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-black to-transparent z-10"></div>
-          <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-black to-transparent z-10"></div>
+          <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none"></div>
           
-          <p className="absolute top-0 left-1/2 -translate-x-1/2 text-[10px] md:text-sm uppercase tracking-[0.4em] text-brand-500 font-black mb-10 text-center w-full">
+          <p className="absolute top-0 left-1/2 -translate-x-1/2 text-[10px] md:text-sm uppercase tracking-[0.4em] text-brand-500 font-black mb-10 text-center w-full pointer-events-none">
             Trusted by creators & studios
           </p>
           
@@ -195,7 +194,8 @@ export default function FeaturesSection() {
               ].map((studio, i) => (
                 <motion.span 
                   key={i} 
-                  className="text-xl md:text-5xl font-black text-slate-800/60 hover:text-brand-500 transition-colors duration-500 cursor-default"
+                  tabIndex={0}
+                  className="text-xl md:text-5xl font-black text-slate-800/60 hover:text-brand-500 focus:text-brand-500 active:text-brand-500 transition-colors duration-500 cursor-default outline-none"
                 >
                   {studio}
                 </motion.span>

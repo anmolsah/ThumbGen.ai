@@ -107,14 +107,14 @@ const PlatformSection = () => {
                  >
                    {/* Counter-rotate the inner element so icons stay upright! */}
                    <motion.div style={{ rotate: iconCounterRotation }}>
-                     <div className="relative group flex flex-col items-center justify-center cursor-pointer transition-transform duration-300 hover:scale-125 hover:z-50 active:scale-95">
-                        <div className="size-14 md:size-20 rounded-full bg-zinc-900 border border-white/10 shadow-xl flex items-center justify-center group-hover:border-brand-500/50 group-hover:bg-zinc-800 transition-colors">
-                           <div className="scale-110 md:scale-150 relative z-10 group-hover:text-brand-400 text-zinc-300 transition-colors">
+                     <div tabIndex={0} className="relative group flex flex-col items-center justify-center cursor-pointer transition-transform duration-300 hover:scale-125 focus:scale-125 hover:z-50 focus:z-50 active:scale-95 outline-none">
+                        <div className="size-14 md:size-20 rounded-full bg-zinc-900 border border-white/10 shadow-xl flex items-center justify-center group-hover:border-brand-500/50 group-focus:border-brand-500/50 group-hover:bg-zinc-800 group-focus:bg-zinc-800 transition-colors">
+                           <div className="scale-110 md:scale-150 relative z-10 group-hover:text-brand-400 group-focus:text-brand-400 text-zinc-300 transition-colors">
                               {PlatformIcons[platform.id]}
                            </div>
                         </div>
                         {/* Floating Hover tooltip label */}
-                        <div className="absolute top-[110%] md:top-[120%] opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap bg-zinc-800 text-white text-[10px] md:text-xs px-3 py-1.5 rounded-lg border border-white/10 shadow-lg font-medium pointer-events-none">
+                        <div className="absolute top-[110%] md:top-[120%] opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-300 whitespace-nowrap bg-zinc-800 text-white text-[10px] md:text-xs px-3 py-1.5 rounded-lg border border-white/10 shadow-lg font-medium pointer-events-none">
                            {platform.label}
                         </div>
                      </div>
