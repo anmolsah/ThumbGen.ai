@@ -102,3 +102,11 @@ button {
 .animate-marquee-reverse {
   animation: marquee-reverse 30s linear infinite;
 }
+
+/* Global Fix for Sticky Hover States on Mobile/Touch Devices */
+@media (hover: none) and (pointer: coarse) {
+  /* This prevents standard CSS pseudo-class hovers from persisting after a tap */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}

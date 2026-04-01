@@ -80,7 +80,7 @@ const PLAN_CARDS = [
     btn: "bg-brand-500 hover:bg-brand-600",
     badge: "POPULAR",
     badgeStyle: "bg-brand-500 text-brand-950",
-    features: ["200 Credits", "40 Thumbnails", "2K Quality", "No Watermark"],
+    features: ["200 Credits", "40 Thumbnails", "Ultra 4K Quality", "No Watermark"],
     featureFlags: [true, true, true, true],
   },
   {
@@ -95,7 +95,7 @@ const PLAN_CARDS = [
     btn: "bg-amber-600 hover:bg-amber-700",
     badge: "BEST VALUE",
     badgeStyle: "bg-amber-500 text-amber-950",
-    features: ["800 Credits", "160 Thumbnails", "4K Quality", "No Watermark"],
+    features: ["800 Credits", "160 Thumbnails", "Ultra 4K Quality", "No Watermark"],
     featureFlags: [true, true, true, true],
   },
 ];
