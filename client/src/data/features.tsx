@@ -2,18 +2,18 @@ import type { IFeature } from "../types";
 
 export const featuresData: IFeature[] = [
     {
-        icon: "/assets/zap-icon.svg",
-        title: "Smart Analysis",
-        description: "Our AI analyzes video content to suggest the most clickable concepts.",
+        logoLabel: "Core Engine",
+        title: "Instant AI Generation",
+        description: "Simply describe your video's concept and our advanced image models will generate stunning, visually arresting thumbnails in seconds.",
     },
     {
-        icon: "/assets/thumb-icon.svg",
-        title: "Eye-Catching Designs",
-        description: "Generate vibrant, high-contrast thumbnails that stand out in the feed.",
+        logoLabel: "Cross-Platform",
+        title: "Platform Exact Sizing",
+        description: "Need a YouTube Thumbnail or a TikTok Cover? Choose your platform and perfectly optimized aspect ratios are generated instantly.",
     },
     {
-        icon: "/assets/shape-icon.svg",
-        title: "Fully Editable",
-        description: "Get fully layered designs you can tweak to perfection if needed.",
+        logoLabel: "Precision Rules",
+        title: "Prompt Customization",
+        description: "Dictate specific text combination overrides, styles, and moods. Keep complete creative control while the AI does the heavy lifting.",
     },
 ];

@@ -18,7 +18,7 @@ export interface ITestimonial {
 }
 
 export interface IFeature {
-    icon: string;
+    logoLabel: string;
     title: string;
     description: string;
 }
