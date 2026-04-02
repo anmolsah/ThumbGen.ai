@@ -18,8 +18,9 @@ import thumb_9 from "../assets/thumb_9.png";
 import thumb_10 from "../assets/thumb_10.png";
 import thumb_11 from "../assets/thumb_11.png";
 import thumb_12 from "../assets/thumb12.jpg";
+import thumb_13 from "../assets/thumb_13.png";
 
-const row1 = [thumb_1, thumb_2, thumb_3, thumb_4, thumb_5, thumb_6];
+const row1 = [thumb_1, thumb_2, thumb_3, thumb_4, thumb_5, thumb_6,thumb_13];
 const row2 = [thumb_7, thumb_8, thumb_9, thumb_10, thumb_11, thumb_12];
 const row3 = [thumb_6, thumb_5, thumb_2, thumb_1, thumb_4, thumb_3]; // Shuffled
 
@@ -122,7 +123,7 @@ export default function HeroSection() {
             className="w-full sm:w-auto overflow-hidden relative group bg-white hover:bg-zinc-200 text-black font-extrabold text-xl rounded-2xl px-10 py-5 shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] transition-all duration-300 hover:scale-105"
           >
             <span className="relative z-10 flex items-center justify-center gap-3">
-              <SparklesIcon size={24} className="text-brand-600" /> Start Generating Free
+              <SparklesIcon size={24} className="text-brand-600" /> Start Generating Now
             </span>
           </button>
           
@@ -145,7 +146,7 @@ export default function HeroSection() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.5 }}
         >
-          <span className="flex items-center gap-2"><CheckCircle2Icon size={18} className="text-brand-400" /> Free 25 Credits</span>
+          <span className="flex items-center gap-2"><CheckCircle2Icon size={18} className="text-brand-400" /> Start With 25 Credits</span>
           <span className="flex items-center gap-2"><CheckCircle2Icon size={18} className="text-brand-400" /> No Credit Card Required</span>
           <span className="flex items-center gap-2"><CheckCircle2Icon size={18} className="text-brand-400" /> Commercial Usage</span>
         </motion.div>
