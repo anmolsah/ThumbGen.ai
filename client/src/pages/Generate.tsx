@@ -26,6 +26,10 @@ import {
   XIcon,
   ImageIcon,
   LinkIcon,
+  TypeIcon,
+  MonitorIcon,
+  PaletteIcon,
+  ImagePlusIcon,
 } from "lucide-react";
 
 const Generate = () => {
@@ -305,293 +309,260 @@ const Generate = () => {
         description="Create your AI-powered YouTube thumbnail. Describe your video, choose a style, and get professional thumbnails in seconds."
         url="https://thumbgen.online/generate"
       />
-      <SoftBackdrop />
-      <div className="pt-24 min-h-screen">
-        <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-28 lg:pb-8">
-          {/* Credits indicator */}
-          {user && (
-            <div className="mb-6 flex items-center justify-between bg-white/6 border border-white/10 rounded-xl px-4 py-3">
-              <span className="text-sm text-gray-400">Credits remaining</span>
-              <span className="font-bold text-brand-400">
-                {user.credits} / {user.totalCredits}
-              </span>
-            </div>
-          )}
+      
+      <div className="min-h-screen bg-black/40 pt-24 relative overflow-hidden">
+        {/* Deep ambient glow layer */}
+        <div className="fixed inset-0 pointer-events-none z-[-1]">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-500/10 blur-[150px] rounded-full mix-blend-screen" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-500/5 blur-[150px] rounded-full mix-blend-screen" />
+        </div>
 
-          <div className="grid lg:grid-cols-[400px_1fr] gap-8">
-            {/* LEFT PANEL */}
-            <div className={`space-y-6 ${id && "pointer-events-none"}`}>
-              <div className="p-6 rounded-2xl bg-white/8 border border-white/12 shadow-xl space-y-6">
-                <div>
-                  <h2 className="text-xl font-bold text-zinc-100 mb-1">
-                    Create Your Thumbnail
-                  </h2>
-                  <p className="text-sm text-zinc-400">
-                    Describe your vision and let AI bring it to life
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+          
+          {/* Header Title Section */}
+          <div className="mb-8">
+            <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-3">AI Studio</h1>
+            <p className="text-zinc-400 text-lg max-w-2xl">Shape your vision. Grouped configurations to forge the perfect thumbnail.</p>
+          </div>
+
+          <div className="grid lg:grid-cols-[450px_1fr] xl:grid-cols-[500px_1fr] gap-8 xl:gap-12 relative items-start">
+            
+            {/* ================= LEFT COMMAND CENTER (SCROLLABLE) ================= */}
+            <div className={`space-y-6 ${id ? "pointer-events-none opacity-80" : ""}`}>
+              
+              {/* === CARD 1: CORE CONTENT === */}
+              <div className="p-6 rounded-[24px] bg-white/[0.03] border border-white/10 shadow-2xl backdrop-blur-xl">
+                 <div className="flex items-center gap-3 mb-6">
+                   <div className="p-2 rounded-lg bg-brand-500/20 text-brand-400">
+                     <TypeIcon size={20} />
+                   </div>
+                   <h2 className="text-lg font-bold text-white">Core Concept</h2>
+                 </div>
+
+                 <div className="space-y-5">
+                   <div className="space-y-2">
+                     <label className="block text-sm font-medium text-zinc-300">
+                       Title or Topic <span className="text-red-400 text-xs">*</span>
+                     </label>
+                     <input
+                       type="text"
+                       value={title}
+                       onChange={(e) => {
+                         setTitle(e.target.value);
+                         if (e.target.value.trim()) setTitleError("");
+                       }}
+                       maxLength={100}
+                       placeholder="e.g., 10 Tips for Better Sleep"
+                       className={`w-full px-4 py-3.5 rounded-xl border bg-black/40 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 transition-all shadow-inner ${
+                         titleError
+                           ? "border-red-500 focus:ring-red-500"
+                           : "border-white/10 focus:ring-brand-500 hover:border-white/20"
+                       }`}
+                     />
+                     <div className="flex items-center justify-between">
+                       {titleError ? (
+                         <span className="text-xs text-red-400 flex items-center gap-1"><span>⚠</span> {titleError}</span>
+                       ) : <span />}
+                       <span className="text-xs text-zinc-500">{title.length}/100</span>
+                     </div>
+                   </div>
+
+                   <div className="space-y-2">
+                     <label className="block text-sm font-medium text-zinc-300">
+                       Additional Details <span className="text-zinc-500 text-xs">(optional)</span>
+                     </label>
+                     <textarea
+                       value={additionalDetails}
+                       onChange={(e) => setAdditionalDetails(e.target.value)}
+                       rows={3}
+                       placeholder="Add specific elements, mood, or context..."
+                       className="w-full px-4 py-3.5 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-500 hover:border-white/20 transition-all resize-none shadow-inner"
+                     />
+                   </div>
+                 </div>
+              </div>
+
+              {/* === CARD 2: FORMAT & SIZING === */}
+              <div className="p-6 rounded-[24px] bg-white/[0.03] border border-white/10 shadow-2xl backdrop-blur-xl">
+                 <div className="flex items-center gap-3 mb-6">
+                   <div className="p-2 rounded-lg bg-green-500/20 text-green-400">
+                     <MonitorIcon size={20} />
+                   </div>
+                   <h2 className="text-lg font-bold text-white">Format & Sizing</h2>
+                 </div>
+                 
+                 <div className="space-y-6">
+                   <PlatformSelector value={platform} onChange={handlePlatformChange} />
+                   <ResolutionSelector value={resolution} onChange={setResolution} isPro={!!isPro} />
+                   <AspectRatioSelector value={aspectRatio} onChange={setAspectRatio} />
+                 </div>
+              </div>
+
+              {/* === CARD 3: ART DIRECTION === */}
+              <div className="p-6 rounded-[24px] bg-white/[0.03] border border-white/10 shadow-2xl backdrop-blur-xl">
+                 <div className="flex items-center gap-3 mb-6">
+                   <div className="p-2 rounded-lg bg-purple-500/20 text-purple-400">
+                     <PaletteIcon size={20} />
+                   </div>
+                   <h2 className="text-lg font-bold text-white">Art Direction</h2>
+                 </div>
+                 
+                 <div className="space-y-6">
+                   <StyleSelector value={style} onChange={setStyle} isOpen={styleDropdownOpen} setIsOpen={setStyleDropdownOpen} />
+                   <ColorSchemeSelector value={colorSchemeId} onChange={setColorSchemeId} />
+                 </div>
+              </div>
+
+              {/* === CARD 4: ADVANCED CONTEXT === */}
+              <div className="p-6 rounded-[24px] bg-white/[0.03] border border-white/10 shadow-2xl backdrop-blur-xl">
+                 <div className="flex items-center justify-between mb-6">
+                   <div className="flex items-center gap-3">
+                     <div className="p-2 rounded-lg bg-amber-500/20 text-amber-400">
+                       <ImagePlusIcon size={20} />
+                     </div>
+                     <h2 className="text-lg font-bold text-white">Advanced References</h2>
+                   </div>
+                   {!canUploadImage && (
+                     <span className="text-[10px] uppercase font-bold tracking-wider text-amber-500 bg-amber-500/10 px-2 py-1 rounded">Pro/Creator Only</span>
+                   )}
+                 </div>
+
+                 <div className="space-y-6">
+                   {/* Ref Image Input */}
+                   <div className="space-y-3">
+                     <div className="flex items-center justify-between">
+                       <label className="block text-sm font-medium text-zinc-300">Reference Image<span className="text-zinc-500 text-xs">(optional)</span></label>
+                       {canUploadImage && <span className="text-xs font-semibold text-amber-400">+10 credits</span>}
+                     </div>
+
+                     {canUploadImage ? (
+                       <>
+                         <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                         {referenceImage ? (
+                           <div className="relative group">
+                             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl z-10 flex items-center justify-center">
+                               <button onClick={removeReferenceImage} className="p-2 bg-red-500 hover:bg-red-600 rounded-full transition shadow-lg text-white">
+                                 <XIcon className="size-5" />
+                               </button>
+                             </div>
+                             <img src={referenceImage} alt="Reference" className="w-full h-40 object-cover rounded-xl border border-white/20 shadow-inner" />
+                           </div>
+                         ) : (
+                           <button onClick={() => fileInputRef.current?.click()} className="w-full py-8 rounded-xl border-2 border-dashed border-white/10 hover:border-brand-500/50 bg-black/20 hover:bg-black/40 transition-all flex flex-col items-center gap-3 group">
+                             <UploadIcon className="size-8 text-zinc-500 group-hover:text-brand-400 transition-colors" />
+                             <div className="text-center">
+                               <span className="block text-sm font-medium text-zinc-300">Click to upload photo</span>
+                               <span className="block text-xs text-zinc-500 mt-1">PNG, JPG up to 5MB</span>
+                             </div>
+                           </button>
+                         )}
+                       </>
+                     ) : (
+                       <div className="w-full py-6 rounded-xl border border-white/5 bg-black/20 flex flex-col items-center justify-center gap-2 opacity-50">
+                         <ImageIcon className="size-6 text-zinc-600" />
+                         <span className="text-xs text-zinc-500 px-4 text-center">Upgrade plan to provide image references</span>
+                       </div>
+                     )}
+                   </div>
+
+                   {/* YT Reference Input */}
+                   <div className="space-y-3">
+                     <div className="flex items-center justify-between">
+                       <label className="block text-sm font-medium text-zinc-300">YouTube Context URL<span className="text-zinc-500 text-xs">(optional)</span></label>
+                       {canUploadImage && <span className="text-xs font-semibold text-amber-400">+10 credits</span>}
+                     </div>
+
+                     {canUploadImage ? (
+                       <div className="space-y-3">
+                         <div className="relative group">
+                           <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-zinc-500 group-focus-within:text-brand-400 transition-colors" />
+                           <input
+                             type="text"
+                             value={youtubeUrl}
+                             onChange={(e) => handleYoutubeUrlChange(e.target.value)}
+                             placeholder="https://youtube.com/watch?v=..."
+                             className="w-full pl-11 pr-10 py-3.5 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-zinc-600 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-inner hover:border-white/20 transition-all"
+                           />
+                           {youtubeUrl && (
+                             <button onClick={clearYoutubeUrl} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-white/10 rounded-full transition-colors text-zinc-400 hover:text-white">
+                               <XIcon className="size-4" />
+                             </button>
+                           )}
+                         </div>
+                         {ytThumbnailPreview && (
+                           <div className="rounded-xl overflow-hidden border border-white/10 relative">
+                             <div className="absolute inset-x-0 bottom-0 py-2 bg-gradient-to-t from-black/80 to-transparent">
+                               <p className="text-[11px] font-medium text-center text-zinc-300 drop-shadow">Style Context Sample</p>
+                             </div>
+                             <img src={ytThumbnailPreview} alt="YouTube thumbnail preview" className="w-full h-28 object-cover" />
+                           </div>
+                         )}
+                       </div>
+                     ) : (
+                       <div className="w-full py-4 rounded-xl border border-white/5 bg-black/20 flex items-center justify-center gap-2 opacity-50">
+                         <LinkIcon className="size-4 text-zinc-600" />
+                         <span className="text-xs text-zinc-500 text-center">Upgrade plan for YouTube reference</span>
+                       </div>
+                     )}
+                   </div>
+                 </div>
+              </div>
+
+            </div>
+
+            {/* ================= RIGHT STICKY PREVIEW ================= */}
+            <div className="sticky top-24 pb-8 space-y-6">
+              
+              {/* Credits HUD Header */}
+              {user && (
+                <div className="flex items-center justify-between bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-4 backdrop-blur-xl shadow-lg">
+                  <div className="flex items-center gap-3 text-zinc-300">
+                     <span className="flex size-2 bg-brand-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(61,143,202,0.8)]" /> 
+                     Available Credits
+                  </div>
+                  <span className="font-black text-brand-400 text-lg tabular-nums">
+                    {user.credits} <span className="text-zinc-600 font-medium text-sm">/ {user.totalCredits}</span>
+                  </span>
+                </div>
+              )}
+
+              {/* Interactive Preview Element */}
+              <div className="rounded-[32px] p-2 bg-white/[0.03] border border-white/10 shadow-2xl backdrop-blur-xl">
+                 <div className="rounded-[24px] overflow-hidden bg-black relative">
+                   {/* Preview component nested directly inside the stylized frame */}
+                   <PreviewPanel thumbnail={thumbnail} isLoading={loading} aspectRatio={aspectRatio} />
+                 </div>
+              </div>
+
+              {/* The "Generate" Master CTA */}
+              {!id && (
+                <div className="pt-2">
+                  <button
+                    onClick={handleGenerate}
+                    disabled={loading}
+                    className="w-full overflow-hidden relative group bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed text-white font-black text-xl rounded-2xl px-8 py-5 shadow-[0_0_30px_rgba(61,143,202,0.3)] hover:shadow-[0_0_40px_rgba(61,143,202,0.5)] transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                    <span className="relative z-10 flex items-center justify-center gap-3 tracking-wide">
+                      {loading ? (
+                        resolution === "4k" ? (
+                          <><span>👑</span> Generating Premium...</>
+                        ) : (
+                          <><span>⚡</span> Generating...</>
+                        )
+                      ) : (
+                        <><SparklesIcon size={24} /> GENERATE THUMBNAIL</>
+                      )}
+                    </span>
+                  </button>
+                  <p className="text-center text-sm font-medium text-zinc-500 mt-4 px-4 bg-white/5 py-2 rounded-xl inline-block w-full border border-white/5">
+                    Consumes: <span className="text-brand-400">{creditsCost} credits</span>
+                    {hasReference && <span className="text-zinc-400"> (incl. ref)</span>}
+                    {resolution === "4k" && <span className="text-amber-400"> + 4K Upgrade</span>}
                   </p>
                 </div>
-
-                <div className="space-y-5">
-                  {/* TITLE INPUT */}
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium">
-                      Title or Topic{" "}
-                      <span className="text-red-400 text-xs">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={title}
-                      onChange={(e) => {
-                        setTitle(e.target.value);
-                        if (e.target.value.trim()) setTitleError("");
-                      }}
-                      maxLength={100}
-                      placeholder="e.g., 10 Tips for Better Sleep"
-                      className={`w-full px-4 py-3 rounded-lg border bg-black/20 text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 transition-colors ${
-                        titleError
-                          ? "border-red-500 focus:ring-red-500"
-                          : "border-white/12 focus:ring-brand-500"
-                      }`}
-                    />
-                    <div className="flex items-center justify-between">
-                      {titleError ? (
-                        <span className="text-xs text-red-400 flex items-center gap-1">
-                          <span>⚠</span> {titleError}
-                        </span>
-                      ) : (
-                        <span />
-                      )}
-                      <span className="text-xs text-zinc-400">
-                        {title.length}/100
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* PlatformSelector */}
-                  <PlatformSelector
-                    value={platform}
-                    onChange={handlePlatformChange}
-                  />
-
-                  {/* ResolutionSelector */}
-                  <ResolutionSelector
-                    value={resolution}
-                    onChange={setResolution}
-                    isPro={!!isPro}
-                  />
-
-                  {/* AspectRatioSelector */}
-                  <AspectRatioSelector
-                    value={aspectRatio}
-                    onChange={setAspectRatio}
-                  />
-
-                  {/* StyleSelector */}
-                  <StyleSelector
-                    value={style}
-                    onChange={setStyle}
-                    isOpen={styleDropdownOpen}
-                    setIsOpen={setStyleDropdownOpen}
-                  />
-
-                  {/* ColorSchemeSelector */}
-                  <ColorSchemeSelector
-                    value={colorSchemeId}
-                    onChange={setColorSchemeId}
-                  />
-
-                  {/* DETAILS */}
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium">
-                      Additional Prompts{" "}
-                      <span className="text-zinc-400 text-xs">(optional)</span>
-                    </label>
-                    <textarea
-                      value={additionalDetails}
-                      onChange={(e) => setAdditionalDetails(e.target.value)}
-                      rows={3}
-                      placeholder="Add any specific elements, mood, or style preferences..."
-                      className="w-full px-4 py-3 rounded-lg border border-white/10 bg-white/6  text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
-                    />
-                  </div>
-
-                  {/* Reference Image Upload - Only for Creator and Pro plans */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <label className="block text-sm font-medium">
-                        Reference Image{" "}
-                        <span className="text-zinc-400 text-xs">
-                          {canUploadImage
-                            ? "(optional)"
-                            : "(Creator & Pro only)"}
-                        </span>
-                      </label>
-                      {canUploadImage && (
-                        <span className="text-xs text-amber-400">
-                          +10 credits
-                        </span>
-                      )}
-                    </div>
-
-                    {canUploadImage ? (
-                      <>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageUpload}
-                          className="hidden"
-                        />
-
-                        {referenceImage ? (
-                          <div className="relative">
-                            <img
-                              src={referenceImage}
-                              alt="Reference"
-                              className="w-full h-32 object-cover rounded-lg border border-white/10"
-                            />
-                            <button
-                              onClick={removeReferenceImage}
-                              className="absolute top-2 right-2 p-1 bg-red-500 hover:bg-red-600 rounded-full transition"
-                            >
-                              <XIcon className="size-4" />
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => fileInputRef.current?.click()}
-                            className="w-full py-6 rounded-lg border-2 border-dashed border-white/20 hover:border-brand-500/50 bg-white/5 hover:bg-white/8 transition flex flex-col items-center gap-2"
-                          >
-                            <UploadIcon className="size-6 text-zinc-400" />
-                            <span className="text-sm text-zinc-400">
-                              Upload your photo to include in thumbnail
-                            </span>
-                            <span className="text-xs text-zinc-500">
-                              PNG, JPG up to 5MB
-                            </span>
-                          </button>
-                        )}
-                      </>
-                    ) : (
-                      <div className="w-full py-4 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center gap-2 opacity-60">
-                        <ImageIcon className="size-5 text-zinc-500" />
-                        <span className="text-sm text-zinc-500">
-                          Upgrade to Creator or Pro to upload reference images
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Reference YouTube URL - Creator & Pro */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <label className="block text-sm font-medium">
-                        Reference YouTube URL{" "}
-                        <span className="text-zinc-400 text-xs">
-                          {canUploadImage
-                            ? "(optional)"
-                            : "(Creator & Pro only)"}
-                        </span>
-                      </label>
-                      {canUploadImage && (
-                        <span className="text-xs text-amber-400">
-                          +10 credits
-                        </span>
-                      )}
-                    </div>
-
-                    {canUploadImage ? (
-                      <div className="space-y-2">
-                        <div className="relative">
-                          <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
-                          <input
-                            type="text"
-                            value={youtubeUrl}
-                            onChange={(e) => handleYoutubeUrlChange(e.target.value)}
-                            placeholder="https://youtube.com/watch?v=..."
-                            className="w-full pl-9 pr-8 py-2.5 rounded-lg border border-white/12 bg-black/20 text-zinc-100 placeholder:text-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-                          />
-                          {youtubeUrl && (
-                            <button
-                              onClick={clearYoutubeUrl}
-                              className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 hover:bg-white/10 rounded"
-                            >
-                              <XIcon className="size-3.5 text-zinc-400" />
-                            </button>
-                          )}
-                        </div>
-                        {ytThumbnailPreview && (
-                          <div className="rounded-lg overflow-hidden border border-white/10">
-                            <img
-                              src={ytThumbnailPreview}
-                              alt="YouTube thumbnail preview"
-                              className="w-full h-24 object-cover"
-                            />
-                            <p className="text-[10px] text-zinc-500 px-2 py-1 bg-white/5">
-                              Will copy this thumbnail's style
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="w-full py-3 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center gap-2 opacity-60">
-                        <LinkIcon className="size-4 text-zinc-500" />
-                        <span className="text-xs text-zinc-500">
-                          Upgrade to Creator or Pro for YouTube URL reference
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* BUTTON */}
-                {!id && (
-                  <div className="space-y-2">
-                    <button
-                      onClick={handleGenerate}
-                      disabled={loading}
-                      className="text-[15px] w-full py-3.5 rounded-xl font-medium bg-linear-to-b from-brand-500 to-brand-600 hover:from-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {loading
-                        ? resolution === "4k"
-                          ? "👑 Premium generating... ~30–45s"
-                          : "⚡ Generating..."
-                        : "Generate Thumbnail"}
-                    </button>
-                    <p className="text-center text-xs text-zinc-500">
-                      This will use{" "}
-                      <span className="text-brand-400 font-medium">
-                        {creditsCost} credits
-                      </span>
-                      {hasReference && (
-                        <span className="text-zinc-600">
-                          {" "}
-                          (includes reference)
-                        </span>
-                      )}
-                      {resolution === "4k" && (
-                        <span className="text-amber-400/70">
-                          {" "}
-                          · 4K Premium Quality
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-            {/* RIGHT PANEL */}
-            <div>
-              <div className="p-6 rounded-2xl bg-white/8 border border-white/10 shadow-xl">
-                <h2 className="text-lg font-semibold text-zinc-100 mb-4">
-                  Preview
-                </h2>
-                <PreviewPanel
-                  thumbnail={thumbnail}
-                  isLoading={loading}
-                  aspectRatio={aspectRatio}
-                />
-              </div>
+              )}
+              
             </div>
           </div>
         </main>
