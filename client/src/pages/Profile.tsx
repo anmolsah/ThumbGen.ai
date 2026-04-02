@@ -57,7 +57,7 @@ const PLAN_CARDS = [
     id: "starter" as const,
     name: "Starter",
     tagline: "Just getting started",
-    price: "$9",
+    price: "$6",
     icon: SparklesIcon,
     iconColor: "text-gray-400",
     iconBg: "bg-gray-800",
@@ -95,7 +95,7 @@ const PLAN_CARDS = [
     btn: "bg-amber-600 hover:bg-amber-700",
     badge: "BEST VALUE",
     badgeStyle: "bg-amber-500 text-amber-950",
-    features: ["800 Credits", "160 Thumbnails", "Ultra 4K Quality", "No Watermark"],
+    features: ["400 Credits", "80 Thumbnails", "Ultra 4K Quality", "No Watermark"],
     featureFlags: [true, true, true, true],
   },
 ];

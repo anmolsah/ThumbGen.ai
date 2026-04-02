@@ -8,6 +8,7 @@ import thumb1 from "../assets/thumb_1.jpg";
 import thumb2 from "../assets/thumb_2.jpg";
 import thumb3 from "../assets/thumb_3.jpg";
 import thumb4 from "../assets/thumb_4.jpg";
+import thumb12 from "../assets/thumb12.jpg";
 import thumb5 from "../assets/thumb_5.jpg";
 import thumb6 from "../assets/thumb_6.jpg";
 import thumb7 from "../assets/thumb_7.jpg";
@@ -15,6 +16,7 @@ import thumb8 from "../assets/thumb_8.png";
 import thumb9 from "../assets/thumb_9.png";
 import thumb10 from "../assets/thumb_10.png";
 import thumb11 from "../assets/thumb_11.png";
+
 
 interface ShowcaseThumbnail {
   _id: string;
@@ -91,6 +93,12 @@ const thumbnails: ShowcaseThumbnail[] = [
     image_url: thumb11,
     style: "Illustrated",
   },
+  {
+     _id: "12",
+    title: "Indias Highest Jump!",
+    image_url: thumb12,
+    style: "Illustrated",
+  }
 ];
 
 export default function ShowcaseSection() {

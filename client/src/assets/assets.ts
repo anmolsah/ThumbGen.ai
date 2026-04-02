@@ -9,11 +9,9 @@ import thumb_8 from "./thumb_8.png";
 import thumb_9 from "./thumb_9.png";
 import thumb_10 from "./thumb_10.png";
 import thumb_11 from "./thumb_11.png";
+import thumb_12 from "./thumb12.jpg";
 
-// import thumb_8 from "./1.png";
-// import thumb_9 from "./2.png";
-// import thumb_10 from "./3.jpg";
-// import thumb_11 from "./5.png";
+
 
 export const aspectRatios = ["16:9", "1:1", "9:16", "4:5", "2:3", "1.91:1"];
 export type AspectRatio = (typeof aspectRatios)[number];
