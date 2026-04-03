@@ -56,25 +56,19 @@ export const generateThumbnail = async (req: Request, res: Response) => {
 
     // Check if reference image is allowed
     const canUseReferenceImage = user.plan === "creator" || user.plan === "pro";
-    // If YouTube URL provided, fetch the thumbnail and use as reference
-    let finalReferenceImage = reference_image;
-    if (youtube_reference_url && !finalReferenceImage) {
-      try {
-        const videoId = extractYouTubeVideoId(youtube_reference_url);
-        if (videoId) {
-          const ytThumbUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-          const response = await fetch(ytThumbUrl);
-          if (response.ok) {
-            const buffer = Buffer.from(await response.arrayBuffer());
-            finalReferenceImage = `data:image/jpeg;base64,${buffer.toString("base64")}`;
-          }
-        }
-      } catch (err) {
-        console.log("Failed to fetch YouTube thumbnail:", err);
-      }
-    }
 
-    const usingReferenceImage = finalReferenceImage && canUseReferenceImage;
+    // ── 2.4: YouTube fetch moved to the worker ────────────────────────────────
+    // Previously the API blocked here waiting for YouTube's CDN (1–3s).
+    // Now we pass the raw URL to the queue; the worker fetches it async,
+    // meaning this endpoint replies immediately regardless of YouTube latency.
+    // The raw reference_image (from direct upload) is still handled here.
+    const finalReferenceImage = reference_image || undefined;
+
+    // If a youtube URL is provided + plan eligible, that counts as a reference
+    const hasYoutubeReference =
+      youtube_reference_url && canUseReferenceImage;
+    const usingReferenceImage =
+      (finalReferenceImage && canUseReferenceImage) || hasYoutubeReference;
     const creditsRequired = usingReferenceImage
       ? CREDITS_WITH_REFERENCE_IMAGE
       : CREDITS_PER_THUMBNAIL;

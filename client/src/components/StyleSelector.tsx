@@ -35,7 +35,7 @@ const StyleSelector = ({ value, onChange, isOpen, setIsOpen }: { value: Thumbnai
             </button>
 
             {isOpen && (
-                <div className='absolute bottom-0 z-50 mt-1 w-full rounded-md border border-white/12 bg-black/20 backdrop-blur-3xl shadow-lg'>
+                <div className='absolute bottom-full mb-1 left-0 z-50 w-full rounded-xl border border-zinc-700 bg-zinc-900 shadow-2xl overflow-hidden'>
                     {thumbnailStyles.map((style) => (
                         <button
                             key={style}
@@ -44,11 +44,11 @@ const StyleSelector = ({ value, onChange, isOpen, setIsOpen }: { value: Thumbnai
                                 onChange(style);
                                 setIsOpen(false);
                             }}
-                            className='flex w-full items-start gap-3 px-4 py-3 text-left transition hover:bg-black/30'
+                            className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-zinc-800 ${value === style ? 'bg-zinc-800/60' : ''}`}
                         >
-                            <div className='mt-0.5'>{styleIcons[style]}</div>
+                            <div className='mt-0.5 text-zinc-400'>{styleIcons[style]}</div>
                             <div>
-                                <p className='font-medium'>{style}</p>
+                                <p className='font-medium text-zinc-100'>{style}</p>
                                 <p className='text-xs text-zinc-400'>{styleDescriptions[style]}</p>
                             </div>
                         </button>

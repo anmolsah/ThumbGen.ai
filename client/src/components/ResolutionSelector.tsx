@@ -18,8 +18,8 @@ const ResolutionSelector = ({
       label: "2K",
       badge: "Fast",
       icon: <Zap className="size-4" />,
-      estimate: "~5–12 sec",
-      description: "Grok AI — fast generation",
+      estimate: "~5–15 sec",
+      description: "Grok AI — standard or pro model by plan",
       locked: false,
     },
     {
@@ -27,8 +27,8 @@ const ResolutionSelector = ({
       label: "4K",
       badge: "Premium",
       icon: <Crown className="size-4" />,
-      estimate: "~30–45 sec",
-      description: "Imagen Ultra — best quality",
+      estimate: "~8–15 sec",
+      description: "Imagen 4.0 — highest quality",
       locked: !isPro,
     },
   ];

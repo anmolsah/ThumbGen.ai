@@ -189,6 +189,25 @@ const Generate = () => {
     }
   };
 
+  // Reset every field to defaults and navigate to the blank generate page
+  const handleNewGenerate = () => {
+    setTitle("");
+    setTitleError("");
+    setAdditionalDetails("");
+    setStyle("Bold & Graphic");
+    setAspectRatio("16:9");
+    setColorSchemeId(colorSchemes[0].id);
+    setPlatform("youtube");
+    setResolution("2k");
+    setReferenceImage(null);
+    setYoutubeUrl("");
+    setYtThumbnailPreview(null);
+    setThumbnail(null);
+    setLoading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    navigate("/generate");
+  };
+
   const fetchThumbnail = async () => {
     try {
       const { data } = await api.get(`/api/user/thumbnail/${id}`);
@@ -223,16 +242,100 @@ const Generate = () => {
   };
 
   useEffect(() => {
-    if (isLoggedIn && id) {
-      fetchThumbnail();
-    }
-    if (id && loading && isLoggedIn) {
-      const interval = setInterval(() => {
-        fetchThumbnail();
-      }, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [id, loading, isLoggedIn]);
+    if (!isLoggedIn || !id) return;
+
+    // Populate the form fields from the existing thumbnail record
+    fetchThumbnail();
+
+    const apiBase =
+      import.meta.env.VITE_BASE_URL ||
+      (typeof window !== "undefined" && window.location.origin.includes("localhost")
+        ? "http://localhost:3000"
+        : "");
+
+    // ── SSE connection ────────────────────────────────────────────────────────
+    const evtSource = new EventSource(
+      `${apiBase}/api/sse/thumbnail/${id}`,
+      { withCredentials: true }
+    );
+
+    // Track whether SSE already delivered a result so we don't start a
+    // redundant fallback interval when the server legitimately closes the
+    // stream (which also fires the native onerror event).
+    let completed = false;
+    let fallbackInterval: ReturnType<typeof setInterval> | null = null;
+
+    const stopFallback = () => {
+      if (fallbackInterval) {
+        clearInterval(fallbackInterval);
+        fallbackInterval = null;
+      }
+    };
+
+    // Start polling every 4 seconds as a fallback (SSE failure / timeout)
+    const startFallback = () => {
+      if (fallbackInterval || completed) return;
+      fallbackInterval = setInterval(async () => {
+        try {
+          const { data } = await api.get(`/api/user/thumbnail/${id}`);
+          const thumb = data?.thumbnail;
+          if (thumb && !thumb.isGenerating && thumb.image_url) {
+            setThumbnail(thumb as IThumbnail);
+            setLoading(false);
+            completed = true;
+            stopFallback();
+            // Refresh credits
+            api.get("/api/auth/verify").then(({ data: d }) => {
+              if (d?.user) setUser(d.user);
+            }).catch(() => {});
+          }
+        } catch { /* network error — keep retrying */ }
+      }, 4000);
+    };
+
+    evtSource.addEventListener("complete", (e) => {
+      completed = true;
+      stopFallback();
+      try {
+        const payload = JSON.parse(e.data);
+        if (payload.thumbnail) {
+          setThumbnail(payload.thumbnail as IThumbnail);
+          setLoading(false);
+          api.get("/api/auth/verify").then(({ data }) => {
+            if (data?.user) setUser(data.user);
+          }).catch(() => {});
+        }
+      } catch {}
+      evtSource.close();
+    });
+
+    // Server sent timeout (job > 120s) — keep polling
+    evtSource.addEventListener("timeout", () => {
+      evtSource.close();
+      startFallback();
+    });
+
+    // Server sent error event — keep polling
+    evtSource.addEventListener("error_event", () => {
+      evtSource.close();
+      startFallback();
+    });
+
+    // Native EventSource onerror fires both on real errors AND when the server
+    // closes the connection after sending "complete". Guard with `completed`.
+    evtSource.onerror = () => {
+      if (!completed) {
+        evtSource.close();
+        startFallback();
+      }
+    };
+
+    return () => {
+      completed = true;
+      evtSource.close();
+      stopFallback();
+    };
+  }, [id, isLoggedIn]);
 
   useEffect(() => {
     if (!id && thumbnail) {
@@ -534,7 +637,9 @@ const Generate = () => {
                  </div>
               </div>
 
-              {/* The "Generate" Master CTA */}
+              {/* ── CTA area ── three states ─────────────────────────── */}
+
+              {/* State 1: blank form — show the master Generate button */}
               {!id && (
                 <div className="pt-2">
                   <button
@@ -562,6 +667,39 @@ const Generate = () => {
                   </p>
                 </div>
               )}
+
+              {/* State 2: thumbnail done — Regenerate + New Generate */}
+              {id && !loading && thumbnail && !thumbnail.isGenerating && thumbnail.image_url && (
+                <div className="pt-2 space-y-3">
+                  {/* Regenerate — same settings, new job */}
+                  <button
+                    onClick={handleGenerate}
+                    className="w-full overflow-hidden relative group bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-bold text-base rounded-2xl px-8 py-4 shadow-[0_0_30px_rgba(61,143,202,0.25)] hover:shadow-[0_0_40px_rgba(61,143,202,0.45)] transition-all duration-300 hover:-translate-y-0.5"
+                  >
+                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                    <span className="relative z-10 flex items-center justify-center gap-2.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                      Regenerate
+                    </span>
+                  </button>
+
+                  {/* New Generate — clear everything */}
+                  <button
+                    onClick={handleNewGenerate}
+                    className="w-full relative group border border-white/15 hover:border-white/30 bg-white/[0.04] hover:bg-white/[0.08] text-zinc-200 font-bold text-base rounded-2xl px-8 py-4 transition-all duration-200 hover:-translate-y-0.5"
+                  >
+                    <span className="flex items-center justify-center gap-2.5">
+                      <SparklesIcon size={18} />
+                      New Generate
+                    </span>
+                  </button>
+
+                  <p className="text-center text-xs text-zinc-600 pt-1">
+                    Regenerate uses <span className="text-brand-400">{creditsCost} credits</span> with the same settings
+                  </p>
+                </div>
+              )}
+
               
             </div>
           </div>

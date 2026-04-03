@@ -6,6 +6,7 @@
     "scripts": {
         "start": "tsx server.ts",
         "server": "nodemon --exec tsx server.ts",
+        "worker": "tsx workerProcess.ts",
         "build": "tsc"
     },
     "keywords": [],
@@ -20,6 +21,7 @@
         "cashfree-pg": "^5.1.0",
         "cloudinary": "^2.8.0",
         "connect-mongo": "^6.0.0",
+        "connect-redis": "^9.0.0",
         "cors": "^2.8.5",
         "dodopayments": "^2.25.1",
         "dotenv": "^17.2.3",
@@ -28,6 +30,7 @@
         "ioredis": "^5.8.2",
         "mongoose": "^9.0.2",
         "openai": "^6.33.0",
+        "redis": "^5.11.0",
         "sharp": "^0.34.5",
         "standardwebhooks": "^1.0.0"
     },
