@@ -16,6 +16,11 @@ import thumb8 from "../assets/thumb_8.png";
 import thumb9 from "../assets/thumb_9.png";
 import thumb10 from "../assets/thumb_10.png";
 import thumb11 from "../assets/thumb_11.png";
+import thumb_13 from "../assets/thumb_13.png";
+import thumb_14 from "../assets/thumb_14.jpg";
+import thumb_15 from "../assets/thumb_15.webp";
+import thumb_16 from "../assets/thumb_16.jpg"
+
 
 
 interface ShowcaseThumbnail {
@@ -97,6 +102,30 @@ const thumbnails: ShowcaseThumbnail[] = [
      _id: "12",
     title: "Indias Highest Jump!",
     image_url: thumb12,
+    style: "Illustrated",
+  },
+  {
+    _id: "13",
+    title: "Indias Highest Jump!",
+    image_url: thumb_13,
+    style: "Illustrated",
+  },
+  {
+    _id: "14",
+    title: "Indias Highest Jump!",
+    image_url: thumb_14,
+    style: "Illustrated",
+  },
+  {
+    _id: "15",
+    title: "Indias Highest Jump!",
+    image_url: thumb_15,
+    style: "Illustrated",
+  },
+  {
+    _id: "16",
+    title: "Indias Highest Jump!",
+    image_url: thumb_16,
     style: "Illustrated",
   }
 ];
