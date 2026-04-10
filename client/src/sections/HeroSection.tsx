@@ -21,11 +21,12 @@ import thumb_12 from "../assets/thumb12.jpg";
 import thumb_13 from "../assets/thumb_13.png";
 import thumb_14 from "../assets/thumb_14.jpg";
 import thumb_15 from "../assets/thumb_15.webp";
-import thumb_16 from "../assets/thumb_16.jpg"
+import thumb_16 from "../assets/thumb_16.jpg";
+import thumb_17 from "../assets/thumb_17.jpeg";
 
 const row1 = [thumb_1, thumb_2, thumb_3, thumb_4, thumb_5, thumb_6,thumb_13,thumb_16];
 const row2 = [thumb_7, thumb_8, thumb_9, thumb_10, thumb_11, thumb_12,thumb_14];
-const row3 = [thumb_6, thumb_5, thumb_2, thumb_1, thumb_4, thumb_3,thumb_15]; // Shuffled
+const row3 = [thumb_6, thumb_5, thumb_2, thumb_1, thumb_4, thumb_3,thumb_15,thumb_17]; // Shuffled
 
 export default function HeroSection() {
   const navigate = useNavigate();

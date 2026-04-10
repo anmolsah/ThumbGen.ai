@@ -20,6 +20,7 @@ import thumb_13 from "../assets/thumb_13.png";
 import thumb_14 from "../assets/thumb_14.jpg";
 import thumb_15 from "../assets/thumb_15.webp";
 import thumb_16 from "../assets/thumb_16.jpg"
+import thumb_17 from "../assets/thumb_17.jpeg"
 
 
 
@@ -32,6 +33,12 @@ interface ShowcaseThumbnail {
 
 // Showcase thumbnails from local assets
 const thumbnails: ShowcaseThumbnail[] = [
+  {
+    _id: "1",
+    title: "10 Tips for Better Sleep",
+    image_url: thumb_17,
+    style: "Bold & Graphic",
+  },
   {
     _id: "1",
     title: "10 Tips for Better Sleep",
