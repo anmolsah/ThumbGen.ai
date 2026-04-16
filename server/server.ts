@@ -66,10 +66,18 @@ app.use(
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
     },
-    // ── 2.2: Sessions now stored in Redis instead of MongoDB ─────────────────
+    // ── 2.2: Sessions stored in Redis ────────────────────────────────────────
     // Redis session reads are ~0.1ms vs 5–20ms for MongoDB.
-    // This is a free 10–50x speedup for every authenticated request.
-    store: new RedisStore({ client: redisSessionClient }),
+    // ttl: explicit 7-day TTL (seconds) — avoids the store computing it on
+    //      every request from cookie.maxAge, saving a small but constant overhead.
+    // disableTouch: true — stops the store issuing a Redis EXPIRE command on
+    //      every single authenticated request just to slide the TTL window.
+    //      Session expiry is still enforced; we just don't extend it each request.
+    store: new RedisStore({
+      client: redisSessionClient,
+      ttl: 60 * 60 * 24 * 7,   // 7 days in seconds
+      disableTouch: true,        // no EXPIRE on every request → saves ~1 op/request
+    }),
   })
 );
 

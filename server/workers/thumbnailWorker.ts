@@ -355,7 +355,19 @@ const thumbnailWorker = new Worker<ThumbnailJobData>(
   processThumbnailJob,
   {
     connection: redisConnection,
-    concurrency: 5, // Process up to 5 jobs simultaneously
+    concurrency: 5,
+    // ── Polling / heartbeat tuning — reduces idle Redis ops significantly ──
+    // drainDelay: seconds to wait before re-polling when queue is empty.
+    // Default is 5 — raising to 10 halves idle BRPOPLPUSH ops.
+    drainDelay: 10,
+    // stalledInterval: how often (ms) to check for stalled jobs.
+    // Default 30 000 — raising to 60 000 halves the stall-check Lua scripts.
+    stalledInterval: 60_000,
+    // lockRenewTime: how often (ms) to heartbeat the job lock.
+    // Default is lockDuration/2 = 15 000 — raising to 20 000 saves ~25% lock heartbeats.
+    // AI jobs run 10–30s so 20s renew is well within the 30s lockDuration.
+    lockRenewTime: 20_000,
+    lockDuration: 30_000,
   }
 );
 
