@@ -15,9 +15,10 @@ import type { ThumbnailJobData } from "../queues/thumbnailQueue.js";
 // ── 2.3: Dedicated Redis publisher for SSE notifications ─────────────────────
 // Must be a separate client — the BullMQ redisConnection is owned by the
 // Worker and cannot be used for pub/sub simultaneously.
+const isTLS = (process.env.REDIS_URL || "").startsWith("rediss://");
 const publisher = new Redis(
   process.env.REDIS_URL || "redis://localhost:6379",
-  { maxRetriesPerRequest: null }
+  { maxRetriesPerRequest: null, ...(isTLS && { tls: {} }) }
 );
 // Suppress unhandled error events — ioredis auto-reconnects, worker must not crash
 publisher.on("error", (err) =>

@@ -50,9 +50,10 @@ SSERouter.get("/thumbnail/:id", async (req: Request, res: Response) => {
   if (alreadyDone) return;
 
   // ── Slow path: subscribe to Redis pub/sub ─────────────────────────────────
+  const isTLS = (process.env.REDIS_URL || "").startsWith("rediss://");
   const subscriber = new Redis(
     process.env.REDIS_URL || "redis://localhost:6379",
-    { maxRetriesPerRequest: null }
+    { maxRetriesPerRequest: null, ...(isTLS && { tls: {} }) }
   );
 
   // Suppress unhandled error events — connection issues are non-fatal here
