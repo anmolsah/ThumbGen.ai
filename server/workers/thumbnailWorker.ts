@@ -106,8 +106,8 @@ const generateWithGrok = async (
 ) => {
   const model =
     userPlan === "creator" || userPlan === "pro"
-      ? "grok-imagine-image-pro"   // higher quality for paid plans
-      : "grok-imagine-image";      // standard for starter
+      ? "grok-imagine-image-quality"   // higher quality for paid plans
+      : "grok-imagine-image-quality";      // standard for starter
 
   console.log(`Using Grok model: ${model} (plan: ${userPlan})`);
 
@@ -208,9 +208,8 @@ const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
     const usingReferenceImage = reference_image && canUseReferenceImage;
 
     // Build prompt
-    let prompt = `Create a ${
-      stylePrompts[style] || stylePrompts["Bold & Graphic"]
-    } for: "${title}"`;
+    let prompt = `Create a ${stylePrompts[style] || stylePrompts["Bold & Graphic"]
+      } for: "${title}"`;
 
     if (color_scheme && colorSchemeDescriptions[color_scheme]) {
       prompt += ` Use a ${colorSchemeDescriptions[color_scheme]} color scheme.`;
