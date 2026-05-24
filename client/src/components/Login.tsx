@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import SoftBackdrop from "./SoftBackdrop";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, EyeIcon, EyeOffIcon } from "lucide-react";
 
 const Login = () => {
   const [state, setState] = useState<"login" | "register" | "otp">("login");
@@ -10,6 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [otpValues, setOtpValues] = useState<string[]>([
     "",
     "",
@@ -296,7 +297,7 @@ const Login = () => {
               />
             </div>
 
-            <div className="flex items-center mt-4 w-full bg-white/5 ring-2 ring-white/10 focus-within:ring-brand-500/60 h-12 rounded-full overflow-hidden pl-6 gap-2 transition-all">
+            <div className="flex items-center mt-4 w-full bg-white/5 ring-2 ring-white/10 focus-within:ring-brand-500/60 h-12 rounded-full overflow-hidden pl-6 pr-5 gap-2 transition-all">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="14"
@@ -304,7 +305,7 @@ const Login = () => {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                className="text-white/75"
+                className="text-white/75 shrink-0"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -313,7 +314,7 @@ const Login = () => {
                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder="Password"
                 className="w-full bg-transparent text-white placeholder-white/60 border-none outline-none"
@@ -321,6 +322,17 @@ const Login = () => {
                 onChange={handleChange}
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-white/60 hover:text-white transition-colors shrink-0 outline-none"
+              >
+                {showPassword ? (
+                  <EyeOffIcon className="size-4" />
+                ) : (
+                  <EyeIcon className="size-4" />
+                )}
+              </button>
             </div>
 
             {state === "login" && (
