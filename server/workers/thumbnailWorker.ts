@@ -5,6 +5,7 @@ import Thumbnail from "../models/Thumbnail.js";
 import User from "../models/User.js";
 import ai from "../configs/ai.js";
 import xai from "../configs/xai.js";
+import openRouter from "../configs/openRouter.js";
 import { PLATFORM_CONFIG } from "../configs/platformConfig.js";
 import { v2 as cloudinary } from "cloudinary";
 import sharp from "sharp";
@@ -127,27 +128,44 @@ const generateWithGrok = async (
   return response.data[0].b64_json;
 };
 
-// ── 4K generation — Google Imagen 4.0 (standard) ─────────────────────────────
-// Switched from imagen-4.0-ultra-generate-001 → imagen-4.0-generate-001.
-// Ultra takes 30–60s and produces imperceptibly different results for thumbnails.
-// Standard is 3–5× faster (~8–15s) at the same effective output quality.
-const generateWithImagen = async (
+// ── 4K generation — OpenRouter (google/gemini-3.1-flash-image-preview) ─────────────
+const generateWithOpenRouter = async (
   prompt: string,
   aspectRatio: string
 ) => {
-  console.log("Using Google Imagen 4.0 (standard)");
+  console.log("Using OpenRouter (google/gemini-3.1-flash-image-preview)");
 
-  const response = await ai.models.generateImages({
-    model: "imagen-4.0-generate-001",
-    prompt,
-    config: { numberOfImages: 1, aspectRatio: aspectRatio || "16:9" },
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "google/gemini-3.1-flash-image-preview",
+      messages: [{ role: "user", content: prompt }],
+      modalities: ["image", "text"],
+    }),
   });
 
-  if (!response?.generatedImages?.[0]?.image?.imageBytes) {
-    throw new Error("Failed to generate image with Imagen");
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`OpenRouter API error: ${response.status} - ${errText}`);
   }
 
-  return response.generatedImages[0].image.imageBytes;
+  const data = await response.json();
+  const imageObj = data?.choices?.[0]?.message?.images?.[0];
+
+  if (!imageObj?.image_url?.url) {
+    console.error("OpenRouter response did not contain an image:", JSON.stringify(data, null, 2));
+    throw new Error("Failed to generate image with OpenRouter: No image returned");
+  }
+
+  const dataUrl = imageObj.image_url.url;
+  // Strip the 'data:image/jpeg;base64,' or similar prefix if present
+  const base64Data = dataUrl.includes("base64,") ? dataUrl.split("base64,")[1] : dataUrl;
+
+  return base64Data;
 };
 
 // ── 2.4: YouTube thumbnail fetch helper (runs inside the worker, not the API) ─
@@ -276,8 +294,8 @@ const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
       if (!imageData) throw new Error("Failed to generate image");
       imageBase64 = imageData;
     } else if (resolution === "4k") {
-      // Premium 4K — Imagen 4.0 standard (3–5× faster than Ultra)
-      imageBase64 = await generateWithImagen(prompt, aspect_ratio);
+      // Premium 4K — OpenRouter
+      imageBase64 = await generateWithOpenRouter(prompt, aspect_ratio);
     } else {
       // Fast 2K — Grok (model chosen by plan)
       imageBase64 = await generateWithGrok(prompt, aspect_ratio, userPlan);
