@@ -5,7 +5,7 @@ export const pricingData: IPricing[] = [
     name: "Starter Plan",
     price: 6,
     period: "one-time",
-    features: ["25 Credits", "5 Thumbnails", "Ultra 2K Quality", "Watermarked"],
+    features: ["25 Credits", "Up to 5 thumbnails", "Ultra 2K Quality", "Watermarked"],
     mostPopular: false,
   },
   {
@@ -14,7 +14,7 @@ export const pricingData: IPricing[] = [
     period: "one-time",
     features: [
       "200 Credits",
-      "40 Thumbnails",
+      "Up to 40 thumbnails",
       "Ultra 4K Quality",
       "No Watermark",
       "Image Referencing",
@@ -27,7 +27,7 @@ export const pricingData: IPricing[] = [
     period: "one-time",
     features: [
       "400 Credits",
-      "80 Thumbnails",
+      "Up to 80 thumbnails",
       "Ultra 4K Quality",
       "No Watermark",
       "Image Referencing",
