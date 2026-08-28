@@ -29,6 +29,8 @@ export interface IThumbnail extends Document {
   user_prompt?: string;
   isGenerating?: boolean;
   error?: string;
+  editedFrom?: string;
+  edit_instructions?: string;
   // createdAt and updatedAt are auto-managed by { timestamps: true }
 }
 
@@ -106,6 +108,8 @@ const ThumbnailSchema = new mongoose.Schema<IThumbnail>(
     user_prompt: { type: String },
     isGenerating: { type: Boolean, default: true },
     error: { type: String },
+    editedFrom: { type: String, ref: "Thumbnail" },
+    edit_instructions: { type: String },
   },
   {
     // 4.2 — auto-manages createdAt & updatedAt; fixes the "Invalid Date" bug

@@ -106,6 +106,8 @@ export interface IThumbnail {
   prompt_used?: string;
   user_prompt?: string;
   isGenerating?: boolean;
+  editedFrom?: string;
+  edit_instructions?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

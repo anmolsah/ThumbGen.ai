@@ -222,8 +222,105 @@ const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
   );
 
   try {
+    // ── EDIT JOB: source image + edit instructions ──────────────────────────
+    if (job.data.source_image_url && job.data.edit_instructions) {
+      console.log(`Worker: processing EDIT job for thumbnail ${thumbnailId}`);
+
+      // Fetch the source image from Cloudinary
+      const sourceResponse = await fetch(job.data.source_image_url);
+      if (!sourceResponse.ok) {
+        throw new Error("Failed to fetch source thumbnail image for editing");
+      }
+      const sourceBuffer = Buffer.from(await sourceResponse.arrayBuffer());
+      const sourceBase64 = sourceBuffer.toString("base64");
+
+      // Determine mime type from URL or default to webp (Cloudinary serves webp)
+      const sourceUrl = job.data.source_image_url;
+      const sourceMimeType = sourceUrl.includes(".webp")
+        ? "image/webp"
+        : sourceUrl.includes(".png")
+        ? "image/png"
+        : "image/jpeg";
+
+      // Build edit prompt
+      const editPrompt = `Edit this thumbnail image based on the following instructions: "${job.data.edit_instructions}". Keep the overall composition, style, colors, and theme of the original thumbnail intact, but apply the requested changes precisely. The result should look like a natural edit of the original, not a completely new image.`;
+
+      const geminiResponse: any = await ai.models.generateContent({
+        model: "gemini-3-pro-image-preview",
+        contents: [
+          {
+            role: "user",
+            parts: [
+              { inlineData: { mimeType: sourceMimeType, data: sourceBase64 } },
+              { text: editPrompt },
+            ],
+          },
+        ],
+        config: { responseModalities: ["TEXT", "IMAGE"] },
+      });
+
+      if (!geminiResponse?.candidates?.[0]?.content?.parts) {
+        throw new Error("Failed to edit image with Gemini");
+      }
+
+      const editParts = geminiResponse.candidates[0].content.parts;
+      let editImageData: string | null = null;
+      for (const part of editParts) {
+        if (part.inlineData?.data) {
+          editImageData = part.inlineData.data;
+          break;
+        }
+      }
+      if (!editImageData) throw new Error("Gemini did not return an edited image");
+
+      let finalBuffer: Buffer = Buffer.from(editImageData, "base64");
+
+      // Add watermark for starter plan
+      if (userPlan === "starter") {
+        finalBuffer = await addWatermark(finalBuffer);
+      }
+
+      // Upload to Cloudinary
+      const webpBuffer = await sharp(finalBuffer).webp({ quality: 90 }).toBuffer();
+      const uploadResult = await new Promise<{ secure_url: string }>(
+        (resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { resource_type: "image", format: "webp", folder: "thumbgen" },
+            (err, result) => {
+              if (err || !result) return reject(err ?? new Error("Cloudinary upload failed"));
+              resolve(result as { secure_url: string });
+            }
+          );
+          stream.end(webpBuffer);
+        }
+      );
+
+      // Update thumbnail in DB
+      const completedThumbnail = await Thumbnail.findByIdAndUpdate(
+        thumbnailId,
+        { image_url: uploadResult.secure_url, isGenerating: false },
+        { new: true }
+      );
+
+      // Deduct credits
+      await User.findByIdAndUpdate(userId, {
+        $inc: { credits: -creditsRequired },
+      });
+
+      // Notify SSE subscribers
+      await publisher.publish(
+        `thumbnail:complete:${thumbnailId}`,
+        JSON.stringify({ thumbnail: completedThumbnail })
+      );
+
+      console.log(`Thumbnail edit ${thumbnailId} completed successfully`);
+      return { success: true, thumbnailId };
+    }
+
+    // ── STANDARD GENERATION (unchanged) ─────────────────────────────────────
     const canUseReferenceImage = userPlan === "creator" || userPlan === "pro";
     const usingReferenceImage = reference_image && canUseReferenceImage;
+
 
     // Build prompt
     let prompt = `Create a ${stylePrompts[style] || stylePrompts["Bold & Graphic"]

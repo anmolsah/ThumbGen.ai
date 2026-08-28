@@ -30,6 +30,7 @@ import {
   MonitorIcon,
   PaletteIcon,
   ImagePlusIcon,
+  PencilLineIcon,
 } from "lucide-react";
 
 const Generate = () => {
@@ -61,6 +62,12 @@ const Generate = () => {
 
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [ytThumbnailPreview, setYtThumbnailPreview] = useState<string | null>(null);
+
+  // Edit mode state
+  const [editMode, setEditMode] = useState(false);
+  const [editInstructions, setEditInstructions] = useState("");
+  const [editLoading, setEditLoading] = useState(false);
+  const [sseReconnectKey, setSseReconnectKey] = useState(0);
 
   const hasNoPlan = !user || user.plan === "none";
   const hasNoCredits = user && user.credits <= 0;
@@ -204,8 +211,46 @@ const Generate = () => {
     setYtThumbnailPreview(null);
     setThumbnail(null);
     setLoading(false);
+    setEditMode(false);
+    setEditInstructions("");
+    setEditLoading(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
     navigate("/generate");
+  };
+
+  const handleEdit = async () => {
+    if (!isLoggedIn) return toast.error("Please login to edit thumbnails");
+    if (!editInstructions.trim()) {
+      toast.error("Please describe what you want to change");
+      return;
+    }
+    if (hasNoCredits) return toast.error("No credits remaining. Please upgrade your plan.");
+
+    setEditLoading(true);
+    try {
+      const { data } = await api.post("/api/thumbnail/edit", {
+        thumbnailId: id,
+        edit_instructions: editInstructions.trim(),
+      });
+      if (data.thumbnail) {
+        if (user && data.credits !== undefined) {
+          setUser({ ...user, credits: data.credits });
+        }
+        // Update in-place — set the thumbnail to generating state and show loader
+        setThumbnail(data.thumbnail);
+        setLoading(true);
+        setEditMode(false);
+        setEditInstructions("");
+        // Trigger SSE reconnect so we receive the edit completion event
+        setSseReconnectKey((k) => k + 1);
+        toast.success(data.message);
+      }
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || error.message);
+    } finally {
+      setEditLoading(false);
+    }
   };
 
   const fetchThumbnail = async () => {
@@ -335,7 +380,7 @@ const Generate = () => {
       evtSource.close();
       stopFallback();
     };
-  }, [id, isLoggedIn]);
+  }, [id, isLoggedIn, sseReconnectKey]);
 
   useEffect(() => {
     if (!id && thumbnail) {
@@ -682,6 +727,64 @@ const Generate = () => {
                       Regenerate
                     </span>
                   </button>
+
+                  {/* Edit — modify the current thumbnail */}
+                  <div className="rounded-2xl border border-white/15 bg-white/[0.03] overflow-hidden transition-all duration-300">
+                    <button
+                      onClick={() => { setEditMode(!editMode); setEditInstructions(""); }}
+                      className={`w-full relative group hover:bg-white/[0.05] text-zinc-200 font-bold text-base px-8 py-4 transition-all duration-200 ${
+                        editMode ? "border-b border-white/10" : ""
+                      }`}
+                    >
+                      <span className="flex items-center justify-center gap-2.5">
+                        <PencilLineIcon size={18} />
+                        Edit Thumbnail
+                      </span>
+                    </button>
+
+                    {/* Edit panel — slides down when editMode is active */}
+                    <div
+                      className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                        editMode ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
+                      }`}
+                    >
+                      <div className="p-5 space-y-4">
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-zinc-300">
+                            What would you like to change?
+                          </label>
+                          <textarea
+                            value={editInstructions}
+                            onChange={(e) => setEditInstructions(e.target.value)}
+                            rows={3}
+                            maxLength={500}
+                            placeholder="e.g., Make the text bigger, change background to blue, add a fire effect, remove the person on the right..."
+                            className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-500 hover:border-white/20 transition-all resize-none shadow-inner text-sm"
+                          />
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-zinc-500">{editInstructions.length}/500</span>
+                            <span className="text-xs font-medium text-zinc-500">
+                              Cost: <span className="text-brand-400">5 credits</span>
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={handleEdit}
+                          disabled={editLoading || !editInstructions.trim()}
+                          className="w-full overflow-hidden relative group bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl px-6 py-3.5 shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] transition-all duration-300"
+                        >
+                          <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                          <span className="relative z-10 flex items-center justify-center gap-2">
+                            {editLoading ? (
+                              <><span>✨</span> Applying Edit...</>
+                            ) : (
+                              <><PencilLineIcon size={16} /> Apply Edit</>
+                            )}
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
 
                   {/* New Generate — clear everything */}
                   <button

@@ -18,6 +18,7 @@ const extractYouTubeVideoId = (url: string): string | null => {
 
 const CREDITS_PER_THUMBNAIL = 5;
 const CREDITS_WITH_REFERENCE_IMAGE = 15;
+const CREDITS_PER_EDIT = 5;
 
 export const generateThumbnail = async (req: Request, res: Response) => {
   try {
@@ -139,6 +140,86 @@ export const generateThumbnail = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const editThumbnail = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.session;
+    const { thumbnailId, edit_instructions } = req.body;
+
+    if (!thumbnailId || !edit_instructions?.trim()) {
+      return res.status(400).json({ message: "Thumbnail ID and edit instructions are required" });
+    }
+
+    // Check user
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.plan === "none") {
+      return res.status(403).json({ message: "Please select a plan to edit thumbnails" });
+    }
+
+    if (user.credits < CREDITS_PER_EDIT) {
+      return res.status(403).json({ message: `Insufficient credits. Editing requires ${CREDITS_PER_EDIT} credits.` });
+    }
+
+    // Look up the source thumbnail
+    const sourceThumbnail = await Thumbnail.findOne({ _id: thumbnailId, userId });
+    if (!sourceThumbnail) {
+      return res.status(404).json({ message: "Source thumbnail not found" });
+    }
+    if (!sourceThumbnail.image_url) {
+      return res.status(400).json({ message: "Source thumbnail has no generated image to edit" });
+    }
+
+    // Save the current image URL before overwriting (needed by the worker)
+    const sourceImageUrl = sourceThumbnail.image_url;
+
+    // Update the SAME thumbnail record in-place — mark as generating
+    const updatedThumbnail = await Thumbnail.findByIdAndUpdate(
+      thumbnailId,
+      {
+        edit_instructions: edit_instructions.trim(),
+        isGenerating: true,
+      },
+      { new: true }
+    );
+
+    // Queue the edit job using the same thumbnail ID
+    await thumbnailQueue.add(
+      `edit-${thumbnailId}`,
+      {
+        thumbnailId: thumbnailId,
+        userId: userId!,
+        title: sourceThumbnail.title,
+        user_prompt: sourceThumbnail.user_prompt || "",
+        style: sourceThumbnail.style,
+        aspect_ratio: sourceThumbnail.aspect_ratio || "16:9",
+        color_scheme: sourceThumbnail.color_scheme || "",
+        text_overlay: sourceThumbnail.text_overlay || false,
+        resolution: sourceThumbnail.resolution || "2k",
+        platform: sourceThumbnail.platform || "",
+        userPlan: user.plan,
+        creditsRequired: CREDITS_PER_EDIT,
+        // Edit-specific data
+        edit_instructions: edit_instructions.trim(),
+        source_image_url: sourceImageUrl,
+      },
+      {
+        priority: user.plan === "pro" ? 1 : user.plan === "creator" ? 2 : 3,
+      }
+    );
+
+    res.json({
+      message: "Thumbnail edit started",
+      thumbnail: updatedThumbnail,
+      credits: user.credits,
+    });
+  } catch (error: any) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 // Get thumbnail status (for polling)
 export const getThumbnailStatus = async (req: Request, res: Response) => {

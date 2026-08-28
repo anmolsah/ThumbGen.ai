@@ -16,6 +16,9 @@ export interface ThumbnailJobData {
   reference_image?: string;
   userPlan: string;
   creditsRequired: number;
+  // Edit-specific fields
+  edit_instructions?: string;
+  source_image_url?: string;
 }
 
 const thumbnailQueue = new Queue<ThumbnailJobData>("thumbnail-generation", {
