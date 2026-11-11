@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-11T15:21:49.000Z",
+  "updated_at": "2026-11-11T15:57:05.000Z",
   "margin_guard": {
     "max_cost_to_revenue_ratio": 0.35
   },
@@ -43,7 +43,7 @@
     "openrouter": {
       "enabled": true,
       "base_url": "https://openrouter.ai/api/v1",
-      "verified_at": "2026-11-11T15:21:49.000Z",
+      "verified_at": "2026-11-11T15:53:31.000Z",
       "source_url": "https://openrouter.ai/api/v1/images/models",
       "max_concurrency": null,
       "todo": "TODO(verify): check account-level concurrency limit on OpenRouter dashboard/docs (Pitfall P6)"
@@ -51,10 +51,10 @@
     "xai": {
       "enabled": true,
       "base_url": "https://api.x.ai/v1",
-      "verified_at": null,
-      "source_url": "https://api.x.ai/v1/models",
+      "verified_at": "2026-11-11T15:57:05.000Z",
+      "source_url": "https://api.x.ai/v1/images/generations",
       "max_concurrency": null,
-      "todo": "TODO(verify): XAI_API_KEY returned HTTP 403 permission-denied on GET /v1/models; verify active Grok model ID, pricing, and concurrency limit on console.x.ai"
+      "todo": "TODO(verify): POST /v1/images/generations verified working with 'grok-imagine-image'; verify account concurrency limit on console.x.ai (Pitfall P6)"
     },
     "fal": {
       "enabled": false,
@@ -80,21 +80,21 @@
       "candidates": [
         {
           "provider": "xai",
-          "model_id": null,
+          "model_id": "grok-imagine-image",
           "est_cost_usd": null,
-          "verified_at": null,
-          "source_url": null,
+          "verified_at": "2026-11-11T15:57:05.000Z",
+          "source_url": "https://api.x.ai/v1/images/generations",
           "preview": false,
           "license_checked": true,
-          "supports_reference_image": false,
+          "supports_reference_image": true,
           "default_resolution": "2K",
-          "todo": "TODO(verify): XAI_API_KEY returned HTTP 403 on GET /v1/models; previously hard-coded 'grok-imagine-image-quality' is retired (Pitfall P1). Confirm active xAI model ID and per-image cost"
+          "todo": "TODO(verify): live call succeeded (2816x1584 @ 2k in 9599ms), but xAI response body omits usage.cost; confirm exact per-image USD price on console.x.ai billing dashboard"
         },
         {
           "provider": "openrouter",
           "model_id": "bytedance-seed/seedream-5-0-flash",
           "est_cost_usd": 0.018,
-          "verified_at": "2026-11-11T15:21:49.000Z",
+          "verified_at": "2026-11-11T15:53:31.000Z",
           "source_url": "https://openrouter.ai/api/v1/images/models/bytedance-seed/seedream-5-0-flash/endpoints",
           "preview": false,
           "license_checked": true,
@@ -131,7 +131,7 @@
           "provider": "openrouter",
           "model_id": "bytedance-seed/seedream-5-0-pro",
           "est_cost_usd": 0.09,
-          "verified_at": "2026-11-11T15:21:49.000Z",
+          "verified_at": "2026-11-11T15:53:31.000Z",
           "source_url": "https://openrouter.ai/api/v1/images/models/bytedance-seed/seedream-5-0-pro/endpoints",
           "preview": false,
           "license_checked": true,
@@ -153,7 +153,7 @@
           "provider": "openrouter",
           "model_id": "bytedance-seed/seedream-5-0-lite",
           "est_cost_usd": 0.035,
-          "verified_at": "2026-11-11T15:21:49.000Z",
+          "verified_at": "2026-11-11T15:53:31.000Z",
           "source_url": "https://openrouter.ai/api/v1/images/models/bytedance-seed/seedream-5-0-lite/endpoints",
           "preview": false,
           "license_checked": true,
@@ -176,39 +176,36 @@
       "candidates": [
         {
           "provider": "openrouter",
-          "model_id": "google/gemini-nano-banana-2.1",
-          "est_cost_usd": null,
-          "verified_at": null,
-          "source_url": "https://openrouter.ai/api/v1/images/models/google/gemini-nano-banana-2.1/endpoints",
-          "preview": false,
-          "license_checked": true,
-          "supports_reference_image": true,
-          "default_resolution": "2K",
-          "todo": "TODO(verify): token-billed ($0.00003/output token on OpenRouter); verify per-image 2K USD cost from live response usage.cost in Phase 2"
-        },
-        {
-          "provider": "openrouter",
           "model_id": "google/gemini-3.1-flash-image",
-          "est_cost_usd": null,
-          "verified_at": null,
+          "est_cost_usd": 0.101,
+          "verified_at": "2026-11-11T15:53:31.000Z",
           "source_url": "https://openrouter.ai/api/v1/images/models/google/gemini-3.1-flash-image/endpoints",
           "preview": false,
           "license_checked": true,
           "supports_reference_image": true,
-          "default_resolution": "2K",
-          "todo": "TODO(verify): token-billed ($0.00006/output token on OpenRouter); verify per-image 2K USD cost from live response usage.cost in Phase 2"
+          "default_resolution": "2K"
+        },
+        {
+          "provider": "openrouter",
+          "model_id": "google/gemini-nano-banana-2.1",
+          "est_cost_usd": 0.054,
+          "verified_at": "2026-11-11T15:53:31.000Z",
+          "source_url": "https://openrouter.ai/api/v1/images/models/google/gemini-nano-banana-2.1/endpoints",
+          "preview": false,
+          "license_checked": true,
+          "supports_reference_image": true,
+          "default_resolution": "2K"
         },
         {
           "provider": "openrouter",
           "model_id": "openai/gpt-image-2",
-          "est_cost_usd": null,
-          "verified_at": null,
+          "est_cost_usd": 0.033,
+          "verified_at": "2026-11-11T15:53:31.000Z",
           "source_url": "https://openrouter.ai/api/v1/images/models/openai/gpt-image-2/endpoints",
           "preview": false,
           "license_checked": true,
           "supports_reference_image": true,
-          "default_resolution": "2K",
-          "todo": "TODO(verify): token-billed ($0.00003/output token on OpenRouter); verify per-image medium-quality USD cost from live response usage.cost in Phase 2"
+          "default_resolution": "2K"
         }
       ]
     },
@@ -234,25 +231,24 @@
           "license_checked": true,
           "supports_reference_image": true,
           "default_resolution": "4K",
-          "todo": "TODO(verify): token-billed ($0.00012/output token on OpenRouter); verify per-image 4K USD cost and actual 4K output pixel dimensions in Phase 2"
+          "todo": "TODO(verify): live call returned HTTP 402 weight_exceeds_budget on current OpenRouter credit balance; top up OpenRouter credits to verify live 4K billed_cost_usd and output pixel dimensions"
         },
         {
           "provider": "openrouter",
           "model_id": "google/gemini-nano-banana-2.1",
-          "est_cost_usd": null,
-          "verified_at": null,
+          "est_cost_usd": 0.116,
+          "verified_at": "2026-11-11T15:53:31.000Z",
           "source_url": "https://openrouter.ai/api/v1/images/models/google/gemini-nano-banana-2.1/endpoints",
           "preview": false,
           "license_checked": true,
           "supports_reference_image": true,
-          "default_resolution": "4K",
-          "todo": "TODO(verify): token-billed ($0.00003/output token on OpenRouter); verify per-image 4K USD cost and actual 4K output pixel dimensions in Phase 2"
+          "default_resolution": "4K"
         },
         {
           "provider": "openrouter",
           "model_id": "bytedance-seed/seedream-5-0-lite",
           "est_cost_usd": 0.035,
-          "verified_at": "2026-11-11T15:21:49.000Z",
+          "verified_at": "2026-11-11T15:53:31.000Z",
           "source_url": "https://openrouter.ai/api/v1/images/models/bytedance-seed/seedream-5-0-lite/endpoints",
           "preview": false,
           "license_checked": true,
@@ -263,4 +259,3 @@
     }
   }
 }
-

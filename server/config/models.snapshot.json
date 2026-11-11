@@ -10921,6 +10921,80 @@
           "details": "/api/v1/models/x-ai/grok-imagine-image-2.0-20260811/endpoints"
         }
       }
+    },
+    {
+      "provider": "xai",
+      "model_id": "grok-imagine-image",
+      "name": "xAI: Grok Imagine Image",
+      "created": null,
+      "input_modalities": [
+        "text",
+        "image"
+      ],
+      "output_modalities": [
+        "image"
+      ],
+      "supports_reference_image": true,
+      "max_reference_images": 3,
+      "pricing": null,
+      "endpoint_pricing": null,
+      "supported_parameters": {
+        "resolution": {
+          "type": "enum",
+          "values": [
+            "1k",
+            "2k"
+          ]
+        },
+        "aspect_ratio": {
+          "type": "enum",
+          "values": [
+            "1:1",
+            "3:4",
+            "4:3",
+            "9:16",
+            "16:9",
+            "2:3",
+            "3:2",
+            "9:19.5",
+            "19.5:9",
+            "9:20",
+            "20:9",
+            "1:2",
+            "2:1"
+          ]
+        },
+        "response_format": {
+          "type": "enum",
+          "values": [
+            "url",
+            "b64_json"
+          ]
+        }
+      },
+      "supported_sizes": [
+        "1K",
+        "2K"
+      ],
+      "supported_aspect_ratios": [
+        "1:1",
+        "3:4",
+        "4:3",
+        "9:16",
+        "16:9",
+        "2:3",
+        "3:2",
+        "9:19.5",
+        "19.5:9",
+        "9:20",
+        "20:9",
+        "1:2",
+        "2:1"
+      ],
+      "source_endpoint": "https://api.x.ai/v1/images/generations",
+      "raw": {
+        "verified_via": "POST https://api.x.ai/v1/images/generations (2816x1584 @ 2k, 9599ms)"
+      }
     }
   ]
 }
