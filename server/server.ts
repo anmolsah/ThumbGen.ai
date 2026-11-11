@@ -11,7 +11,10 @@ import UserRouter from "./routes/UserRoutes.js";
 import PaymentRouter from "./routes/PaymentRoutes.js";
 import SSERouter from "./routes/SSERoutes.js";
 import "./configs/cloudinary.js";
-import { assertValidStartupRegistry } from "./configs/registryValidator.js";
+import {
+  assertValidStartupRegistry,
+  loadRegistryConfig,
+} from "./configs/registryValidator.js";
 import { defaultCreditService } from "./services/creditService.js";
 import {
   generateThumbnail,
@@ -107,6 +110,46 @@ app.use(express.json({ limit: "20mb" }));
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is Live!");
+});
+
+// Public configuration endpoint derived from config/registry.json (never exposes internal model/provider costs)
+app.get("/api/config/public", (req: Request, res: Response) => {
+  try {
+    const registry = loadRegistryConfig();
+    const publicPlans = Object.entries(registry.plans).map(([id, plan]) => ({
+      id,
+      name: plan.name,
+      price_usd: plan.price_usd,
+      credits: plan.credits,
+      most_popular: plan.most_popular,
+      max_resolution: plan.max_resolution,
+      watermark: plan.watermark,
+      reference_images: plan.reference_images,
+      max_concurrent_jobs: plan.max_concurrent_jobs,
+      marketing_thumbnails_claim: plan.marketing_thumbnails_claim,
+    }));
+
+    const publicModes = Object.entries(registry.modes)
+      .filter(([, mode]) => mode.enabled)
+      .map(([id, mode]) => ({
+        id,
+        label: mode.label,
+        description: mode.description,
+        credits: mode.credits,
+        allowed_plans: mode.allowed_plans,
+        max_resolution_by_plan: mode.max_resolution_by_plan,
+        supports_reference_image: mode.candidates.some(
+          (c) => c.supports_reference_image && c.model_id !== null
+        ),
+      }));
+
+    res.json({
+      plans: publicPlans,
+      modes: publicModes,
+    });
+  } catch (err: any) {
+    res.status(500).json({ message: "Failed to load public configuration" });
+  }
 });
 
 // Debug endpoint to check session

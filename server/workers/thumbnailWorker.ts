@@ -24,6 +24,10 @@ import {
 } from "../services/creditService.js";
 import { executeGenerationWithFallback } from "../services/resilience.js";
 import {
+  processAndStoreAssets,
+  sanitizeThumbnailForPlan,
+} from "../services/postProcessService.js";
+import {
   normalizeResolutionTier,
   ProviderError,
   type GenerateInput,
@@ -284,23 +288,19 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
 
     const { output, meta } = await executeGenerationWithFallback(generateInput);
 
-    let deliveryBuffer: Buffer = output.assetBytes;
-    const isStarter = userPlan === "starter" || userPlan === "free";
-    if (isStarter) {
-      deliveryBuffer = await addWatermark(deliveryBuffer);
-    }
+    // Phase 5 post-processing: generates `original`, `watermarked`, and `preview_webp` (<=640px)
+    // under independent cryptographic keys and verifies actual pixel dimensions.
+    const processed = await processAndStoreAssets({
+      rawAssetBytes: output.assetBytes,
+      requestedResolution: resolutionTier,
+      aspectRatio: aspect_ratio,
+      userPlan,
+    });
 
-    const webpBuffer = await sharp(deliveryBuffer)
-      .webp({ quality: 90 })
-      .toBuffer();
-    const deliveryUrl = await uploadBufferToCloudinary(webpBuffer, "webp");
+    meta.resolution_actual = processed.resolutionActual;
+    meta.upscaled = processed.upscaled;
 
-    const assets = {
-      original_url: isStarter ? null : deliveryUrl,
-      watermarked_url: isStarter ? deliveryUrl : null,
-      preview_webp_url: deliveryUrl,
-      delivery_url: deliveryUrl,
-    };
+    const assets = processed.assets;
 
     if (jobId) {
       await defaultCreditService.commitJobCredits({
@@ -317,7 +317,7 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
     const completedThumbnail = await Thumbnail.findByIdAndUpdate(
       thumbnailId,
       {
-        image_url: deliveryUrl,
+        image_url: assets.delivery_url ?? "",
         original_url: assets.original_url ?? undefined,
         watermarked_url: assets.watermarked_url ?? undefined,
         preview_webp_url: assets.preview_webp_url ?? undefined,
@@ -329,9 +329,14 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
       { new: true }
     );
 
+    const sanitizedThumbnail = sanitizeThumbnailForPlan(
+      completedThumbnail,
+      userPlan
+    );
+
     await publisher.publish(
       `thumbnail:complete:${thumbnailId}`,
-      JSON.stringify({ thumbnail: completedThumbnail })
+      JSON.stringify({ thumbnail: sanitizedThumbnail })
     );
 
     console.log(

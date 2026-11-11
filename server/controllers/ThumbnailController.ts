@@ -6,6 +6,10 @@ import {
   CreditServiceError,
   defaultCreditService,
 } from "../services/creditService.js";
+import {
+  sanitizeJobAssetsForPlan,
+  sanitizeThumbnailForPlan,
+} from "../services/postProcessService.js";
 import { ProviderError } from "../providers/types.js";
 
 function extractIdempotencyKey(
@@ -384,17 +388,19 @@ export const getJobStatus = async (req: Request, res: Response) => {
         .json({ code: "JOB_NOT_FOUND", message: "Job not found" });
     }
 
-    const thumbnail = job.thumbnailId
-      ? await Thumbnail.findOne({ _id: job.thumbnailId, userId })
-      : null;
+    const [user, thumbnail, ledgerEntries] = await Promise.all([
+      defaultCreditService.getStore().getUserById(userId!),
+      job.thumbnailId
+        ? Thumbnail.findOne({ _id: job.thumbnailId, userId })
+        : Promise.resolve(null),
+      defaultCreditService.getStore().findLedgerEntriesForJob(job.id),
+    ]);
 
-    const ledgerEntries = await defaultCreditService
-      .getStore()
-      .findLedgerEntriesForJob(job.id);
+    const userPlan = user?.plan || "starter";
 
     return res.json({
-      job,
-      thumbnail,
+      job: sanitizeJobAssetsForPlan(job, userPlan),
+      thumbnail: sanitizeThumbnailForPlan(thumbnail, userPlan),
       ledger: ledgerEntries,
       isComplete: job.status === "succeeded",
       isFailed: job.status === "failed" || job.status === "canceled",
@@ -454,14 +460,20 @@ export const getThumbnailStatus = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Thumbnail not found" });
     }
 
-    const job = thumbnail.jobId
-      ? await defaultCreditService.getStore().findJobById(thumbnail.jobId)
-      : null;
+    const [user, job] = await Promise.all([
+      defaultCreditService.getStore().getUserById(userId!),
+      thumbnail.jobId
+        ? defaultCreditService.getStore().findJobById(thumbnail.jobId)
+        : Promise.resolve(null),
+    ]);
+
+    const userPlan = user?.plan || "starter";
+    const sanitizedThumb = sanitizeThumbnailForPlan(thumbnail, userPlan);
 
     res.json({
-      thumbnail,
-      job,
-      isComplete: !thumbnail.isGenerating && !!thumbnail.image_url,
+      thumbnail: sanitizedThumb,
+      job: job ? sanitizeJobAssetsForPlan(job, userPlan) : null,
+      isComplete: !sanitizedThumb.isGenerating && !!sanitizedThumb.image_url,
     });
   } catch (error: any) {
     res.status(500).json({ message: error.message });

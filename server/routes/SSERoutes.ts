@@ -1,6 +1,8 @@
 import { Router, Request, Response } from "express";
 import { Redis } from "ioredis";
 import Thumbnail from "../models/Thumbnail.js";
+import User from "../models/User.js";
+import { sanitizeThumbnailForPlan } from "../services/postProcessService.js";
 
 const SSERouter = Router();
 
@@ -79,18 +81,25 @@ SSERouter.get("/thumbnail/:id", async (req: Request, res: Response) => {
     try {
       const thumbnail = await Thumbnail.findOne(
         { _id: id, userId },
-        // Only fetch the two fields we need — avoids sending the full document over the wire
-        { image_url: 1, isGenerating: 1 }
+        { image_url: 1, isGenerating: 1, error: 1, error_code: 1 }
       );
       if (!thumbnail) {
         sendEvent("error", { message: "Thumbnail not found" });
         res.end();
         return true;
       }
-      if (!thumbnail.isGenerating && thumbnail.image_url) {
-        // Re-fetch complete doc for the payload (only on the happy path)
-        const full = await Thumbnail.findById(id);
-        sendEvent("complete", { thumbnail: full });
+      if (!thumbnail.isGenerating && (thumbnail.image_url || thumbnail.error)) {
+        const [full, user] = await Promise.all([
+          Thumbnail.findById(id),
+          User.findById(userId).select("plan").lean(),
+        ]);
+        const userPlan = (user as any)?.plan || "starter";
+        const sanitized = sanitizeThumbnailForPlan(full, userPlan);
+        sendEvent("complete", {
+          thumbnail: sanitized,
+          error: full?.error,
+          errorCode: full?.error_code,
+        });
         res.end();
         return true;
       }
