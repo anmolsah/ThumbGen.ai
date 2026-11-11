@@ -13,10 +13,6 @@ import redisConnection from "../configs/redis.js";
 import Thumbnail from "../models/Thumbnail.js";
 import User from "../models/User.js";
 import { PLATFORM_CONFIG } from "../configs/platformConfig.js";
-import { v2 as cloudinary } from "cloudinary";
-import sharp from "sharp";
-import path from "path";
-import { fileURLToPath } from "url";
 import type { ThumbnailJobData } from "../queues/thumbnailQueue.js";
 import {
   defaultCreditService,
@@ -44,44 +40,6 @@ const publisher = new Redis(
 publisher.on("error", (err) =>
   console.error("SSE publisher Redis error (non-fatal):", err.message)
 );
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const WATERMARK_PATH = path.join(__dirname, "../assets/logo.png");
-
-type WatermarkCache = { buffer: Buffer; width: number; height: number };
-const watermarkCache = new Map<number, WatermarkCache>();
-
-const getWatermark = async (targetWidth: number): Promise<WatermarkCache> => {
-  if (watermarkCache.has(targetWidth)) return watermarkCache.get(targetWidth)!;
-  const buffer = await sharp(WATERMARK_PATH).resize(targetWidth).toBuffer();
-  const meta = await sharp(buffer).metadata();
-  const entry: WatermarkCache = {
-    buffer,
-    width: meta.width || targetWidth,
-    height: meta.height || targetWidth,
-  };
-  watermarkCache.set(targetWidth, entry);
-  return entry;
-};
-
-const addWatermark = async (imageBuffer: Buffer): Promise<Buffer> => {
-  const image = sharp(imageBuffer);
-  const { width: imageWidth = 1280, height: imageHeight = 720 } =
-    await image.metadata();
-  const targetWidth = Math.round(imageWidth * 0.15);
-  const wm = await getWatermark(targetWidth);
-  const padding = 20;
-  return image
-    .composite([
-      {
-        input: wm.buffer,
-        left: imageWidth - wm.width - padding,
-        top: imageHeight - wm.height - padding,
-      },
-    ])
-    .toBuffer();
-};
 
 const stylePrompts: Record<string, string> = {
   "Bold & Graphic":
@@ -140,29 +98,6 @@ const fetchYouTubeThumbnail = async (url: string): Promise<string | null> => {
     console.warn("Worker: failed to fetch YouTube thumbnail:", err);
     return null;
   }
-};
-
-const uploadBufferToCloudinary = async (
-  buffer: Buffer,
-  format: "webp" | "png" = "webp"
-): Promise<string> => {
-  const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      {
-        resource_type: "image",
-        format,
-        folder: "thumbgen",
-      },
-      (err, res) => {
-        if (err || !res) {
-          return reject(err ?? new Error("Cloudinary upload failed"));
-        }
-        resolve(res as { secure_url: string });
-      }
-    );
-    stream.end(buffer);
-  });
-  return result.secure_url;
 };
 
 export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {

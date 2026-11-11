@@ -14,7 +14,6 @@ import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { v2 as cloudinary } from "cloudinary";
 import sharp from "sharp";
 import type { PlanId, ResolutionTier } from "../configs/registryValidator.js";
 import type { IJobAssets, IJobGenerationMeta } from "../models/Job.js";
@@ -23,10 +22,7 @@ import {
   type ResolutionActual,
 } from "../providers/types.js";
 import { resolveEffectivePlanId } from "./creditService.js";
-import {
-  getR2ConfigFromEnv,
-  uploadToCloudflareR2,
-} from "./r2StorageService.js";
+import { uploadToCloudflareR2 } from "./r2StorageService.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -127,29 +123,12 @@ export type AssetUploadFn = (
  * Default Cloudinary uploader using cryptographically random `public_id`s
  * so `original_url` cannot be guessed or derived from `watermarked_url`.
  */
-export const uploadToCloudinaryWithKey: AssetUploadFn = async (
+export const uploadToR2WithKey: AssetUploadFn = async (
   buffer: Buffer,
   publicId: string,
   format: "webp" | "png" = "webp"
 ): Promise<string> => {
-  const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      {
-        resource_type: "image",
-        public_id: publicId,
-        format,
-        overwrite: true,
-      },
-      (err, res) => {
-        if (err || !res) {
-          return reject(err ?? new Error("Cloudinary upload failed"));
-        }
-        resolve(res as { secure_url: string });
-      }
-    );
-    stream.end(buffer);
-  });
-  return result.secure_url;
+  return uploadToCloudflareR2(buffer, publicId, format);
 };
 
 export interface PostProcessInput {
@@ -176,15 +155,12 @@ export interface PostProcessOutput {
  *   2. Produces full-resolution `original` WebP buffer.
  *   3. Produces full-resolution `watermarked` WebP buffer.
  *   4. Produces `<= 640px` `preview_webp` buffer (watermarked for Starter, unwatermarked for Creator/Pro).
- *   5. Uploads all three variants under independent, non-guessable keys (`orig_<hex>`, `wm_<hex>`, `prev_<hex>`).
+ *   5. Uploads all three variants to Cloudflare R2 under independent, non-guessable keys (`orig_<hex>`, `wm_<hex>`, `prev_<hex>`).
  */
 export async function processAndStoreAssets(
   input: PostProcessInput
 ): Promise<PostProcessOutput> {
-  const defaultStorageUpload: AssetUploadFn = getR2ConfigFromEnv()
-    ? (buf, pubId, fmt) => uploadToCloudflareR2(buf, pubId, fmt)
-    : uploadToCloudinaryWithKey;
-  const upload = input.uploadFn ?? defaultStorageUpload;
+  const upload = input.uploadFn ?? uploadToR2WithKey;
   const effectivePlan: PlanId =
     resolveEffectivePlanId(input.userPlan) ?? "starter";
   const isStarter = effectivePlan === "starter";

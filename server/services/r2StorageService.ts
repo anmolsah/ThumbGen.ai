@@ -21,7 +21,9 @@ export function getR2ConfigFromEnv(): R2Config | null {
   const accountId = (process.env.R2_ACCOUNT_ID || "").trim();
   const accessKeyId = (process.env.R2_ACCESS_KEY_ID || "").trim();
   const secretAccessKey = (process.env.R2_SECRET_ACCESS_KEY || "").trim();
-  const bucketName = (process.env.R2_BUCKET_NAME || "").trim();
+  const bucketName = (process.env.R2_BUCKET_NAME || "")
+    .trim()
+    .replace(/^\/+|\/+$/g, "");
   const publicBaseUrl = (process.env.R2_PUBLIC_BASE_URL || "")
     .trim()
     .replace(/\/+$/, "");
@@ -157,4 +159,100 @@ export async function uploadToCloudflareR2(
 
   return `${cfg.publicBaseUrl}/${cleanKey}`;
 }
+
+/**
+ * Lists object keys inside the configured Cloudflare R2 bucket via S3 ListObjectsV2 (`GET /<bucket>?list-type=2`).
+ */
+export async function listR2BucketObjects(
+  configOverride?: R2Config
+): Promise<string[]> {
+  const cfg = configOverride ?? getR2ConfigFromEnv();
+  if (!cfg) {
+    throw new Error("Cloudflare R2 credentials are not configured");
+  }
+
+  const host = `${cfg.accountId}.r2.cloudflarestorage.com`;
+  const canonicalUri = `/${cfg.bucketName}`;
+  const canonicalQueryString = "list-type=2";
+  const endpoint = `https://${host}${canonicalUri}?${canonicalQueryString}`;
+
+  const now = new Date();
+  const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, "");
+  const dateStamp = amzDate.slice(0, 8);
+  const region = "auto";
+  const service = "s3";
+
+  const payloadHash = sha256Hex("");
+
+  const canonicalHeaders =
+    `host:${host}\n` +
+    `x-amz-content-sha256:${payloadHash}\n` +
+    `x-amz-date:${amzDate}\n`;
+  const signedHeaders = "host;x-amz-content-sha256;x-amz-date";
+
+  const canonicalRequest = [
+    "GET",
+    canonicalUri,
+    canonicalQueryString,
+    canonicalHeaders,
+    signedHeaders,
+    payloadHash,
+  ].join("\n");
+
+  const credentialScope = `${dateStamp}/${region}/${service}/aws4_request`;
+  const stringToSign = [
+    "AWS4-HMAC-SHA256",
+    amzDate,
+    credentialScope,
+    sha256Hex(canonicalRequest),
+  ].join("\n");
+
+  const signingKey = getSigningKey(
+    cfg.secretAccessKey,
+    dateStamp,
+    region,
+    service
+  );
+  const signature = crypto
+    .createHmac("sha256", signingKey)
+    .update(stringToSign, "utf8")
+    .digest("hex");
+
+  const authorization = `AWS4-HMAC-SHA256 Credential=${cfg.accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+  const res = await fetch(endpoint, {
+    method: "GET",
+    headers: {
+      "x-amz-content-sha256": payloadHash,
+      "x-amz-date": amzDate,
+      Authorization: authorization,
+    },
+  });
+
+  if (!res.ok) {
+    const errText = await res.text().catch(() => "");
+    throw new Error(
+      `Cloudflare R2 ListObjectsV2 failed (${res.status}): ${errText.slice(
+        0,
+        240
+      )}`
+    );
+  }
+
+  const xml = await res.text();
+  const keys: string[] = [];
+  const regex = /<Key>([^<]+)<\/Key>/g;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(xml)) !== null) {
+    const decoded = match[1]
+      .replace(/&apos;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/&gt;/g, ">")
+      .replace(/&lt;/g, "<")
+      .replace(/&amp;/g, "&");
+    keys.push(decoded);
+  }
+  return keys;
+}
+
 
