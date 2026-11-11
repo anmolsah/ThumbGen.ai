@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 export interface IUser extends Document {
   name: string;
@@ -6,7 +6,7 @@ export interface IUser extends Document {
   password?: string;
   channelName?: string;
   avatar?: string;
-  plan: "none" | "starter" | "creator" | "pro";
+  plan: "none" | "free" | "starter" | "creator" | "pro";
   credits: number;
   totalCredits: number;
   createdAt?: Date;
@@ -28,11 +28,11 @@ const UserSchema = new mongoose.Schema<IUser>(
     avatar: { type: String, trim: true, default: "" },
     plan: {
       type: String,
-      enum: ["none", "starter", "creator", "pro"],
+      enum: ["none", "free", "starter", "creator", "pro"],
       default: "none",
     },
-    credits: { type: Number, default: 0 },
-    totalCredits: { type: Number, default: 0 },
+    credits: { type: Number, default: 0, min: 0 },
+    totalCredits: { type: Number, default: 0, min: 0 },
   },
   { timestamps: true }
 );

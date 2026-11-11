@@ -4,6 +4,7 @@ import Payment from "../models/Payment.js";
 import User from "../models/User.js";
 import crypto from "crypto";
 import { Webhook } from "standardwebhooks";
+import { defaultCreditService } from "../services/creditService.js";
 
 // Generate unique order ID
 const generateOrderId = () => {
@@ -118,14 +119,14 @@ export const verifyPayment = async (req: Request, res: Response) => {
         }
         await payment.save();
 
-        // Update user plan and add credits
+        // Update user plan and add credits via append-only credit_ledger
         const planDetails = PLANS[payment.plan as keyof typeof PLANS];
-        await User.findByIdAndUpdate(payment.userId, {
-          plan: payment.plan,
-          $inc: {
-            credits: planDetails.credits,
-            totalCredits: planDetails.credits,
-          },
+        await defaultCreditService.grantCredits({
+          userId: String(payment.userId),
+          amount: planDetails.credits,
+          reason: `Purchased ${planDetails.name} (${payment.orderId})`,
+          idempotencyKey: `grant:order:${payment.orderId}`,
+          planUpdate: payment.plan as "starter" | "creator" | "pro",
         });
 
         return res.json({ success: true, status: "paid" });
@@ -196,14 +197,14 @@ export const paymentWebhook = async (req: Request, res: Response) => {
       payment.dodoPaymentId = paymentId;
       await payment.save();
 
-      // Update user plan and add credits (top-up)
+      // Update user plan and add credits via append-only credit_ledger
       const planDetails = PLANS[payment.plan as keyof typeof PLANS];
-      await User.findByIdAndUpdate(payment.userId, {
-        plan: payment.plan,
-        $inc: {
-          credits: planDetails.credits,
-          totalCredits: planDetails.credits,
-        },
+      await defaultCreditService.grantCredits({
+        userId: String(payment.userId),
+        amount: planDetails.credits,
+        reason: `Purchased ${planDetails.name} (${payment.orderId})`,
+        idempotencyKey: `grant:order:${payment.orderId}`,
+        planUpdate: payment.plan as "starter" | "creator" | "pro",
       });
 
       console.log("Webhook: Payment succeeded for order:", payment.orderId);
@@ -253,22 +254,25 @@ export const activateFreePlan = async (req: Request, res: Response) => {
         .json({ message: "You already have an active plan" });
     }
 
-    // Activate free plan with 25 credits
-    user.plan = "free";
-    user.credits = 25;
-    user.totalCredits = 25;
-    await user.save();
+    // Activate starter/free plan with 25 credits via append-only credit_ledger
+    const grantRes = await defaultCreditService.grantCredits({
+      userId: String(user._id),
+      amount: 25,
+      reason: "Starter plan activation",
+      idempotencyKey: `grant:starter_activation:${String(user._id)}`,
+      planUpdate: "starter",
+    });
 
     return res.json({
       success: true,
-      message: "Free plan activated successfully",
+      message: "Starter plan activated successfully",
       user: {
         _id: user._id,
         name: user.name,
         email: user.email,
-        plan: user.plan,
-        credits: user.credits,
-        totalCredits: user.totalCredits,
+        plan: grantRes.user.plan,
+        credits: grantRes.user.credits,
+        totalCredits: grantRes.user.totalCredits,
       },
     });
   } catch (error: any) {

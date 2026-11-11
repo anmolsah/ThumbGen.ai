@@ -2,6 +2,8 @@ import { Queue } from "bullmq";
 import redisConnection from "../configs/redis.js";
 
 export interface ThumbnailJobData {
+  jobId?: string;
+  mode?: "fast" | "standard" | "premium" | "ultra";
   thumbnailId: string;
   userId: string;
   title: string;
@@ -14,6 +16,7 @@ export interface ThumbnailJobData {
   platform: string;
   youtube_reference_url?: string;
   reference_image?: string;
+  reference_images?: string[];
   userPlan: string;
   creditsRequired: number;
   // Edit-specific fields

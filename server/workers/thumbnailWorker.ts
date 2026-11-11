@@ -12,6 +12,8 @@ import sharp from "sharp";
 import path from "path";
 import { fileURLToPath } from "url";
 import type { ThumbnailJobData } from "../queues/thumbnailQueue.js";
+import { defaultCreditService } from "../services/creditService.js";
+import { inspectImageResolution } from "../providers/types.js";
 
 // ── 2.3: Dedicated Redis publisher for SSE notifications ─────────────────────
 // Must be a separate client — the BullMQ redisConnection is owned by the
@@ -221,6 +223,14 @@ const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
     `Processing thumbnail job: ${thumbnailId} | resolution: ${resolution} | platform: ${platform}`
   );
 
+  if (job.data.jobId) {
+    try {
+      await defaultCreditService.markJobRunning(job.data.jobId);
+    } catch (e: any) {
+      console.warn(`Could not transition job ${job.data.jobId} to running:`, e?.message);
+    }
+  }
+
   try {
     // ── EDIT JOB: source image + edit instructions ──────────────────────────
     if (job.data.source_image_url && job.data.edit_instructions) {
@@ -302,10 +312,35 @@ const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
         { new: true }
       );
 
-      // Deduct credits
-      await User.findByIdAndUpdate(userId, {
-        $inc: { credits: -creditsRequired },
-      });
+      // Commit reserved credits in credit_ledger (or fallback for legacy jobs without jobId)
+      if (job.data.jobId) {
+        const resActual = await inspectImageResolution(webpBuffer);
+        await defaultCreditService.commitJobCredits({
+          jobId: job.data.jobId,
+          generationMeta: {
+            provider: "legacy",
+            model_id: "gemini-3-pro-image-preview",
+            fallback_used: false,
+            attempts: [],
+            latency_ms: null,
+            billed_cost_usd: null,
+            request_params: null,
+            resolution_actual: resActual,
+            upscaled: false,
+          },
+          assets: {
+            original_url: uploadResult.secure_url,
+            watermarked_url:
+              userPlan === "starter" ? uploadResult.secure_url : null,
+            preview_webp_url: uploadResult.secure_url,
+            delivery_url: uploadResult.secure_url,
+          },
+        });
+      } else {
+        await User.findByIdAndUpdate(userId, {
+          $inc: { credits: -creditsRequired },
+        });
+      }
 
       // Notify SSE subscribers
       await publisher.publish(
@@ -435,10 +470,35 @@ const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
       { new: true }
     );
 
-    // Deduct credits
-    await User.findByIdAndUpdate(userId, {
-      $inc: { credits: -creditsRequired },
-    });
+    // Commit reserved credits in credit_ledger (or fallback for legacy jobs without jobId)
+    if (job.data.jobId) {
+      const resActual = await inspectImageResolution(webpBuffer);
+      await defaultCreditService.commitJobCredits({
+        jobId: job.data.jobId,
+        generationMeta: {
+          provider: "legacy",
+          model_id: "legacy-worker",
+          fallback_used: false,
+          attempts: [],
+          latency_ms: null,
+          billed_cost_usd: null,
+          request_params: null,
+          resolution_actual: resActual,
+          upscaled: false,
+        },
+        assets: {
+          original_url: uploadResult.secure_url,
+          watermarked_url:
+            userPlan === "starter" ? uploadResult.secure_url : null,
+          preview_webp_url: uploadResult.secure_url,
+          delivery_url: uploadResult.secure_url,
+        },
+      });
+    } else {
+      await User.findByIdAndUpdate(userId, {
+        $inc: { credits: -creditsRequired },
+      });
+    }
 
     // ── 2.3: Notify SSE subscribers via Redis pub/sub ─────────────────────────
     // Any Express process subscribed to this channel will push the event
@@ -489,8 +549,26 @@ thumbnailWorker.on("completed", (job) => {
   console.log(`Job ${job.id} completed for thumbnail ${job.data.thumbnailId}`);
 });
 
-thumbnailWorker.on("failed", (job, err) => {
+thumbnailWorker.on("failed", async (job, err) => {
   console.error(`Job ${job?.id} failed:`, err.message);
+  if (job?.data?.jobId) {
+    const maxAttempts = job.opts?.attempts ?? 1;
+    if (job.attemptsMade >= maxAttempts) {
+      try {
+        await defaultCreditService.refundJobCredits({
+          jobId: job.data.jobId,
+          reason: `Terminal worker failure after ${job.attemptsMade} attempt(s): ${err.message}`,
+          errorCode: "WORKER_TERMINAL_FAILURE",
+          errorMessage: err.message,
+        });
+      } catch (refundErr: any) {
+        console.error(
+          `Failed to refund credits for job ${job.data.jobId}:`,
+          refundErr?.message
+        );
+      }
+    }
+  }
 });
 
 export default thumbnailWorker;

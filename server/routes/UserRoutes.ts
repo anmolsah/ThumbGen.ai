@@ -1,11 +1,17 @@
-import express from 'express';
-import { getThumbnailbyId, getUsersThumbnails, updateProfile } from '../controllers/UserController.js';
-import protect from '../middlewares/auth.js';
+import express from "express";
+import {
+  getThumbnailbyId,
+  getUsersThumbnails,
+  updateProfile,
+} from "../controllers/UserController.js";
+import { getUserCreditLedger } from "../controllers/ThumbnailController.js";
+import protect from "../middlewares/auth.js";
 
 const UserRouter = express.Router();
 
-UserRouter.get('/thumbnails', protect, getUsersThumbnails);
-UserRouter.get('/thumbnail/:id', protect, getThumbnailbyId);
-UserRouter.put('/profile', protect, updateProfile);
+UserRouter.get("/thumbnails", protect, getUsersThumbnails);
+UserRouter.get("/thumbnail/:id", protect, getThumbnailbyId);
+UserRouter.get("/ledger", protect, getUserCreditLedger);
+UserRouter.put("/profile", protect, updateProfile);
 
 export default UserRouter;

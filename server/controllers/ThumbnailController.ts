@@ -1,225 +1,429 @@
+import crypto from "crypto";
 import { Request, Response } from "express";
 import Thumbnail from "../models/Thumbnail.js";
-import User from "../models/User.js";
 import thumbnailQueue from "../queues/thumbnailQueue.js";
+import {
+  CreditServiceError,
+  defaultCreditService,
+} from "../services/creditService.js";
+import { ProviderError } from "../providers/types.js";
 
-// Extract YouTube video ID from various URL formats
-const extractYouTubeVideoId = (url: string): string | null => {
-  const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
-    /^([a-zA-Z0-9_-]{11})$/, // bare video ID
-  ];
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match) return match[1];
+function extractIdempotencyKey(
+  req: Request,
+  strictRequired: boolean
+): string {
+  const headerVal =
+    (req.headers["idempotency-key"] as string | undefined) ||
+    (req.headers["x-idempotency-key"] as string | undefined);
+  const bodyVal = req.body?.idempotencyKey || req.body?.idempotency_key;
+  const key = (headerVal || bodyVal || "").trim();
+
+  if (!key && !strictRequired) {
+    return `auto_${crypto.randomUUID()}`;
   }
-  return null;
-};
-
-const CREDITS_PER_THUMBNAIL = 5;
-const CREDITS_WITH_REFERENCE_IMAGE = 15;
-const CREDITS_PER_EDIT = 5;
+  return key;
+}
 
 export const generateThumbnail = async (req: Request, res: Response) => {
+  let reservedJobId: string | null = null;
   try {
     const { userId } = req.session;
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ code: "UNAUTHORIZED", message: "Authentication required" });
+    }
+
     const {
       title,
-      prompt: user_prompt,
-      style,
-      aspect_ratio,
+      prompt: rawPrompt,
+      user_prompt,
+      style = "Bold & Graphic",
+      aspect_ratio = "16:9",
       color_scheme,
-      text_overlay,
+      text_overlay = true,
       reference_image,
-      resolution = "2k",
+      referenceImages,
+      resolution = "2K",
+      mode,
       platform,
       youtube_reference_url,
     } = req.body;
 
-    // Check if user has a plan and credits
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (user.plan === "none") {
-      return res
-        .status(403)
-        .json({ message: "Please select a plan to generate thumbnails" });
-    }
-
-    // Validate resolution — 4K is Pro-only
-    if (resolution === "4k" && user.plan !== "pro") {
-      return res.status(403).json({
-        message: "4K premium generation is only available for Pro plan users",
+    const effectivePrompt = (rawPrompt ?? user_prompt ?? title ?? "").trim();
+    if (!effectivePrompt) {
+      return res.status(400).json({
+        code: "INVALID_PARAMETERS",
+        message: "A title or prompt is required to generate a thumbnail",
       });
     }
 
-    // Check if reference image is allowed
-    const canUseReferenceImage = user.plan === "creator" || user.plan === "pro";
+    // POST /api/generate strictly requires Idempotency-Key (PLAN.md Section 8 Rule 3)
+    const isStrictGenerateRoute =
+      req.baseUrl === "/api" ||
+      req.originalUrl.startsWith("/api/generate") ||
+      req.headers["x-require-idempotency-key"] === "true";
 
-    // ── 2.4: YouTube fetch moved to the worker ────────────────────────────────
-    // Previously the API blocked here waiting for YouTube's CDN (1–3s).
-    // Now we pass the raw URL to the queue; the worker fetches it async,
-    // meaning this endpoint replies immediately regardless of YouTube latency.
-    // The raw reference_image (from direct upload) is still handled here.
-    const finalReferenceImage = reference_image || undefined;
+    const idempotencyKey = extractIdempotencyKey(req, isStrictGenerateRoute);
 
-    // If a youtube URL is provided + plan eligible, that counts as a reference
-    const hasYoutubeReference =
-      youtube_reference_url && canUseReferenceImage;
-    const usingReferenceImage =
-      (finalReferenceImage && canUseReferenceImage) || hasYoutubeReference;
-    const creditsRequired = usingReferenceImage
-      ? CREDITS_WITH_REFERENCE_IMAGE
-      : CREDITS_PER_THUMBNAIL;
+    // Count reference images passed via reference_image, referenceImages[], or youtube_reference_url
+    const refArray: string[] = Array.isArray(referenceImages)
+      ? referenceImages.filter(Boolean)
+      : reference_image
+      ? [reference_image]
+      : [];
+    const totalRefCount =
+      refArray.length + (youtube_reference_url?.trim() ? 1 : 0);
 
-    if (finalReferenceImage && !canUseReferenceImage) {
-      return res.status(403).json({
-        message:
-          "Reference images are only available for Creator and Pro plans",
+    // 1. Atomically check entitlements, check idempotency, decrement credits, and create Job + reserve ledger entry
+    const reservation = await defaultCreditService.reserveCreditsAndCreateJob({
+      userId,
+      idempotencyKey,
+      mode,
+      resolution,
+      aspectRatio: aspect_ratio,
+      prompt: effectivePrompt,
+      referenceImagesCount: totalRefCount,
+    });
+
+    // If this is an idempotent replay of an existing request, return the existing job & thumbnail immediately
+    if (reservation.idempotentReplay) {
+      const existingThumb = reservation.job.thumbnailId
+        ? await Thumbnail.findById(reservation.job.thumbnailId)
+        : null;
+      return res.status(200).json({
+        message: "Thumbnail generation already in progress (idempotent replay)",
+        idempotentReplay: true,
+        job: reservation.job,
+        thumbnail: existingThumb,
+        credits: reservation.userCreditsAfter,
       });
     }
 
-    if (user.credits < creditsRequired) {
-      return res.status(403).json({
-        message: usingReferenceImage
-          ? `Insufficient credits. Reference image generation requires ${CREDITS_WITH_REFERENCE_IMAGE} credits.`
-          : "Insufficient credits. Please upgrade your plan.",
-      });
-    }
+    reservedJobId = reservation.job.id;
 
-    // Create thumbnail record
+    // 2. Create the linked Thumbnail record
     const thumbnail = await Thumbnail.create({
       userId,
-      title,
-      prompt_used: user_prompt,
-      user_prompt,
+      jobId: reservation.job.id,
+      mode: reservation.job.mode,
+      title: (title || effectivePrompt).slice(0, 200),
+      prompt_used: effectivePrompt,
+      user_prompt: effectivePrompt,
       style,
-      aspect_ratio,
+      aspect_ratio: reservation.job.aspect_ratio,
       color_scheme,
       text_overlay,
-      resolution,
+      resolution: reservation.job.resolution.toLowerCase() as "2k" | "4k",
       platform: platform || undefined,
       youtube_reference_url: youtube_reference_url || undefined,
       isGenerating: true,
     });
 
-    // Add job to queue (non-blocking)
+    await defaultCreditService
+      .getStore()
+      .updateJobThumbnailId(reservation.job.id, thumbnail._id.toString());
+
+    // 3. Enqueue job into BullMQ
     await thumbnailQueue.add(
       `generate-${thumbnail._id}`,
       {
+        jobId: reservation.job.id,
         thumbnailId: thumbnail._id.toString(),
-        userId: userId!,
-        title,
-        user_prompt,
+        userId,
+        mode: reservation.job.mode,
+        title: (title || effectivePrompt).slice(0, 200),
+        user_prompt: effectivePrompt,
         style,
-        aspect_ratio,
+        aspect_ratio: reservation.job.aspect_ratio,
         color_scheme,
         text_overlay,
-        reference_image: finalReferenceImage,
-        resolution,
+        reference_image: refArray[0] || undefined,
+        reference_images: refArray,
+        resolution: reservation.job.resolution,
         platform: platform || "",
         youtube_reference_url: youtube_reference_url || "",
-        userPlan: user.plan,
-        creditsRequired,
+        userPlan: reservation.effectivePlan,
+        creditsRequired: reservation.job.reserved_credits,
       },
       {
-        priority: user.plan === "pro" ? 1 : user.plan === "creator" ? 2 : 3,
+        priority:
+          reservation.effectivePlan === "pro"
+            ? 1
+            : reservation.effectivePlan === "creator"
+            ? 2
+            : 3,
       }
     );
 
-    // Respond immediately - don't wait for generation
-    res.json({
+    const updatedJob = {
+      ...reservation.job,
+      thumbnailId: thumbnail._id.toString(),
+    };
+
+    return res.status(202).json({
       message: "Thumbnail generation started",
+      idempotentReplay: false,
+      job: updatedJob,
       thumbnail,
-      credits: user.credits, // Credits will be deducted when job completes
+      credits: reservation.userCreditsAfter,
     });
   } catch (error: any) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
+    // If reservation succeeded before Thumbnail.create or thumbnailQueue.add failed, refund immediately
+    if (reservedJobId) {
+      try {
+        await defaultCreditService.refundJobCredits({
+          jobId: reservedJobId,
+          reason: `Automatic refund: failed to enqueue job (${
+            error?.message || "unknown error"
+          })`,
+          errorCode: "QUEUE_ENQUEUE_FAILED",
+          errorMessage: error?.message || "Failed to enqueue generation job",
+        });
+      } catch (refundErr) {
+        console.error("Failed to refund after enqueue error:", refundErr);
+      }
+    }
+
+    if (error instanceof CreditServiceError) {
+      return res.status(error.status).json({
+        code: error.code,
+        message: error.message,
+      });
+    }
+    if (error instanceof ProviderError) {
+      return res.status(400).json({
+        code: error.code,
+        message: error.message,
+      });
+    }
+    console.error("generateThumbnail error:", error);
+    return res.status(500).json({
+      code: "INTERNAL_ERROR",
+      message: error?.message || "Failed to start thumbnail generation",
+    });
   }
 };
 
 export const editThumbnail = async (req: Request, res: Response) => {
+  let reservedJobId: string | null = null;
   try {
     const { userId } = req.session;
-    const { thumbnailId, edit_instructions } = req.body;
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ code: "UNAUTHORIZED", message: "Authentication required" });
+    }
+
+    const { thumbnailId, edit_instructions, mode } = req.body;
 
     if (!thumbnailId || !edit_instructions?.trim()) {
-      return res.status(400).json({ message: "Thumbnail ID and edit instructions are required" });
+      return res.status(400).json({
+        code: "INVALID_PARAMETERS",
+        message: "Thumbnail ID and edit instructions are required",
+      });
     }
 
-    // Check user
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    if (user.plan === "none") {
-      return res.status(403).json({ message: "Please select a plan to edit thumbnails" });
-    }
-
-    if (user.credits < CREDITS_PER_EDIT) {
-      return res.status(403).json({ message: `Insufficient credits. Editing requires ${CREDITS_PER_EDIT} credits.` });
-    }
-
-    // Look up the source thumbnail
-    const sourceThumbnail = await Thumbnail.findOne({ _id: thumbnailId, userId });
+    // Look up the source thumbnail first
+    const sourceThumbnail = await Thumbnail.findOne({
+      _id: thumbnailId,
+      userId,
+    });
     if (!sourceThumbnail) {
-      return res.status(404).json({ message: "Source thumbnail not found" });
+      return res.status(404).json({
+        code: "THUMBNAIL_NOT_FOUND",
+        message: "Source thumbnail not found",
+      });
     }
     if (!sourceThumbnail.image_url) {
-      return res.status(400).json({ message: "Source thumbnail has no generated image to edit" });
+      return res.status(400).json({
+        code: "INVALID_PARAMETERS",
+        message: "Source thumbnail has no generated image to edit",
+      });
     }
 
-    // Save the current image URL before overwriting (needed by the worker)
+    const isStrict = req.headers["x-require-idempotency-key"] === "true";
+    const idempotencyKey = extractIdempotencyKey(req, isStrict);
+
+    // Reserve credits atomically before updating thumbnail or enqueueing edit job
+    const reservation = await defaultCreditService.reserveCreditsAndCreateJob({
+      userId,
+      idempotencyKey,
+      mode: mode || sourceThumbnail.mode || "standard",
+      resolution: sourceThumbnail.resolution || "2K",
+      aspectRatio: sourceThumbnail.aspect_ratio || "16:9",
+      prompt: edit_instructions.trim(),
+      referenceImagesCount: 0,
+      thumbnailId: String(sourceThumbnail._id),
+    });
+
+    if (reservation.idempotentReplay) {
+      return res.status(200).json({
+        message: "Thumbnail edit already in progress (idempotent replay)",
+        idempotentReplay: true,
+        job: reservation.job,
+        thumbnail: sourceThumbnail,
+        credits: reservation.userCreditsAfter,
+      });
+    }
+
+    reservedJobId = reservation.job.id;
     const sourceImageUrl = sourceThumbnail.image_url;
 
-    // Update the SAME thumbnail record in-place — mark as generating
     const updatedThumbnail = await Thumbnail.findByIdAndUpdate(
       thumbnailId,
       {
+        jobId: reservation.job.id,
         edit_instructions: edit_instructions.trim(),
         isGenerating: true,
+        error: undefined,
       },
       { new: true }
     );
 
-    // Queue the edit job using the same thumbnail ID
     await thumbnailQueue.add(
-      `edit-${thumbnailId}`,
+      `edit-${thumbnailId}-${reservation.job.id}`,
       {
-        thumbnailId: thumbnailId,
-        userId: userId!,
+        jobId: reservation.job.id,
+        thumbnailId: String(thumbnailId),
+        userId,
+        mode: reservation.job.mode,
         title: sourceThumbnail.title,
         user_prompt: sourceThumbnail.user_prompt || "",
         style: sourceThumbnail.style,
         aspect_ratio: sourceThumbnail.aspect_ratio || "16:9",
         color_scheme: sourceThumbnail.color_scheme || "",
         text_overlay: sourceThumbnail.text_overlay || false,
-        resolution: sourceThumbnail.resolution || "2k",
+        resolution: reservation.job.resolution,
         platform: sourceThumbnail.platform || "",
-        userPlan: user.plan,
-        creditsRequired: CREDITS_PER_EDIT,
-        // Edit-specific data
+        userPlan: reservation.effectivePlan,
+        creditsRequired: reservation.job.reserved_credits,
         edit_instructions: edit_instructions.trim(),
         source_image_url: sourceImageUrl,
       },
       {
-        priority: user.plan === "pro" ? 1 : user.plan === "creator" ? 2 : 3,
+        priority:
+          reservation.effectivePlan === "pro"
+            ? 1
+            : reservation.effectivePlan === "creator"
+            ? 2
+            : 3,
       }
     );
 
-    res.json({
+    return res.status(202).json({
       message: "Thumbnail edit started",
+      idempotentReplay: false,
+      job: reservation.job,
       thumbnail: updatedThumbnail,
-      credits: user.credits,
+      credits: reservation.userCreditsAfter,
     });
   } catch (error: any) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
+    if (reservedJobId) {
+      try {
+        await defaultCreditService.refundJobCredits({
+          jobId: reservedJobId,
+          reason: `Automatic refund: failed to enqueue edit job (${
+            error?.message || "unknown error"
+          })`,
+          errorCode: "QUEUE_ENQUEUE_FAILED",
+          errorMessage: error?.message || "Failed to enqueue edit job",
+        });
+      } catch (refundErr) {
+        console.error("Failed to refund edit job after enqueue error:", refundErr);
+      }
+    }
+
+    if (error instanceof CreditServiceError) {
+      return res.status(error.status).json({
+        code: error.code,
+        message: error.message,
+      });
+    }
+    if (error instanceof ProviderError) {
+      return res.status(400).json({
+        code: error.code,
+        message: error.message,
+      });
+    }
+    console.error("editThumbnail error:", error);
+    return res.status(500).json({
+      code: "INTERNAL_ERROR",
+      message: error?.message || "Failed to start thumbnail edit",
+    });
   }
 };
 
+// Get job status by jobId (GET /api/jobs/:id)
+export const getJobStatus = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { userId } = req.session;
+
+    const job = await defaultCreditService.getStore().findJobById(id);
+    if (!job || job.userId !== userId) {
+      return res
+        .status(404)
+        .json({ code: "JOB_NOT_FOUND", message: "Job not found" });
+    }
+
+    const thumbnail = job.thumbnailId
+      ? await Thumbnail.findOne({ _id: job.thumbnailId, userId })
+      : null;
+
+    const ledgerEntries = await defaultCreditService
+      .getStore()
+      .findLedgerEntriesForJob(job.id);
+
+    return res.json({
+      job,
+      thumbnail,
+      ledger: ledgerEntries,
+      isComplete: job.status === "succeeded",
+      isFailed: job.status === "failed" || job.status === "canceled",
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      code: "INTERNAL_ERROR",
+      message: error?.message || "Failed to fetch job status",
+    });
+  }
+};
+
+// Get user credit ledger history (GET /api/user/ledger)
+export const getUserCreditLedger = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.session;
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ code: "UNAUTHORIZED", message: "Authentication required" });
+    }
+
+    const user = await defaultCreditService.getStore().getUserById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ code: "USER_NOT_FOUND", message: "User not found" });
+    }
+
+    const entries = await defaultCreditService
+      .getStore()
+      .findLedgerEntriesForUser(userId, 100);
+
+    return res.json({
+      credits: user.credits,
+      totalCredits: user.totalCredits,
+      plan: user.plan,
+      ledger: entries,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      code: "INTERNAL_ERROR",
+      message: error?.message || "Failed to fetch credit ledger",
+    });
+  }
+};
 
 // Get thumbnail status (for polling)
 export const getThumbnailStatus = async (req: Request, res: Response) => {
@@ -233,8 +437,13 @@ export const getThumbnailStatus = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Thumbnail not found" });
     }
 
+    const job = thumbnail.jobId
+      ? await defaultCreditService.getStore().findJobById(thumbnail.jobId)
+      : null;
+
     res.json({
       thumbnail,
+      job,
       isComplete: !thumbnail.isGenerating && !!thumbnail.image_url,
     });
   } catch (error: any) {
@@ -248,7 +457,7 @@ export const deleteThumbnail = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { userId } = req.session;
 
-    await Thumbnail.findByIdAndDelete({ _id: id, userId });
+    await Thumbnail.findOneAndDelete({ _id: id, userId });
 
     res.json({ message: "Thumbnail deleted successfully" });
   } catch (error: any) {

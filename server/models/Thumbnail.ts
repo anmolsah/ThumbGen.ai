@@ -1,7 +1,9 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 export interface IThumbnail extends Document {
   userId: string;
+  jobId?: string;
+  mode?: "fast" | "standard" | "premium" | "ultra";
   title: string;
   description?: string;
   style:
@@ -20,15 +22,20 @@ export interface IThumbnail extends Document {
     | "monochrome"
     | "ocean"
     | "pastel";
-  resolution?: "2k" | "4k";
+  resolution?: "1k" | "2k" | "4k" | "1K" | "2K" | "4K";
   platform?: string;
   youtube_reference_url?: string;
   text_overlay?: boolean;
   image_url?: string;
+  original_url?: string;
+  watermarked_url?: string;
+  preview_webp_url?: string;
   prompt_used?: string;
   user_prompt?: string;
   isGenerating?: boolean;
   error?: string;
+  error_code?: string;
+  generation_meta?: Record<string, unknown>;
   editedFrom?: string;
   edit_instructions?: string;
   // createdAt and updatedAt are auto-managed by { timestamps: true }
@@ -37,6 +44,12 @@ export interface IThumbnail extends Document {
 const ThumbnailSchema = new mongoose.Schema<IThumbnail>(
   {
     userId: { type: String, ref: "User", required: true },
+    jobId: { type: String, ref: "Job", index: true },
+    mode: {
+      type: String,
+      enum: ["fast", "standard", "premium", "ultra"],
+      default: "standard",
+    },
     title: { type: String, required: true, trim: true },
     description: { type: String, trim: true },
     style: {
@@ -82,7 +95,7 @@ const ThumbnailSchema = new mongoose.Schema<IThumbnail>(
     },
     resolution: {
       type: String,
-      enum: ["2k", "4k"],
+      enum: ["1k", "2k", "4k", "1K", "2K", "4K"],
       default: "2k",
     },
     youtube_reference_url: { type: String },
@@ -104,10 +117,15 @@ const ThumbnailSchema = new mongoose.Schema<IThumbnail>(
     },
     text_overlay: { type: Boolean, default: false },
     image_url: { type: String, default: "" },
+    original_url: { type: String },
+    watermarked_url: { type: String },
+    preview_webp_url: { type: String },
     prompt_used: { type: String },
     user_prompt: { type: String },
     isGenerating: { type: Boolean, default: true },
     error: { type: String },
+    error_code: { type: String },
+    generation_meta: { type: mongoose.Schema.Types.Mixed },
     editedFrom: { type: String, ref: "Thumbnail" },
     edit_instructions: { type: String },
   },

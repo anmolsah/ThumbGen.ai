@@ -12,6 +12,12 @@ import PaymentRouter from "./routes/PaymentRoutes.js";
 import SSERouter from "./routes/SSERoutes.js";
 import "./configs/cloudinary.js";
 import { assertValidStartupRegistry } from "./configs/registryValidator.js";
+import { defaultCreditService } from "./services/creditService.js";
+import {
+  generateThumbnail,
+  getJobStatus,
+} from "./controllers/ThumbnailController.js";
+import protect from "./middlewares/auth.js";
 
 // Validate model registry at boot (fails production startup if any enabled mode has null/stale/unverified values per Rule R3)
 assertValidStartupRegistry();
@@ -30,6 +36,18 @@ declare module "express-session" {
 }
 
 await connectDB();
+defaultCreditService
+  .sweepOrphanedJobs()
+  .then((res) => {
+    if (res.sweptCount > 0) {
+      console.log(
+        `[CreditService] Startup sweep refunded ${res.refundedJobIds.length}/${res.sweptCount} orphaned job(s).`
+      );
+    }
+  })
+  .catch((err) =>
+    console.warn("[CreditService] Startup orphan sweep warning:", err?.message)
+  );
 
 // ── Redis session client (node-redis v4 — required by connect-redis) ─────────
 // This is separate from the ioredis client used by BullMQ,
@@ -102,6 +120,8 @@ app.get("/api/debug/session", (req: Request, res: Response) => {
 
 app.use("/api/auth", AuthRouter);
 app.use("/api/thumbnail", ThumbnailRouter);
+app.post("/api/generate", protect, generateThumbnail);
+app.get("/api/jobs/:id", protect, getJobStatus);
 app.use("/api/user", UserRouter);
 app.use("/api/payment", PaymentRouter);
 // ── 2.3: SSE endpoint for real-time job completion notifications ──────────────

@@ -13,12 +13,18 @@ import "dotenv/config";
 import connectDB from "./configs/db.js";
 import "./configs/cloudinary.js";
 import { assertValidStartupRegistry } from "./configs/registryValidator.js";
+import { defaultCreditService } from "./services/creditService.js";
 
 // Validate model registry at boot (fails production startup if any enabled mode has null/stale/unverified values per Rule R3)
 assertValidStartupRegistry();
 
 // Connect to MongoDB (worker reads/writes Thumbnail & User models)
 await connectDB();
+
+// Refund any orphaned queued/running jobs left over from a prior worker crash
+await defaultCreditService.sweepOrphanedJobs().catch((err) => {
+  console.warn("[CreditService] Worker startup orphan sweep warning:", err?.message);
+});
 
 // Start the worker — this file simply importing it kicks it off
 import "./workers/thumbnailWorker.js";

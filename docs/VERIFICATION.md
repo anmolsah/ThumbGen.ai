@@ -46,6 +46,6 @@ Executed real API generation calls across `xai` and `openrouter` adapters on `20
 ---
 
 ## Carried Over from Phase 0 (Pending Later Phases / Owner Confirmation)
-- **Plan Pricing & Credit Grants (`server/configs/dodo.ts` vs. `config/registry.json`):** `config/registry.json` uses Starter=\$6/25cr, Creator=\$29/200cr, Pro=\$59/400cr; `server/configs/dodo.ts` still has Starter=\$9/25cr and Pro=\$59/800cr (to be unified in Phase 3 / Phase 6).
+- **Plan Pricing & Credit Grants (`server/configs/dodo.ts` vs. `config/registry.json`):** **Resolved in Phase 3** — `server/configs/dodo.ts` now derives `PLANS` (`starter`: \$6/25cr, `creator`: \$29/200cr, `pro`: \$59/400cr) directly from `config/registry.json`, and `PaymentController.ts` grants credits via `defaultCreditService.grantCredits(...)` into `credit_ledger`. (Client-side pricing display will be unified in Phase 6).
 - **Platform Official Aspect Ratios & Pixel Dimensions (Section 10):** `server/configs/platformConfig.ts` and `client/src/assets/assets.ts` preset dimensions to be verified before Phase 6 UI lock-in.
 - **UI Marketing Claims & Testimonials (Rule R2 & Section 10 — Phase 6):** `client/src/data/testimonial.ts`, `HeroSection.tsx`, `MarketComparison.tsx`.
