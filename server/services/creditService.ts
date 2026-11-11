@@ -38,7 +38,8 @@ export type CreditErrorCode =
   | "QUEUE_BUSY"
   | "INSUFFICIENT_CREDITS"
   | "JOB_NOT_FOUND"
-  | "INVALID_JOB_STATE";
+  | "INVALID_JOB_STATE"
+  | "SPEND_CAP_REACHED";
 
 export class CreditServiceError extends Error {
   public readonly code: CreditErrorCode;

@@ -32,6 +32,7 @@ import {
   ProviderError,
   type GenerateInput,
 } from "../providers/index.js";
+import { defaultObservability } from "../services/observabilityService.js";
 
 // ── Dedicated Redis publisher for SSE notifications ──────────────────────────
 const isTLS = (process.env.REDIS_URL || "").startsWith("rediss://");
@@ -301,18 +302,46 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
     meta.upscaled = processed.upscaled;
 
     const assets = processed.assets;
+    let finalCreditsCommitted = creditsRequired;
 
     if (jobId) {
-      await defaultCreditService.commitJobCredits({
+      const commitRes = await defaultCreditService.commitJobCredits({
         jobId,
         generationMeta: meta,
         assets,
       });
+      finalCreditsCommitted =
+        commitRes.job.final_credits ?? creditsRequired;
     } else {
       await User.findByIdAndUpdate(userId, {
         $inc: { credits: -creditsRequired },
       });
     }
+
+    await defaultObservability.recordGenerationEvent({
+      user_id: userId,
+      job_id: jobId || thumbnailId,
+      mode: modeId,
+      provider: meta.provider || "openrouter",
+      model_id: meta.model_id || "unknown",
+      attempt: Array.isArray((meta as any).attempts)
+        ? (meta as any).attempts.length
+        : 1,
+      latency_ms: meta.latency_ms ?? 0,
+      billed_cost_usd: meta.billed_cost_usd,
+      reserved_credits: creditsRequired,
+      final_credits: finalCreditsCommitted,
+      status: "succeeded",
+      error_code: null,
+      request_params: meta.request_params ?? undefined,
+      resolution_actual: meta.resolution_actual
+        ? {
+            width: meta.resolution_actual.width,
+            height: meta.resolution_actual.height,
+            tier: meta.resolution_actual.tier,
+          }
+        : undefined,
+    });
 
     const completedThumbnail = await Thumbnail.findByIdAndUpdate(
       thumbnailId,
@@ -370,6 +399,31 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
         );
       }
     }
+
+    await defaultObservability
+      .recordGenerationEvent({
+        user_id: userId,
+        job_id: jobId || thumbnailId,
+        mode: job.data.mode || "standard",
+        provider: error instanceof ProviderError ? error.provider : "worker",
+        model_id: error instanceof ProviderError ? error.model_id : "unknown",
+        attempt:
+          error instanceof ProviderError && Array.isArray(error.attempts)
+            ? error.attempts.length
+            : 1,
+        latency_ms: 0,
+        billed_cost_usd: 0,
+        reserved_credits: creditsRequired,
+        final_credits: 0,
+        status: "failed",
+        error_code: errorCode,
+        request_params: {
+          aspect_ratio,
+          resolution,
+          style,
+        },
+      })
+      .catch(() => {});
 
     const failedThumbnail = await Thumbnail.findByIdAndUpdate(
       thumbnailId,

@@ -10,6 +10,10 @@ import {
   sanitizeJobAssetsForPlan,
   sanitizeThumbnailForPlan,
 } from "../services/postProcessService.js";
+import {
+  defaultGenerationRateLimiter,
+  defaultObservability,
+} from "../services/observabilityService.js";
 import { ProviderError } from "../providers/types.js";
 
 function extractIdempotencyKey(
@@ -37,6 +41,18 @@ export const generateThumbnail = async (req: Request, res: Response) => {
         .status(401)
         .json({ code: "UNAUTHORIZED", message: "Authentication required" });
     }
+
+    // Phase 8 Abuse Protection & Daily Spend Kill Switch
+    const rateCheck = defaultGenerationRateLimiter.check(userId);
+    if (!rateCheck.allowed) {
+      res.setHeader("Retry-After", String(rateCheck.retryAfterSeconds));
+      return res.status(429).json({
+        code: "RATE_LIMITED",
+        error_code: "RATE_LIMITED",
+        message: `Too many generation requests. Please retry in ${rateCheck.retryAfterSeconds}s.`,
+      });
+    }
+    defaultObservability.assertSpendBelowCap();
 
     const {
       title,
@@ -227,6 +243,18 @@ export const editThumbnail = async (req: Request, res: Response) => {
         .status(401)
         .json({ code: "UNAUTHORIZED", message: "Authentication required" });
     }
+
+    // Phase 8 Abuse Protection & Daily Spend Kill Switch
+    const rateCheck = defaultGenerationRateLimiter.check(userId);
+    if (!rateCheck.allowed) {
+      res.setHeader("Retry-After", String(rateCheck.retryAfterSeconds));
+      return res.status(429).json({
+        code: "RATE_LIMITED",
+        error_code: "RATE_LIMITED",
+        message: `Too many generation requests. Please retry in ${rateCheck.retryAfterSeconds}s.`,
+      });
+    }
+    defaultObservability.assertSpendBelowCap();
 
     const { thumbnailId, edit_instructions, mode } = req.body;
 

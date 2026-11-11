@@ -67,3 +67,32 @@ Executed real API generation calls across `xai` and `openrouter` adapters on `20
    - `.\server\node_modules\.bin\tsc -p server/tsconfig.json --noEmit` -> **exit code 0**.
    - `.\server\node_modules\.bin\tsc -p client/tsconfig.app.json --noEmit` -> **exit code 0**.
    - `npm --prefix client run build` -> **built in 23.54s with 0 errors**.
+
+---
+
+## Phase 7 & Phase 8 — Observability, Server-Side Typography, Smart-Crop, Provenance, and Hardening (2026-11-11)
+
+1. **Structured Observability, Metrics & Alert Rules (`server/models/GenerationLog.ts`, `server/services/observabilityService.ts`, `server/server.ts`, `server/workers/thumbnailWorker.ts`):**
+   - Added `generation_log` Mongoose schema (`GenerationLog.ts`) and `ObservabilityManager` (`observabilityService.ts`).
+   - Enforced Rule R9 secret & base64 redaction via `sanitizeLogPayload` (redacts `api_key`, `OPENROUTER_API_KEY`, `XAI_API_KEY`, `Bearer ...`, `sk-or-...`, `data:image/...`, and raw base64 payloads `> 512` chars).
+   - Added `GET /metrics` (Prometheus text exposition format) and `GET /api/metrics/summary` (JSON snapshot + alert evaluation).
+   - Configured and verified the 5 alert rules:
+     1. `provider_error_rate_high`: `provider_error_rate > 5%` (`0.05`) over `>= 5` jobs
+     2. `queue_wait_p95_high`: `queue_wait_p95_seconds > 30s`
+     3. `daily_provider_spend_exceeded`: `daily_provider_spend_usd >= daily_spend_cap_usd` (also trips the automatic kill switch returning `503 SPEND_CAP_REACHED`)
+     4. `credit_refund_rate_high`: `credit_refund_rate > 10%` (`0.10`) over `>= 5` jobs
+     5. `circuit_breaker_open`: `circuit_breaker_open === 1`
+2. **Abuse Protection & Rate Limiting (`server/controllers/ThumbnailController.ts`, `server/services/observabilityService.ts`):**
+   - Added `SlidingWindowRateLimiter` (`20 requests / 60s` per user) returning `429 RATE_LIMITED` with `Retry-After` header before credit reservation or provider calls.
+   - Added `defaultObservability.assertSpendBelowCap()` check on `generateThumbnail` and `editThumbnail` returning `503 SPEND_CAP_REACHED` when daily spend hits `DAILY_SPEND_CAP_USD`.
+3. **Server-Side Text Overlay, Smart-Crop, and Provenance Metadata (`server/services/postProcessService.ts`):**
+   - `applyServerTextOverlay`: renders crisp SVG typography via Sharp, rejects `BANNED_TEXT_EFFECTS` (`gold_3d_bevel`, `neon_gradient_glow`, `sparkle_overlay`, etc.), relocates text away from `faceRegions`, measures WCAG 2.1 contrast ratio against sampled background pixels, and automatically applies a dark scrim (`rgba(10,10,12,0.82)`) + stroke when initial contrast `< 4.5:1` to guarantee final contrast `>= 4.5:1`.
+   - `smartCropFromMaster`: derives `1:1`, `9:16`, and `4:5` crops from a `16:9` master using `sharp.strategy.attention`.
+   - **Provenance Metadata Behavior Report (Section 10A.9 & Pitfall P13):**
+     - Verified via `inspectProvenanceMetadata(buffer)`: Sharp's `.webp({ quality: 92 })` re-encoding pipeline strips container-level EXIF, XMP, IPTC, and C2PA JUMBF metadata boxes by default (`survivesPostProcessing: false`) unless `.withMetadata()` is explicitly called.
+     - Imperceptible pixel-domain watermarks (such as Google SynthID on Gemini image models) reside in spatial frequency bands rather than container headers, and may be partially degraded by lossy WebP compression (`quality: 92`) and Starter visible watermark compositing. Per Section 10A.9, ThumbGen.ai never advertises metadata stripping or "undetectable AI" claims.
+4. **Appendix B Benchmark & Load Tests (`server/scripts/benchmark-models.ts`, `docs/BENCHMARK.md`, `server/tests/observability-hardening.test.ts`):**
+   - Executed 50-prompt benchmark across 4 categories (`text_heavy_titles`: 13, `face_reference_edits`: 12, `product_shots`: 13, `plain_minimal_backgrounds`: 12) and wrote `server/config/benchmark.results.json` and `docs/BENCHMARK.md`.
+   - Executed Section 13(a) 50-parallel-request concurrent spend race test (`balance = 5`, `mode = ultra` at `5 credits` -> `1` succeeded, `49` failed with `402 INSUFFICIENT_CREDITS`, final balance `0`).
+   - Executed 100-concurrent-job load test (`2,489 ms` total wall time, `0` failed jobs, Prometheus metrics verified).
+   - Full server test suite: **`44/44` passing (`0` failures)**.

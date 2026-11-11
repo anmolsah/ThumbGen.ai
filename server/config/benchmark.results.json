@@ -1,0 +1,109 @@
+{
+  "generated_at": "2026-11-11T17:41:55.528Z",
+  "prompt_count": 50,
+  "categories": {
+    "text_heavy_titles": 13,
+    "face_reference_edits": 12,
+    "product_shots": 13,
+    "plain_minimal_backgrounds": 12
+  },
+  "harness_results": [
+    {
+      "mode": "fast",
+      "provider": "openrouter",
+      "model_id": "black-forest-labs/flux.2-klein-4b",
+      "prompts_tested": 50,
+      "success_rate": 100,
+      "failure_rate": 0,
+      "pipeline_p50_ms": 31,
+      "pipeline_p95_ms": 39,
+      "crop_safety_pass_rate": 100,
+      "error_types": {}
+    },
+    {
+      "mode": "fast",
+      "provider": "xai",
+      "model_id": "grok-imagine-image",
+      "prompts_tested": 50,
+      "success_rate": 100,
+      "failure_rate": 0,
+      "pipeline_p50_ms": 25,
+      "pipeline_p95_ms": 29,
+      "crop_safety_pass_rate": 100,
+      "error_types": {}
+    },
+    {
+      "mode": "standard",
+      "provider": "openrouter",
+      "model_id": "google/gemini-3.1-flash-image-preview",
+      "prompts_tested": 50,
+      "success_rate": 100,
+      "failure_rate": 0,
+      "pipeline_p50_ms": 28,
+      "pipeline_p95_ms": 32,
+      "crop_safety_pass_rate": 100,
+      "error_types": {}
+    },
+    {
+      "mode": "standard",
+      "provider": "openrouter",
+      "model_id": "bytedance-seed/seedream-4.5",
+      "prompts_tested": 50,
+      "success_rate": 100,
+      "failure_rate": 0,
+      "pipeline_p50_ms": 29,
+      "pipeline_p95_ms": 36,
+      "crop_safety_pass_rate": 100,
+      "error_types": {}
+    },
+    {
+      "mode": "premium",
+      "provider": "openrouter",
+      "model_id": "black-forest-labs/flux.2-pro",
+      "prompts_tested": 50,
+      "success_rate": 100,
+      "failure_rate": 0,
+      "pipeline_p50_ms": 24,
+      "pipeline_p95_ms": 29,
+      "crop_safety_pass_rate": 100,
+      "error_types": {}
+    },
+    {
+      "mode": "premium",
+      "provider": "xai",
+      "model_id": "grok-imagine-image-pro",
+      "prompts_tested": 50,
+      "success_rate": 100,
+      "failure_rate": 0,
+      "pipeline_p50_ms": 24,
+      "pipeline_p95_ms": 28,
+      "crop_safety_pass_rate": 100,
+      "error_types": {}
+    },
+    {
+      "mode": "ultra",
+      "provider": "openrouter",
+      "model_id": "google/gemini-3-pro-image-preview",
+      "prompts_tested": 50,
+      "success_rate": 100,
+      "failure_rate": 0,
+      "pipeline_p50_ms": 24,
+      "pipeline_p95_ms": 30,
+      "crop_safety_pass_rate": 100,
+      "error_types": {}
+    },
+    {
+      "mode": "ultra",
+      "provider": "openrouter",
+      "model_id": "black-forest-labs/flux.2-max",
+      "prompts_tested": 50,
+      "success_rate": 100,
+      "failure_rate": 0,
+      "pipeline_p50_ms": 25,
+      "pipeline_p95_ms": 32,
+      "crop_safety_pass_rate": 100,
+      "error_types": {}
+    }
+  ],
+  "live_provider_probes": []
+}

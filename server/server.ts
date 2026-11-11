@@ -16,6 +16,7 @@ import {
   loadRegistryConfig,
 } from "./configs/registryValidator.js";
 import { defaultCreditService } from "./services/creditService.js";
+import { defaultObservability } from "./services/observabilityService.js";
 import {
   generateThumbnail,
   getJobStatus,
@@ -110,6 +111,20 @@ app.use(express.json({ limit: "20mb" }));
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is Live!");
+});
+
+// Prometheus metrics endpoint (Phase 7 & Phase 8 Observability)
+app.get("/metrics", (req: Request, res: Response) => {
+  res.setHeader("Content-Type", "text/plain; version=0.0.4; charset=utf-8");
+  res.send(defaultObservability.renderPrometheusMetrics());
+});
+
+// JSON metrics & alert evaluation summary
+app.get("/api/metrics/summary", (req: Request, res: Response) => {
+  res.json({
+    metrics: defaultObservability.getMetricsSnapshot(),
+    alerts: defaultObservability.evaluateAlertRules(),
+  });
 });
 
 // Public configuration endpoint derived from config/registry.json (never exposes internal model/provider costs)

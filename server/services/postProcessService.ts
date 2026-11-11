@@ -293,3 +293,355 @@ export function sanitizeThumbnailForPlan(
   return obj;
 }
 
+// ---------------------------------------------------------------------------
+// Phase 7: Server-Side Text Overlay, Smart-Crop & Provenance Inspection
+// (PLAN.md Sections 10A.4, 10A.9, 12 Phase 7, Pitfalls P12 & P13)
+// ---------------------------------------------------------------------------
+
+export const BANNED_TEXT_EFFECTS = [
+  "gold_3d_bevel",
+  "neon_gradient_glow",
+  "sparkle_overlay",
+  "rainbow_wordart",
+  "heavy_drop_shadow_stack",
+] as const;
+
+export interface BoundingBox {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+export interface TextOverlayOptions {
+  text: string;
+  textColorHex?: string; // default "#FFFFFF"
+  effectPreset?: string; // checked against BANNED_TEXT_EFFECTS
+  faceRegions?: BoundingBox[];
+  position?: "top" | "bottom" | "left" | "right";
+}
+
+export interface TextOverlayResult {
+  buffer: Buffer;
+  initialContrastRatio: number;
+  finalContrastRatio: number;
+  scrimApplied: boolean;
+  placedRegion: BoundingBox;
+}
+
+function parseHexRgb(hex: string): { r: number; g: number; b: number } {
+  const clean = hex.replace(/^#/, "").trim();
+  if (clean.length === 3) {
+    return {
+      r: parseInt(clean[0] + clean[0], 16),
+      g: parseInt(clean[1] + clean[1], 16),
+      b: parseInt(clean[2] + clean[2], 16),
+    };
+  }
+  return {
+    r: parseInt(clean.slice(0, 2) || "ff", 16),
+    g: parseInt(clean.slice(2, 4) || "ff", 16),
+    b: parseInt(clean.slice(4, 6) || "ff", 16),
+  };
+}
+
+/**
+ * Computes WCAG 2.1 relative luminance for an sRGB triplet (0-255).
+ */
+export function computeRelativeLuminance(
+  r: number,
+  g: number,
+  b: number
+): number {
+  const toLinear = (c: number) => {
+    const s = Math.max(0, Math.min(255, c)) / 255;
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  };
+  return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+}
+
+/**
+ * Computes WCAG 2.1 contrast ratio between two relative luminances (`1.0` to `21.0`).
+ */
+export function computeContrastRatio(lumA: number, lumB: number): number {
+  const lighter = Math.max(lumA, lumB);
+  const darker = Math.min(lumA, lumB);
+  return Number(((lighter + 0.05) / (darker + 0.05)).toFixed(2));
+}
+
+function boxesOverlap(a: BoundingBox, b: BoundingBox): boolean {
+  return (
+    a.left < b.left + b.width &&
+    a.left + a.width > b.left &&
+    a.top < b.top + b.height &&
+    a.top + a.height > b.top
+  );
+}
+
+function escapeXml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+/**
+ * Renders crisp server-side typography over an image buffer using Sharp SVG compositing.
+ * Enforces PLAN.md Section 10A.4 & Pitfall P12:
+ *   - Rejects banned tacky effect presets (`gold_3d_bevel`, `neon_gradient_glow`, etc.)
+ *   - Avoids overlapping any passed `faceRegions`
+ *   - Samples background pixels in the target text box and verifies WCAG contrast >= 4.5:1
+ *   - Automatically adds a high-contrast dark scrim + stroke when initial contrast < 4.5:1
+ */
+export async function applyServerTextOverlay(
+  imageBuffer: Buffer,
+  options: TextOverlayOptions
+): Promise<TextOverlayResult> {
+  if (
+    options.effectPreset &&
+    (BANNED_TEXT_EFFECTS as readonly string[]).includes(options.effectPreset)
+  ) {
+    throw new Error(
+      `BANNED_TEXT_EFFECT: Effect preset "${options.effectPreset}" is prohibited by Section 10A.4 / P12.`
+    );
+  }
+
+  const cleanText = options.text.trim();
+  if (!cleanText) {
+    throw new Error("Text overlay requires a non-empty text string.");
+  }
+
+  const meta = await sharp(imageBuffer).metadata();
+  const imgWidth = meta.width ?? 1280;
+  const imgHeight = meta.height ?? 720;
+
+  const boxWidth = Math.round(imgWidth * 0.84);
+  const boxHeight = Math.max(64, Math.round(imgHeight * 0.22));
+  const marginX = Math.round((imgWidth - boxWidth) / 2);
+  const marginY = Math.max(24, Math.round(imgHeight * 0.06));
+
+  const candidateBoxes: Record<string, BoundingBox> = {
+    bottom: {
+      left: marginX,
+      top: Math.max(0, imgHeight - boxHeight - marginY),
+      width: boxWidth,
+      height: boxHeight,
+    },
+    top: {
+      left: marginX,
+      top: marginY,
+      width: boxWidth,
+      height: boxHeight,
+    },
+  };
+
+  const preferredOrder =
+    options.position === "top" ? ["top", "bottom"] : ["bottom", "top"];
+  const faces = options.faceRegions ?? [];
+
+  let placedRegion = candidateBoxes[preferredOrder[0]];
+  for (const posKey of preferredOrder) {
+    const candidate = candidateBoxes[posKey];
+    const collides = faces.some((face) => boxesOverlap(candidate, face));
+    if (!collides) {
+      placedRegion = candidate;
+      break;
+    }
+  }
+
+  // Sample average luminance in the placedRegion
+  const regionStats = await sharp(imageBuffer)
+    .extract({
+      left: Math.max(0, Math.min(imgWidth - 1, placedRegion.left)),
+      top: Math.max(0, Math.min(imgHeight - 1, placedRegion.top)),
+      width: Math.max(
+        1,
+        Math.min(imgWidth - placedRegion.left, placedRegion.width)
+      ),
+      height: Math.max(
+        1,
+        Math.min(imgHeight - placedRegion.top, placedRegion.height)
+      ),
+    })
+    .stats();
+
+  const avgR = regionStats.channels[0]?.mean ?? 128;
+  const avgG = regionStats.channels[1]?.mean ?? 128;
+  const avgB = regionStats.channels[2]?.mean ?? 128;
+  const bgLuminance = computeRelativeLuminance(avgR, avgG, avgB);
+
+  const textRgb = parseHexRgb(options.textColorHex ?? "#FFFFFF");
+  const textLuminance = computeRelativeLuminance(
+    textRgb.r,
+    textRgb.g,
+    textRgb.b
+  );
+
+  const initialContrastRatio = computeContrastRatio(textLuminance, bgLuminance);
+  const needsScrim = initialContrastRatio < 4.5;
+
+  // When scrim (rgba(10,10,12,0.82)) is applied beneath light text, effective background luminance drops
+  const effectiveBgLuminance = needsScrim
+    ? computeRelativeLuminance(
+        Math.round(avgR * 0.18 + 10 * 0.82),
+        Math.round(avgG * 0.18 + 10 * 0.82),
+        Math.round(avgB * 0.18 + 12 * 0.82)
+      )
+    : bgLuminance;
+
+  const EffectiveTextHex =
+    needsScrim && textLuminance < 0.5
+      ? "#FFFFFF"
+      : options.textColorHex ?? "#FFFFFF";
+  const finalTextRgb = parseHexRgb(EffectiveTextHex);
+  const finalTextLum = computeRelativeLuminance(
+    finalTextRgb.r,
+    finalTextRgb.g,
+    finalTextRgb.b
+  );
+  const finalContrastRatio = computeContrastRatio(
+    finalTextLum,
+    effectiveBgLuminance
+  );
+
+  const fontSize = Math.max(
+    24,
+    Math.min(
+      Math.round(placedRegion.height * 0.52),
+      Math.round((placedRegion.width / Math.max(6, cleanText.length)) * 1.65)
+    )
+  );
+
+  const scrimRect = needsScrim
+    ? `<rect x="0" y="0" width="${placedRegion.width}" height="${placedRegion.height}" rx="12" fill="rgba(10,10,12,0.82)"/>`
+    : "";
+
+  const svgOverlay = `<svg width="${placedRegion.width}" height="${placedRegion.height}" xmlns="http://www.w3.org/2000/svg">
+    ${scrimRect}
+    <text
+      x="50%"
+      y="54%"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      fill="${EffectiveTextHex}"
+      stroke="rgba(0,0,0,0.75)"
+      stroke-width="${Math.max(2, Math.round(fontSize * 0.06))}"
+      paint-order="stroke fill"
+      font-family="Inter, Impact, sans-serif"
+      font-weight="900"
+      font-size="${fontSize}px"
+      letter-spacing="0.02em"
+    >${escapeXml(cleanText)}</text>
+  </svg>`;
+
+  const compositedBuffer = await sharp(imageBuffer)
+    .composite([
+      {
+        input: Buffer.from(svgOverlay),
+        left: placedRegion.left,
+        top: placedRegion.top,
+      },
+    ])
+    .webp({ quality: 92 })
+    .toBuffer();
+
+  return {
+    buffer: compositedBuffer,
+    initialContrastRatio,
+    finalContrastRatio,
+    scrimApplied: needsScrim,
+    placedRegion,
+  };
+}
+
+/**
+ * Smart-crops a 16:9 master buffer into another target aspect ratio (`1:1`, `9:16`, `4:5`)
+ * using Sharp's entropy/attention-based subject detection (`position: sharp.strategy.attention`).
+ */
+export async function smartCropFromMaster(
+  masterBuffer: Buffer,
+  targetAspectRatio: "16:9" | "1:1" | "9:16" | "4:5"
+): Promise<{ buffer: Buffer; width: number; height: number }> {
+  const meta = await sharp(masterBuffer).metadata();
+  const srcWidth = meta.width ?? 1280;
+  const srcHeight = meta.height ?? 720;
+
+  const ratioMap: Record<"16:9" | "1:1" | "9:16" | "4:5", [number, number]> = {
+    "16:9": [16, 9],
+    "1:1": [1, 1],
+    "9:16": [9, 16],
+    "4:5": [4, 5],
+  };
+
+  const [rw, rh] = ratioMap[targetAspectRatio] ?? [16, 9];
+  const targetRatio = rw / rh;
+  const srcRatio = srcWidth / srcHeight;
+
+  let cropWidth = srcWidth;
+  let cropHeight = srcHeight;
+  if (srcRatio > targetRatio) {
+    cropWidth = Math.max(1, Math.round(srcHeight * targetRatio));
+  } else if (srcRatio < targetRatio) {
+    cropHeight = Math.max(1, Math.round(srcWidth / targetRatio));
+  }
+
+  const buffer = await sharp(masterBuffer)
+    .resize({
+      width: cropWidth,
+      height: cropHeight,
+      fit: "cover",
+      position: sharp.strategy.attention,
+    })
+    .webp({ quality: 92 })
+    .toBuffer();
+
+  const outMeta = await sharp(buffer).metadata();
+  return {
+    buffer,
+    width: outMeta.width ?? cropWidth,
+    height: outMeta.height ?? cropHeight,
+  };
+}
+
+export interface ProvenanceInspection {
+  format: string;
+  hasExif: boolean;
+  hasIcc: boolean;
+  hasXmp: boolean;
+  hasIptc: boolean;
+   survivesPostProcessing: boolean;
+  notes: string;
+}
+
+/**
+ * Inspects image provenance/EXIF/XMP metadata before & after Sharp WebP post-processing
+ * (PLAN.md Section 10A.9 & Pitfall P13).
+ */
+export async function inspectProvenanceMetadata(
+  rawBuffer: Buffer
+): Promise<ProvenanceInspection> {
+  const rawMeta = await sharp(rawBuffer).metadata();
+  const processedBuffer = await sharp(rawBuffer).webp({ quality: 92 }).toBuffer();
+  const procMeta = await sharp(processedBuffer).metadata();
+
+  const rawHasAny = Boolean(
+    rawMeta.exif || rawMeta.xmp || rawMeta.iptc
+  );
+  const procHasAny = Boolean(
+    procMeta.exif || procMeta.xmp || procMeta.iptc
+  );
+
+  return {
+    format: procMeta.format ?? "webp",
+    hasExif: Boolean(procMeta.exif),
+    hasIcc: Boolean(procMeta.icc),
+    hasXmp: Boolean(procMeta.xmp),
+    hasIptc: Boolean(procMeta.iptc),
+    survivesPostProcessing: rawHasAny ? procHasAny : false,
+    notes:
+      "Sharp `.webp()` strips EXIF/XMP/C2PA JUMBF boxes by default unless `.withMetadata()` is explicitly called; SynthID imperceptible pixel-domain watermarks (on Gemini models) reside in spatial frequency bands and may degrade under lossy WebP compression + watermarking.",
+  };
+}
+
