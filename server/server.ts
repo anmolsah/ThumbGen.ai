@@ -11,6 +11,10 @@ import UserRouter from "./routes/UserRoutes.js";
 import PaymentRouter from "./routes/PaymentRoutes.js";
 import SSERouter from "./routes/SSERoutes.js";
 import "./configs/cloudinary.js";
+import { assertValidStartupRegistry } from "./configs/registryValidator.js";
+
+// Validate model registry at boot (fails production startup if any enabled mode has null/stale/unverified values per Rule R3)
+assertValidStartupRegistry();
 
 // ─── NOTE ────────────────────────────────────────────────────────────────────
 // The BullMQ worker is NO LONGER imported here.

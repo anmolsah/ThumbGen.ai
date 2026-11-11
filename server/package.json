@@ -8,7 +8,11 @@
         "server": "nodemon --exec tsx server.ts",
         "worker": "node --import tsx/esm workerProcess.ts",
         "build": "tsc",
-        "postinstall": "npm rebuild sharp"
+        "postinstall": "npm rebuild sharp",
+        "discover-models": "node --import tsx/esm scripts/discover-models.ts",
+        "validate-registry": "node --import tsx/esm scripts/validate-registry.ts",
+        "margin-guard": "node --import tsx/esm scripts/margin-guard.ts",
+        "test": "node --import tsx/esm --test tests/*.test.ts"
     },
     "engines": {
         "node": ">=20.0.0"

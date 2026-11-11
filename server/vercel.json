@@ -5,7 +5,7 @@
             "src": "server.ts",
             "use": "@vercel/node",
             "config": {
-                "includeFiles": ["configs/**", "controllers/**", "middlewares/**", "models/**", "queues/**", "routes/**", "workers/**"]
+                "includeFiles": ["config/**", "configs/**", "controllers/**", "middlewares/**", "models/**", "queues/**", "routes/**", "workers/**"]
             }
         }
     ],

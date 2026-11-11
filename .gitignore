@@ -1,2 +1,5 @@
 # Docs folder (personal notes)
-docs/
+docs/*
+!docs/AUDIT.md
+!docs/VERIFICATION.md
+!docs/BENCHMARK.md
