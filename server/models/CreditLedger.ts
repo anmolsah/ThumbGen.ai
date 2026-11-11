@@ -82,3 +82,4 @@ const CreditLedger =
   mongoose.model<ICreditLedger>("CreditLedger", CreditLedgerSchema);
 
 export default CreditLedger;
+
