@@ -45,7 +45,25 @@ Executed real API generation calls across `xai` and `openrouter` adapters on `20
 
 ---
 
-## Carried Over from Phase 0 (Pending Later Phases / Owner Confirmation)
-- **Plan Pricing & Credit Grants (`server/configs/dodo.ts` vs. `config/registry.json`):** **Resolved in Phase 3** — `server/configs/dodo.ts` now derives `PLANS` (`starter`: \$6/25cr, `creator`: \$29/200cr, `pro`: \$59/400cr) directly from `config/registry.json`, and `PaymentController.ts` grants credits via `defaultCreditService.grantCredits(...)` into `credit_ledger`. (Client-side pricing display will be unified in Phase 6).
-- **Platform Official Aspect Ratios & Pixel Dimensions (Section 10):** `server/configs/platformConfig.ts` and `client/src/assets/assets.ts` preset dimensions to be verified before Phase 6 UI lock-in.
-- **UI Marketing Claims & Testimonials (Rule R2 & Section 10 — Phase 6):** `client/src/data/testimonial.ts`, `HeroSection.tsx`, `MarketComparison.tsx`.
+## Carried Over from Phase 0 (Resolved in Phases 3, 5, and 6)
+- **Plan Pricing & Credit Grants (`server/configs/dodo.ts` vs. `config/registry.json`):** **Resolved in Phase 3 & Phase 6** — `server/configs/dodo.ts` and `GET /api/config/public` derive `PLANS` (`starter`: \$6/25cr, `creator`: \$29/200cr, `pro`: \$59/400cr) directly from `config/registry.json`, and `client/src/data/pricing.ts`, `PricingSection.tsx`, and `Profile.tsx` display accurate thumbnail range claims (`12–25`, `40–200`, `80–400` thumbnails).
+- **UI Marketing Claims & Testimonials (Rule R2 & Section 10 — Phase 6):** **Resolved in Phase 6** — Removed all fabricated testimonials, stock Unsplash avatars, unverified `"50+ creators"` / `"thousands of creators"` / `"Trusted by MrBeast, PewDiePie..."` claims, false `"No Credit Card Required"` / `"Generate Free Thumbnail"` claims, and unverified competitor price claims across `client/src/data/testimonial.ts`, `TestimonialSection.tsx`, `HeroSection.tsx`, `FeaturesSection.tsx`, `CTASection.tsx`, and `MarketComparison.tsx`.
+
+---
+
+## Phase 5 & Phase 6 — Post-Processing, Storage, and UI/UX Redesign Verification (2026-11-11)
+
+1. **Post-Processing & Watermark Isolation (`server/services/postProcessService.ts`, `server/tests/postprocess.test.ts`):**
+   - Verified `processAndStoreAssets` generates three distinct variants with independent 128-bit cryptographic random keys (`orig_<32-hex>`, `wm_<32-hex>`, `prev_<32-hex>`):
+     - `original_url` (full-resolution WebP master)
+     - `watermarked_url` (diagonal + corner SVG watermark composited via Sharp)
+     - `preview_webp_url` (`<= 640px` wide WebP for fast gallery browsing)
+   - Verified `sanitizeJobAssetsForPlan` and `sanitizeThumbnailForPlan` strip `original_url` for `starter` users and automatically unlock `original_url` when a user upgrades to `creator` or `pro`.
+2. **UI/UX Skills Installed & Applied (`.agents/skills/`):**
+   - Cloned and installed `pbakaus/impeccable`, `Leonxlnx/taste-skill`, `nextlevelbuilder/ui-ux-pro-max-skill`, and `emilkowalski/skills` into `.agents/skills/`.
+   - Redesigned the landing page (`HeroSection.tsx`, `PlatformMarqueeSection.tsx`, `FeaturesSection.tsx`, `TestimonialSection.tsx`, `PricingSection.tsx`, `ShowcaseSection.tsx`, `CTASection.tsx`, `MarketComparison.tsx`) and Studio (`Generate.tsx`, `ResolutionSelector.tsx`, `PreviewPanel.tsx`, `MyGeneration.tsx`, `Navbar.tsx`, `Footer.tsx`, `SectionTitle.tsx`, `globals.css`) to eliminate AI-slop patterns and enforce Operate/Persuade craft rules.
+3. **Automated Test & Build Verification:**
+   - `npm --prefix server test` -> **38/38 tests passing** (`0` failures).
+   - `.\server\node_modules\.bin\tsc -p server/tsconfig.json --noEmit` -> **exit code 0**.
+   - `.\server\node_modules\.bin\tsc -p client/tsconfig.app.json --noEmit` -> **exit code 0**.
+   - `npm --prefix client run build` -> **built in 23.54s with 0 errors**.

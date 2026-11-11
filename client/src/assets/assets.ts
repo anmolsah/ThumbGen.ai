@@ -5,11 +5,6 @@ import thumb_4 from "./thumb_4.jpg";
 import thumb_5 from "./thumb_5.jpg";
 import thumb_6 from "./thumb_6.jpg";
 import thumb_7 from "./thumb_7.jpg";
-import thumb_8 from "./thumb_8.png";
-import thumb_9 from "./thumb_9.png";
-import thumb_10 from "./thumb_10.png";
-import thumb_11 from "./thumb_11.png";
-import thumb_12 from "./thumb12.jpg";
 
 
 
@@ -18,6 +13,63 @@ export type AspectRatio = (typeof aspectRatios)[number];
 
 export const resolutions = ["2k", "4k"] as const;
 export type Resolution = (typeof resolutions)[number];
+
+export const generationModes = ["fast", "standard", "premium", "ultra"] as const;
+export type GenerationModeId = (typeof generationModes)[number];
+
+export interface GenerationModeMeta {
+  id: GenerationModeId;
+  label: string;
+  description: string;
+  credits: number;
+  allowedPlans: Array<"starter" | "creator" | "pro">;
+  defaultResolution: Resolution;
+  supportsReferenceImage: boolean;
+  estimate: string;
+}
+
+export const GENERATION_MODES: GenerationModeMeta[] = [
+  {
+    id: "fast",
+    label: "Fastest",
+    description: "Rapid 2K concept generation for high-volume testing",
+    credits: 1,
+    allowedPlans: ["starter", "creator", "pro"],
+    defaultResolution: "2k",
+    supportsReferenceImage: false,
+    estimate: "~8–15 sec",
+  },
+  {
+    id: "standard",
+    label: "Standard",
+    description: "Balanced 2K thumbnail quality and composition",
+    credits: 2,
+    allowedPlans: ["starter", "creator", "pro"],
+    defaultResolution: "2k",
+    supportsReferenceImage: false,
+    estimate: "~12–25 sec",
+  },
+  {
+    id: "premium",
+    label: "Best for Text & Reference Photos",
+    description: "Superior typography, faces, and reference image fidelity in 2K",
+    credits: 3,
+    allowedPlans: ["creator", "pro"],
+    defaultResolution: "2k",
+    supportsReferenceImage: true,
+    estimate: "~15–30 sec",
+  },
+  {
+    id: "ultra",
+    label: "Ultra 4K",
+    description: "True 4K resolution (≥ 3840px wide) with reference support",
+    credits: 5,
+    allowedPlans: ["creator", "pro"],
+    defaultResolution: "4k",
+    supportsReferenceImage: true,
+    estimate: "~20–35 sec",
+  },
+];
 
 export interface PlatformOption {
   id: string;
@@ -99,13 +151,28 @@ export interface IThumbnail {
     | "ocean"
     | "pastel";
   resolution?: "2k" | "4k";
+  mode?: GenerationModeId;
+  jobId?: string;
   platform?: string;
   youtube_reference_url?: string;
   text_overlay?: boolean;
   image_url?: string;
+  watermarked_url?: string;
+  preview_webp_url?: string;
   prompt_used?: string;
   user_prompt?: string;
   isGenerating?: boolean;
+  error?: string;
+  error_code?: string;
+  generation_meta?: {
+    resolution_actual?: {
+      width: number;
+      height: number;
+      tier: string;
+      dimensions: string;
+    };
+    fallback_used?: boolean;
+  };
   editedFrom?: string;
   edit_instructions?: string;
   createdAt?: Date;

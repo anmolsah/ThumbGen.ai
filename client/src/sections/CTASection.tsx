@@ -1,48 +1,44 @@
 "use client";
-import { motion } from "motion/react";
+import { ArrowRightIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function CTASection() {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
 
   return (
-    <motion.div
-      className="max-w-5xl py-16 mt-40 md:pl-20 md:w-full max-md:mx-4 md:mx-auto flex flex-col md:flex-row max-md:gap-6 items-center justify-between text-left bg-linear-to-b from-brand-600 to-brand-900 rounded-2xl p-6 text-white"
-      initial={{ y: 150, opacity: 0 }}
-      whileInView={{ y: 0, opacity: 1 }}
-      viewport={{ once: true }}
-      transition={{ type: "spring", stiffness: 320, damping: 70, mass: 1 }}
-    >
-      <div>
-        <motion.h1
-          className="text-4xl md:text-[46px] md:leading-15 font-semibold bg-linear-to-r from-white to-brand-300 text-transparent bg-clip-text"
-          initial={{ y: 80, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ type: "spring", stiffness: 280, damping: 70, mass: 1 }}
-        >
-          Ready to go viral?
-        </motion.h1>
-        <motion.p
-          className="bg-linear-to-r from-white to-brand-300 text-transparent bg-clip-text text-lg"
-          initial={{ y: 80, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ type: "spring", stiffness: 200, damping: 70, mass: 1 }}
-        >
-          Join thousands of creators using AI to boost their CTR.
-        </motion.p>
+    <section className="py-24 bg-[#090a0c]">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="rounded-2xl border border-white/[0.1] bg-[#111317] p-8 sm:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+          <div className="space-y-2 max-w-xl">
+            <h2 className="text-2xl sm:text-3xl font-semibold tracking-[-0.025em] text-zinc-100">
+              Ready to ship your next thumbnail in 2K or true 4K?
+            </h2>
+            <p className="text-sm sm:text-base text-zinc-400">
+              Start with a $6 Starter pack (25 credits) or unlock 4K and reference photo conditioning on Creator and Pro.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => navigate(isLoggedIn ? "/generate" : "/login")}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-sm"
+            >
+              <span>Open Studio</span>
+              <ArrowRightIcon className="size-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/market-comparison")}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#171a20] hover:bg-white/[0.08] text-zinc-200 border border-white/[0.1] font-medium text-sm"
+            >
+              <span>Compare Alternatives</span>
+            </button>
+          </div>
+        </div>
       </div>
-      <motion.button
-        onClick={() => navigate("/generate")}
-        className="px-12 py-3 text-slate-800 bg-white hover:bg-slate-200 rounded-full text-sm mt-4"
-        initial={{ y: 80, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ type: "spring", stiffness: 280, damping: 70, mass: 1 }}
-      >
-        Generate Free Thumbnail
-      </motion.button>
-    </motion.div>
+    </section>
   );
 }

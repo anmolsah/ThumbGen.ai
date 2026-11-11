@@ -1,9 +1,7 @@
 "use client";
 import SectionTitle from "../components/SectionTitle";
-import { motion } from "motion/react";
 import Marquee from "react-fast-marquee";
 
-// Import images from assets
 import thumb1 from "../assets/thumb_1.jpg";
 import thumb2 from "../assets/thumb_2.jpg";
 import thumb3 from "../assets/thumb_3.jpg";
@@ -19,10 +17,8 @@ import thumb11 from "../assets/thumb_11.png";
 import thumb_13 from "../assets/thumb_13.png";
 import thumb_14 from "../assets/thumb_14.jpg";
 import thumb_15 from "../assets/thumb_15.webp";
-import thumb_16 from "../assets/thumb_16.jpg"
-import thumb_17 from "../assets/thumb_17.jpeg"
-
-
+import thumb_16 from "../assets/thumb_16.jpg";
+import thumb_17 from "../assets/thumb_17.jpeg";
 
 interface ShowcaseThumbnail {
   _id: string;
@@ -31,208 +27,87 @@ interface ShowcaseThumbnail {
   style: string;
 }
 
-// Showcase thumbnails from local assets
 const thumbnails: ShowcaseThumbnail[] = [
-  {
-    _id: "1",
-    title: "10 Tips for Better Sleep",
-    image_url: thumb_17,
-    style: "Bold & Graphic",
-  },
-  {
-    _id: "1",
-    title: "10 Tips for Better Sleep",
-    image_url: thumb1,
-    style: "Bold & Graphic",
-  },
-  {
-    _id: "2",
-    title: "Ultimate Gaming Setup 2025",
-    image_url: thumb2,
-    style: "Tech/Futuristic",
-  },
-  {
-    _id: "3",
-    title: "Morning Routine for Success",
-    image_url: thumb3,
-    style: "Minimalist",
-  },
-  {
-    _id: "4",
-    title: "Travel Vlog: Japan",
-    image_url: thumb4,
-    style: "Photorealistic",
-  },
-  {
-    _id: "5",
-    title: "How I Made $10K",
-    image_url: thumb5,
-    style: "Bold & Graphic",
-  },
-  {
-    _id: "6",
-    title: "Cooking Masterclass",
-    image_url: thumb6,
-    style: "Illustrated",
-  },
-  {
-    _id: "7",
-    title: "Tech Review 2025",
-    image_url: thumb7,
-    style: "Tech/Futuristic",
-  },
-  {
-    _id: "8",
-    title: "Productivity Hacks",
-    image_url: thumb8,
-    style: "Bold & Graphic",
-  },
-  {
-    _id: "9",
-    title: "Fitness Journey",
-    image_url: thumb9,
-    style: "Photorealistic",
-  },
-  {
-    _id: "10",
-    title: "Music Production Tips",
-    image_url: thumb10,
-    style: "Minimalist",
-  },
-  {
-    _id: "11",
-    title: "Startup Success Story",
-    image_url: thumb11,
-    style: "Illustrated",
-  },
-  {
-     _id: "12",
-    title: "Indias Highest Jump!",
-    image_url: thumb12,
-    style: "Illustrated",
-  },
-  {
-    _id: "13",
-    title: "Indias Highest Jump!",
-    image_url: thumb_13,
-    style: "Illustrated",
-  },
-  {
-    _id: "14",
-    title: "Indias Highest Jump!",
-    image_url: thumb_14,
-    style: "Illustrated",
-  },
-  {
-    _id: "15",
-    title: "Indias Highest Jump!",
-    image_url: thumb_15,
-    style: "Illustrated",
-  },
-  {
-    _id: "16",
-    title: "Indias Highest Jump!",
-    image_url: thumb_16,
-    style: "Illustrated",
-  }
+  { _id: "1", title: "10 Tips for Better Sleep", image_url: thumb_17, style: "Bold & Graphic" },
+  { _id: "2", title: "Top Smartwatch Under 1499", image_url: thumb1, style: "Bold & Graphic" },
+  { _id: "3", title: "Ultimate Gaming Setup", image_url: thumb2, style: "Tech/Futuristic" },
+  { _id: "4", title: "Morning Routine for Focus", image_url: thumb3, style: "Minimalist" },
+  { _id: "5", title: "Travel Documentary: Japan", image_url: thumb4, style: "Photorealistic" },
+  { _id: "6", title: "Scaling to 100K Revenue", image_url: thumb5, style: "Bold & Graphic" },
+  { _id: "7", title: "Culinary Masterclass", image_url: thumb6, style: "Illustrated" },
+  { _id: "8", title: "Hardware Review", image_url: thumb7, style: "Tech/Futuristic" },
+  { _id: "9", title: "Deep Work Systems", image_url: thumb8, style: "Bold & Graphic" },
+  { _id: "10", title: "Strength Training Guide", image_url: thumb9, style: "Photorealistic" },
+  { _id: "11", title: "Audio Production Workflow", image_url: thumb10, style: "Minimalist" },
+  { _id: "12", title: "Founder Postmortem", image_url: thumb11, style: "Illustrated" },
+  { _id: "13", title: "India's Highest Jump", image_url: thumb12, style: "Photorealistic" },
+  { _id: "14", title: "Expedition Documentary", image_url: thumb_13, style: "Photorealistic" },
+  { _id: "15", title: "Street Food Tour", image_url: thumb_14, style: "Bold & Graphic" },
+  { _id: "16", title: "AI Engineering Breakdown", image_url: thumb_15, style: "Tech/Futuristic" },
+  { _id: "17", title: "Cinema Camera Comparison", image_url: thumb_16, style: "Photorealistic" },
 ];
 
 export default function ShowcaseSection() {
   return (
-    <div className="py-20">
-      <SectionTitle
-        text1="Showcase"
-        text2="Created with ThumbGen.ai"
-        text3="See what creators are building with our AI thumbnail generator."
-      />
+    <section className="py-24 border-b border-white/[0.08] bg-[#090a0c]">
+      <div className="max-w-7xl mx-auto px-6 mb-12">
+        <SectionTitle
+          text1="Gallery"
+          text2="Recent Studio Outputs"
+          text3="Unretouched 16:9 outputs generated across Bold & Graphic, Photorealistic, Minimalist, and Tech/Futuristic styles."
+        />
+      </div>
 
-      <motion.div
-        className="mt-16"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
-        {/* First row - left to right */}
+      <div className="space-y-4">
         <Marquee
-          speed={40}
+          speed={32}
           gradient={true}
-          gradientColor="black"
-          gradientWidth={100}
+          gradientColor="#090a0c"
+          gradientWidth={80}
           pauseOnHover={true}
-          className="mb-6"
         >
-          {thumbnails.map((thumb, index) => (
-            <motion.div
-              key={`row1-${thumb._id}-${index}`}
-              className="mx-3 group"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="relative w-80 aspect-video rounded-xl overflow-hidden border border-white/10 shadow-xl">
+          {thumbnails.slice(0, 9).map((thumb, index) => (
+            <div key={`row1-${thumb._id}-${index}`} className="mx-2.5 group">
+              <div className="relative w-72 sm:w-80 aspect-video rounded-xl overflow-hidden border border-white/[0.08] bg-[#111317]">
                 <img
                   src={thumb.image_url}
                   alt={thumb.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = "/Thumbgen.png";
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <p className="text-sm font-medium text-white line-clamp-1">
-                      {thumb.title}
-                    </p>
-                    <span className="text-xs text-brand-400">
-                      {thumb.style}
-                    </span>
-                  </div>
-                </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </Marquee>
 
-        {/* Second row - right to left */}
         <Marquee
-          speed={40}
+          speed={32}
           gradient={true}
-          gradientColor="black"
-          gradientWidth={100}
+          gradientColor="#090a0c"
+          gradientWidth={80}
           pauseOnHover={true}
           direction="right"
         >
-          {[...thumbnails].reverse().map((thumb, index) => (
-            <motion.div
-              key={`row2-${thumb._id}-${index}`}
-              className="mx-3 group"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="relative w-80 aspect-video rounded-xl overflow-hidden border border-white/10 shadow-xl">
+          {thumbnails.slice(8).map((thumb, index) => (
+            <div key={`row2-${thumb._id}-${index}`} className="mx-2.5 group">
+              <div className="relative w-72 sm:w-80 aspect-video rounded-xl overflow-hidden border border-white/[0.08] bg-[#111317]">
                 <img
                   src={thumb.image_url}
                   alt={thumb.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = "/Thumbgen.png";
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <p className="text-sm font-medium text-white line-clamp-1">
-                      {thumb.title}
-                    </p>
-                    <span className="text-xs text-brand-400">
-                      {thumb.style}
-                    </span>
-                  </div>
-                </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </Marquee>
-      </motion.div>
-    </div>
+      </div>
+    </section>
   );
 }

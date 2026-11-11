@@ -65,7 +65,12 @@ const PLAN_CARDS = [
     btn: "bg-gray-700 hover:bg-gray-600",
     badge: null,
     badgeStyle: "",
-    features: ["25 Credits", "5 Thumbnails", "2K Quality", "Watermarked"],
+    features: [
+      "25 Credits",
+      "12–25 Thumbnails (1–2 cr/gen)",
+      "Ultra 2K Quality",
+      "Watermarked",
+    ],
     featureFlags: [true, true, true, false],
   },
   {
@@ -80,7 +85,12 @@ const PLAN_CARDS = [
     btn: "bg-brand-500 hover:bg-brand-600",
     badge: "POPULAR",
     badgeStyle: "bg-brand-500 text-brand-950",
-    features: ["200 Credits", "40 Thumbnails", "Ultra 4K Quality", "No Watermark"],
+    features: [
+      "200 Credits",
+      "40–200 Thumbnails (1–5 cr/gen)",
+      "Ultra 4K Quality",
+      "No Watermark + Image Referencing",
+    ],
     featureFlags: [true, true, true, true],
   },
   {
@@ -95,7 +105,12 @@ const PLAN_CARDS = [
     btn: "bg-amber-600 hover:bg-amber-700",
     badge: "BEST VALUE",
     badgeStyle: "bg-amber-500 text-amber-950",
-    features: ["400 Credits", "80 Thumbnails", "Ultra 4K Quality", "No Watermark"],
+    features: [
+      "400 Credits",
+      "80–400 Thumbnails (1–5 cr/gen)",
+      "Ultra 4K Quality",
+      "No Watermark + Priority Queue",
+    ],
     featureFlags: [true, true, true, true],
   },
 ];
@@ -162,6 +177,10 @@ const Profile = () => {
       const { data } = await api.post("/api/payment/create-order", { plan });
       if (!data.success) {
         toast.error("Failed to create order");
+        return;
+      }
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
         return;
       }
       const cashfreeMode = data.environment || (import.meta.env.PROD ? "production" : "sandbox");
@@ -346,7 +365,14 @@ const Profile = () => {
                   </div>
                   <p className="text-xs text-zinc-500">
                     {user.credits > 0
-                      ? `~${Math.floor(user.credits / 5)} thumbnails remaining (5 credits each)`
+                      ? `~${Math.max(
+                          1,
+                          Math.floor(
+                            user.credits / (user.plan === "starter" ? 2 : 5)
+                          )
+                        )}–${user.credits} thumbnails remaining (1–${
+                          user.plan === "starter" ? 2 : 5
+                        } credits/gen)`
                       : "No credits left — buy more to continue"}
                   </p>
                 </div>

@@ -1,80 +1,109 @@
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --font-outfit: "Outfit", sans-serif;
+  --font-outfit: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  /* Brand Colors */
-  --color-brand-900: #0d2240;
-  --color-brand-800: #143258;
-  --color-brand-700: #1c4270;
-  --color-brand-600: #28659c;
-  --color-brand-500: #3d8fca;
-  --color-brand-400: #5ba3d6;
-  --color-brand-300: #7bb7e2;
-  --color-brand-200: #a8d1ee;
-  --color-brand-100: #d4e8f7;
+  /* Restrained Precision Brand Scale (Steel / Cyan-Blue Accent, Zero Violet) */
+  --color-brand-900: #0c1f38;
+  --color-brand-800: #122d52;
+  --color-brand-700: #1a3f70;
+  --color-brand-600: #2563eb;
+  --color-brand-500: #3b82f6;
+  --color-brand-400: #60a5fa;
+  --color-brand-300: #93c5fd;
+  --color-brand-200: #bfdbfe;
+  --color-brand-100: #dbeafe;
+}
+
+:root {
+  --bg-canvas: #090a0c;
+  --bg-surface: #111317;
+  --bg-elevated: #171a20;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+
+  /* Emil Kowalski custom easing curves */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+html {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  color-scheme: dark;
+  scrollbar-color: #27272a #090a0c;
+  scrollbar-width: thin;
 }
 
 body {
-  @apply bg-black text-white text-sm antialiased font-outfit;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-outfit);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  caret-color: var(--color-brand-400);
 }
 
-body::selection {
-  @apply bg-brand-500 text-white;
+::selection {
+  background-color: rgba(59, 130, 246, 0.28);
+  color: #ffffff;
+}
+
+a {
+  text-underline-offset: 3px;
 }
 
 button {
-  @apply cursor-pointer;
+  cursor: pointer;
+  transition:
+    transform 150ms var(--ease-out),
+    background-color 150ms var(--ease-out),
+    border-color 150ms var(--ease-out),
+    color 150ms var(--ease-out),
+    opacity 150ms var(--ease-out);
 }
 
-.move-gradient {
-  background-image: linear-gradient(
-    to right,
-    var(--color-brand-500),
-    var(--color-brand-300)
-  );
-  background-size: 200% 100%;
-  animation: movegradient 5s infinite;
+button:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
-@keyframes movegradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+button:disabled {
+  cursor: not-allowed;
 }
 
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+:focus-visible {
+  outline: 2px solid var(--color-brand-400);
+  outline-offset: 2px;
 }
 
-@keyframes slide-up {
+/* Tabular numerals for pricing, credits, dimensions, and timers */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Subtle entrance transition for hero only (no scale(0), starts at 0.97) */
+@keyframes hero-enter {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(8px) scale(0.985);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-.animate-slide-up {
-  animation: slide-up 0.4s ease-out;
+.animate-hero-enter {
+  animation: hero-enter 320ms var(--ease-out) forwards;
 }
 
 @keyframes marquee {
@@ -96,16 +125,39 @@ button {
 }
 
 .animate-marquee {
-  animation: marquee 30s linear infinite;
+  animation: marquee 36s linear infinite;
 }
 
 .animate-marquee-reverse {
-  animation: marquee-reverse 30s linear infinite;
+  animation: marquee-reverse 36s linear infinite;
+}
+
+/* Gate hover effects behind fine pointer devices */
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Reduced motion compliance (Emil Kowalski & Impeccable) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 120ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  button:active:not(:disabled),
+  .hover-lift:hover {
+    transform: none !important;
+  }
 }
 
 /* Global Fix for Sticky Hover States on Mobile/Touch Devices */
 @media (hover: none) and (pointer: coarse) {
-  /* This prevents standard CSS pseudo-class hovers from persisting after a tap */
   * {
     -webkit-tap-highlight-color: transparent;
   }

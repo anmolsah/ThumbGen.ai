@@ -83,9 +83,9 @@ interface PlatformSelectorProps {
 
 const PlatformSelector = ({ value, onChange }: PlatformSelectorProps) => {
   return (
-    <div className="space-y-3">
-      <label className="block text-sm font-medium text-zinc-200">
-        Platform
+    <div className="space-y-2.5">
+      <label className="block text-xs font-medium text-zinc-300">
+        Target Platform
       </label>
 
       <div className="grid grid-cols-2 gap-2">
@@ -97,20 +97,20 @@ const PlatformSelector = ({ value, onChange }: PlatformSelectorProps) => {
               key={platform.id}
               type="button"
               onClick={() => onChange(platform.id)}
-              className={`flex items-center gap-2.5 rounded-lg border px-3 py-2.5 text-sm transition border-white/10 text-left ${
+              className={`flex items-center gap-2.5 rounded-lg border px-3 py-2 text-left transition-colors ${
                 selected
-                  ? "bg-brand-500/15 border-brand-500/40 ring-1 ring-brand-500/20"
-                  : "hover:bg-white/6"
+                  ? "bg-brand-500/[0.12] border-brand-500/50 text-zinc-100"
+                  : "border-white/[0.08] bg-[#090a0c] hover:border-white/[0.16] text-zinc-300"
               }`}
             >
               <span className="flex-shrink-0">
                 {PlatformIcons[platform.id]}
               </span>
               <div className="min-w-0">
-                <span className="block font-medium text-zinc-100 truncate text-[13px]">
+                <span className="block font-medium text-zinc-100 truncate text-xs">
                   {platform.label}
                 </span>
-                <span className="block text-[10px] text-zinc-500">
+                <span className="block text-[10px] font-mono text-zinc-500 tabular-nums">
                   {platform.dimensions} · {platform.aspectRatio}
                 </span>
               </div>

@@ -79,7 +79,6 @@ test("processAndStoreAssets produces original, watermarked, and <=640px preview_
 
   // Starter delivery_url must point to watermarked_url
   assert.equal(outStarter.assets.delivery_url, outStarter.assets.watermarked_url);
-  assert.NotEqual;
   assert.notEqual(
     outStarter.assets.delivery_url,
     outStarter.assets.original_url
@@ -154,3 +153,4 @@ test("4K verification in processAndStoreAssets: verifies 3840x2160 pixel dimensi
   assert.equal(outPro4k.resolutionActual.dimensions, "3840x2160");
   assert.equal(outPro4k.assets.delivery_url, outPro4k.assets.original_url);
 });
+

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 interface SEOProps {
   title?: string;
   description?: string;
+  url?: string;
 }
 
 const defaultTitle = "ThumbGen - AI YouTube Thumbnail Generator";

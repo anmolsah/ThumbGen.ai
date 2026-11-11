@@ -1,40 +1,23 @@
 import type { SectionTitleProps } from "../types";
-import { motion } from "motion/react";
 
+/**
+ * Clean typographic section header (Impeccable craft-floor:
+ * no pill eyebrow/kicker badges, no scroll-linked bounce).
+ */
 export default function SectionTitle({
-  text1,
   text2,
   text3,
 }: SectionTitleProps) {
   return (
-    <>
-      <motion.p
-        className="text-center font-medium text-brand-400 mt-16 px-10 py-2 rounded-full bg-brand-900/70 border border-brand-700 w-max mx-auto"
-        initial={{ y: 120, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ type: "spring", stiffness: 320, damping: 70, mass: 1 }}
-      >
-        {text1}
-      </motion.p>
-      <motion.h3
-        className="text-3xl font-semibold text-center mx-auto mt-4"
-        initial={{ y: 120, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ type: "spring", stiffness: 280, damping: 70, mass: 1 }}
-      >
+    <div className="max-w-2xl mx-auto text-center">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-[-0.025em] text-zinc-100 text-balance">
         {text2}
-      </motion.h3>
-      <motion.p
-        className="text-slate-300 text-center mt-2 max-w-xl mx-auto"
-        initial={{ y: 120, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ type: "spring", stiffness: 240, damping: 70, mass: 1 }}
-      >
-        {text3}
-      </motion.p>
-    </>
+      </h2>
+      {text3 && (
+        <p className="text-zinc-400 text-sm sm:text-base mt-3 leading-relaxed max-w-[62ch] mx-auto">
+          {text3}
+        </p>
+      )}
+    </div>
   );
 }

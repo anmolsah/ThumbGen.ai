@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import SoftBackdrop from "../components/SoftBackdrop";
 import { type IThumbnail } from "../assets/assets";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowUpRightIcon, DownloadIcon, TrashIcon } from "lucide-react";
+import { ArrowUpRightIcon, DownloadIcon, TrashIcon, PlusIcon } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import api from "../configs/api";
 import toast from "react-hot-toast";
@@ -36,7 +35,7 @@ const MyGeneration = () => {
     }
   };
 
-  const handleDownlaod = (image_url: string) => {
+  const handleDownload = (image_url: string) => {
     const link = document.createElement("a");
     link.href = image_url.replace("/upload", "/upload/fl_attachment");
     document.body.appendChild(link);
@@ -68,123 +67,163 @@ const MyGeneration = () => {
   }, [isLoggedIn]);
 
   return (
-    <>
-      <SoftBackdrop />
-      <div className="mt-32 min-h-screen px-6 md:px-16 lg:px-24 xl:px-32">
+    <div className="pt-28 pb-20 min-h-screen bg-[#090a0c] px-6">
+      <div className="max-w-7xl mx-auto">
         {/* HEADER */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-zinc-200">My Generations</h1>
-          <p className="text-sm text-zinc-400 mt-1">
-            View and manage all your AI-generated thumbnails
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-8 border-b border-white/[0.08]">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-[-0.02em] text-zinc-100">
+              Generated Thumbnails
+            </h1>
+            <p className="text-xs sm:text-sm text-zinc-400 mt-1">
+              Fast WebP previews for browsing; click Download for full-resolution masters.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => navigate("/generate")}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs sm:text-sm self-start sm:self-auto"
+          >
+            <PlusIcon className="size-4" />
+            <span>New Thumbnail</span>
+          </button>
         </div>
 
-        {/* LOADING */}
+        {/* SKELETON LOADING */}
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl bg-white/6 border border-white/10 animate-pulse h-[260px]"
+                className="rounded-xl bg-[#111317] border border-white/[0.08] animate-pulse h-[260px]"
               />
             ))}
           </div>
         )}
+
         {/* EMPTY STATE */}
         {!loading && thumbnails.length === 0 && (
-          <div className="text-center py-24">
-            <h3 className="text-lg font-semibold text-zinc-200">
-              No thumbnails yet
+          <div className="rounded-xl border border-white/[0.08] bg-[#111317] text-center py-20 px-6 max-w-md mx-auto">
+            <h3 className="text-base font-semibold text-zinc-100">
+              No thumbnails generated yet
             </h3>
-            <p className="text-sm text-zinc-400 mt-2">
-              Generate your first thumbnail to see it here
+            <p className="text-xs sm:text-sm text-zinc-400 mt-2 mb-6">
+              Open the Studio to create your first 2K or true 4K thumbnail.
             </p>
+            <button
+              type="button"
+              onClick={() => navigate("/generate")}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs sm:text-sm"
+            >
+              <PlusIcon className="size-4" />
+              <span>Open Studio</span>
+            </button>
           </div>
         )}
 
-        {/* GRID */}
+        {/* GALLERY GRID */}
         {!loading && thumbnails.length > 0 && (
-          <div className="columns-1 sm:columns-2 lg:columns-3 2xl:columns-4 gap-8">
+          <div className="columns-1 sm:columns-2 lg:columns-3 2xl:columns-4 gap-6">
             {thumbnails.map((thumb: IThumbnail) => {
               const aspectClass =
-                aspectRatioClassMap[thumb.aspect_ratio || "16:9"];
+                aspectRatioClassMap[thumb.aspect_ratio || "16:9"] || "aspect-video";
+              const displaySrc = thumb.preview_webp_url || thumb.image_url;
 
               return (
                 <div
                   key={thumb._id}
                   onClick={() => navigate(`/generate/${thumb._id}`)}
-                  className="mb-8 group relative cursor-pointer rounded-2xl bg-white/6 border border-white/10 transition shadow-xl break-inside-avoid"
+                  className="mb-6 group relative cursor-pointer rounded-xl bg-[#111317] border border-white/[0.08] hover:border-white/[0.18] transition-colors overflow-hidden break-inside-avoid"
                 >
                   {/* IMAGE */}
                   <div
-                    className={`relative overflow-hidden rounded-t-2xl ${aspectClass} bg-black`}
+                    className={`relative overflow-hidden ${aspectClass} bg-[#090a0c]`}
                   >
-                    {thumb.image_url ? (
+                    {displaySrc ? (
                       <img
-                        src={thumb.image_url}
+                        src={displaySrc}
                         alt={thumb.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-sm text-zinc-400">
-                        {thumb.isGenerating ? "Generating…" : "No image"}
+                      <div className="w-full h-full flex items-center justify-center text-xs text-zinc-500">
+                        {thumb.isGenerating ? "Rendering…" : "Failed / No image"}
                       </div>
                     )}
 
                     {thumb.isGenerating && (
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-sm font-medium text-white">
-                        Generating…
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-xs font-medium text-zinc-200">
+                        Rendering…
                       </div>
                     )}
                   </div>
 
-                  {/* CONTENT */}
-                  <div className="p-4 space-y-2">
-                    <h3 className="text-sm font-semibold text-zinc-100 line-clamp-2">
+                  {/* METADATA */}
+                  <div className="p-4 space-y-2.5 border-t border-white/[0.06]">
+                    <h3 className="text-xs sm:text-sm font-semibold text-zinc-100 line-clamp-1">
                       {thumb.title}
                     </h3>
-                    <div className="flex flex-wrap gap-2 text-xs text-zinc-400">
-                      <span className="px-2 py-0.5 rounded bg-white/8">
+                    <div className="flex flex-wrap gap-1.5 text-[11px] font-mono text-zinc-400 tabular-nums">
+                      <span className="px-2 py-0.5 rounded bg-[#090a0c] border border-white/[0.06]">
                         {thumb.style}
                       </span>
-                      <span className="px-2 py-0.5 rounded bg-white/8">
-                        {thumb.color_scheme}
+                      <span className="px-2 py-0.5 rounded bg-[#090a0c] border border-white/[0.06]">
+                        {thumb.aspect_ratio || "16:9"}
                       </span>
-                      <span className="px-2 py-0.5 rounded bg-white/8">
-                        {thumb.aspect_ratio}
-                      </span>
+                      {thumb.resolution && (
+                        <span className="px-2 py-0.5 rounded bg-[#090a0c] border border-white/[0.06] uppercase">
+                          {thumb.resolution}
+                        </span>
+                      )}
                     </div>
-                    <p className="text-xs text-zinc-500">
-                      {thumb.createdAt
-                        ? new Date(thumb.createdAt).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          })
-                        : "—"}
-                    </p>
-                  </div>
+                    <div className="flex items-center justify-between pt-1">
+                      <p className="text-[11px] text-zinc-500 tabular-nums">
+                        {thumb.createdAt
+                          ? new Date(thumb.createdAt).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })
+                          : "—"}
+                      </p>
 
-                  <div
-                    onClick={(e) => e.stopPropagation()}
-                    className="absolute bottom-2 right-2 max-sm:flex sm:hidden group-hover:flex gap-1.5"
-                  >
-                    <TrashIcon
-                      onClick={() => handleDelete(thumb._id)}
-                      className="size-6 bg-black/50 p-1 rounded hover:bg-brand-600 transition-all"
-                    />
-
-                    <DownloadIcon
-                      onClick={() => handleDownlaod(thumb.image_url!)}
-                      className="size-6 bg-black/50 p-1 rounded hover:bg-brand-600 transition-all"
-                    />
-
-                    <Link
-                      target="_blank"
-                      to={`/preview?thumbnail_url=${thumb.image_url}&title=${thumb.title}`}
-                    >
-                      <ArrowUpRightIcon className="size-6 bg-black/50 p-1 rounded hover:bg-brand-600 transition-all" />
-                    </Link>
+                      <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-1"
+                      >
+                        {thumb.image_url && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => handleDownload(thumb.image_url!)}
+                              aria-label="Download full-resolution thumbnail"
+                              className="p-1.5 rounded-md bg-[#090a0c] border border-white/[0.08] text-zinc-300 hover:text-white hover:border-white/[0.2]"
+                            >
+                              <DownloadIcon className="size-3.5" />
+                            </button>
+                            <Link
+                              target="_blank"
+                              to={`/preview?thumbnail_url=${encodeURIComponent(
+                                thumb.image_url
+                              )}&title=${encodeURIComponent(thumb.title)}`}
+                              aria-label="Preview in YouTube layout"
+                              className="p-1.5 rounded-md bg-[#090a0c] border border-white/[0.08] text-zinc-300 hover:text-white hover:border-white/[0.2]"
+                            >
+                              <ArrowUpRightIcon className="size-3.5" />
+                            </Link>
+                          </>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(thumb._id)}
+                          aria-label="Delete thumbnail"
+                          className="p-1.5 rounded-md bg-[#090a0c] border border-white/[0.08] text-zinc-400 hover:text-red-400 hover:border-red-500/30"
+                        >
+                          <TrashIcon className="size-3.5" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               );
@@ -192,7 +231,7 @@ const MyGeneration = () => {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 
