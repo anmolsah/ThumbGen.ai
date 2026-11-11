@@ -1,29 +1,40 @@
+/**
+ * workers/thumbnailWorker.ts
+ *
+ * BullMQ worker for thumbnail generation & editing (PLAN.md Sections 4, 6, 8, 9, 12 Phase 4).
+ * Uses `executeGenerationWithFallback` across the verified Provider Adapter Layer
+ * (`openrouter`, `xai`, `mock`) with per-provider concurrency semaphores,
+ * per-model circuit breakers, and atomic credit commit/refund via `CreditService`.
+ */
+
 import { Worker, Job } from "bullmq";
 import { Redis } from "ioredis";
 import redisConnection from "../configs/redis.js";
 import Thumbnail from "../models/Thumbnail.js";
 import User from "../models/User.js";
-import ai from "../configs/ai.js";
-import xai from "../configs/xai.js";
-import openRouter from "../configs/openRouter.js";
 import { PLATFORM_CONFIG } from "../configs/platformConfig.js";
 import { v2 as cloudinary } from "cloudinary";
 import sharp from "sharp";
 import path from "path";
 import { fileURLToPath } from "url";
 import type { ThumbnailJobData } from "../queues/thumbnailQueue.js";
-import { defaultCreditService } from "../services/creditService.js";
-import { inspectImageResolution } from "../providers/types.js";
+import {
+  defaultCreditService,
+  resolveRequestedMode,
+} from "../services/creditService.js";
+import { executeGenerationWithFallback } from "../services/resilience.js";
+import {
+  normalizeResolutionTier,
+  ProviderError,
+  type GenerateInput,
+} from "../providers/index.js";
 
-// ── 2.3: Dedicated Redis publisher for SSE notifications ─────────────────────
-// Must be a separate client — the BullMQ redisConnection is owned by the
-// Worker and cannot be used for pub/sub simultaneously.
+// ── Dedicated Redis publisher for SSE notifications ──────────────────────────
 const isTLS = (process.env.REDIS_URL || "").startsWith("rediss://");
 const publisher = new Redis(
   process.env.REDIS_URL || "redis://localhost:6379",
   { maxRetriesPerRequest: null, ...(isTLS && { tls: {} }) }
 );
-// Suppress unhandled error events — ioredis auto-reconnects, worker must not crash
 publisher.on("error", (err) =>
   console.error("SSE publisher Redis error (non-fatal):", err.message)
 );
@@ -32,9 +43,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const WATERMARK_PATH = path.join(__dirname, "../assets/logo.png");
 
-// ── Watermark cache ───────────────────────────────────────────────────────────
-// Read and pre-resize the logo once at startup instead of re-processing it on
-// every job. Saves ~100–200ms of Sharp disk I/O per generation.
 type WatermarkCache = { buffer: Buffer; width: number; height: number };
 const watermarkCache = new Map<number, WatermarkCache>();
 
@@ -59,11 +67,13 @@ const addWatermark = async (imageBuffer: Buffer): Promise<Buffer> => {
   const wm = await getWatermark(targetWidth);
   const padding = 20;
   return image
-    .composite([{
-      input: wm.buffer,
-      left: imageWidth - wm.width - padding,
-      top: imageHeight - wm.height - padding,
-    }])
+    .composite([
+      {
+        input: wm.buffer,
+        left: imageWidth - wm.width - padding,
+        top: imageHeight - wm.height - padding,
+      },
+    ])
     .toBuffer();
 };
 
@@ -98,79 +108,6 @@ const colorSchemeDescriptions: Record<string, string> = {
     "soft pastel colors, low saturation, gentle tones, calm and friendly aesthetic",
 };
 
-// ── 2K generation — Grok (xAI) ───────────────────────────────────────────────
-// grok-imagine-image      → Starter plan  (fast, standard quality)
-// grok-imagine-image-pro  → Creator / Pro (higher quality, still fast)
-// 4K always uses Imagen (Pro only).
-const generateWithGrok = async (
-  prompt: string,
-  aspectRatio: string,
-  userPlan: string
-) => {
-  const model =
-    userPlan === "creator" || userPlan === "pro"
-      ? "grok-imagine-image-quality"   // higher quality for paid plans
-      : "grok-imagine-image-quality";      // standard for starter
-
-  console.log(`Using Grok model: ${model} (plan: ${userPlan})`);
-
-  const response = await xai.images.generate({
-    model,
-    prompt,
-    // @ts-expect-error — xAI-specific parameter not in OpenAI types
-    aspect_ratio: aspectRatio || "16:9",
-    response_format: "b64_json",
-    n: 1,
-  });
-
-  if (!response?.data?.[0]?.b64_json) {
-    throw new Error("Failed to generate image with Grok");
-  }
-
-  return response.data[0].b64_json;
-};
-
-// ── 4K generation — OpenRouter (google/gemini-3.1-flash-image-preview) ─────────────
-const generateWithOpenRouter = async (
-  prompt: string,
-  aspectRatio: string
-) => {
-  console.log("Using OpenRouter (google/gemini-3.1-flash-image-preview)");
-
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "google/gemini-3.1-flash-image-preview",
-      messages: [{ role: "user", content: prompt }],
-      modalities: ["image", "text"],
-    }),
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`OpenRouter API error: ${response.status} - ${errText}`);
-  }
-
-  const data = await response.json();
-  const imageObj = data?.choices?.[0]?.message?.images?.[0];
-
-  if (!imageObj?.image_url?.url) {
-    console.error("OpenRouter response did not contain an image:", JSON.stringify(data, null, 2));
-    throw new Error("Failed to generate image with OpenRouter: No image returned");
-  }
-
-  const dataUrl = imageObj.image_url.url;
-  // Strip the 'data:image/jpeg;base64,' or similar prefix if present
-  const base64Data = dataUrl.includes("base64,") ? dataUrl.split("base64,")[1] : dataUrl;
-
-  return base64Data;
-};
-
-// ── 2.4: YouTube thumbnail fetch helper (runs inside the worker, not the API) ─
 const fetchYouTubeThumbnail = async (url: string): Promise<string | null> => {
   try {
     const patterns = [
@@ -180,7 +117,10 @@ const fetchYouTubeThumbnail = async (url: string): Promise<string | null> => {
     let videoId: string | null = null;
     for (const p of patterns) {
       const m = url.match(p);
-      if (m) { videoId = m[1]; break; }
+      if (m) {
+        videoId = m[1];
+        break;
+      }
     }
     if (!videoId) return null;
 
@@ -196,55 +136,80 @@ const fetchYouTubeThumbnail = async (url: string): Promise<string | null> => {
   }
 };
 
-const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
+const uploadBufferToCloudinary = async (
+  buffer: Buffer,
+  format: "webp" | "png" = "webp"
+): Promise<string> => {
+  const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: "image",
+        format,
+        folder: "thumbgen",
+      },
+      (err, res) => {
+        if (err || !res) {
+          return reject(err ?? new Error("Cloudinary upload failed"));
+        }
+        resolve(res as { secure_url: string });
+      }
+    );
+    stream.end(buffer);
+  });
+  return result.secure_url;
+};
+
+export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
   const {
+    jobId,
     thumbnailId,
     userId,
     title,
     user_prompt,
     style,
-    aspect_ratio,
+    aspect_ratio = "16:9",
     color_scheme,
-    resolution,
+    resolution = "2K",
     platform,
     userPlan,
     creditsRequired,
   } = job.data;
 
-  // ── 2.4: Resolve reference image ─────────────────────────────────────────
-  // Direct upload takes priority; YouTube URL is fetched here (async, off API).
-  let reference_image = job.data.reference_image;
-  if (!reference_image && job.data.youtube_reference_url) {
-    console.log(`Worker: fetching YouTube thumbnail for job ${thumbnailId}`);
-    reference_image = (await fetchYouTubeThumbnail(job.data.youtube_reference_url)) ?? undefined;
-  }
-
-  console.log(
-    `Processing thumbnail job: ${thumbnailId} | resolution: ${resolution} | platform: ${platform}`
-  );
-
-  if (job.data.jobId) {
+  if (jobId) {
     try {
-      await defaultCreditService.markJobRunning(job.data.jobId);
+      await defaultCreditService.markJobRunning(jobId);
     } catch (e: any) {
-      console.warn(`Could not transition job ${job.data.jobId} to running:`, e?.message);
+      console.warn(
+        `Could not transition job ${jobId} to running:`,
+        e?.message
+      );
     }
   }
 
   try {
-    // ── EDIT JOB: source image + edit instructions ──────────────────────────
-    if (job.data.source_image_url && job.data.edit_instructions) {
-      console.log(`Worker: processing EDIT job for thumbnail ${thumbnailId}`);
+    const resolutionTier = normalizeResolutionTier(
+      resolution || "2K",
+      "worker",
+      job.data.mode || "standard"
+    );
 
-      // Fetch the source image from Cloudinary
+    let prompt: string;
+    const referenceImages: string[] = [];
+
+    if (job.data.source_image_url && job.data.edit_instructions) {
+      // ── EDIT JOB: fetch source image and pass as reference image to Provider Adapter Layer
+      console.log(`Worker: processing EDIT job for thumbnail ${thumbnailId}`);
       const sourceResponse = await fetch(job.data.source_image_url);
       if (!sourceResponse.ok) {
-        throw new Error("Failed to fetch source thumbnail image for editing");
+        throw new ProviderError({
+          code: "INVALID_PARAMETERS",
+          message: "Failed to fetch source thumbnail image for editing",
+          retryable: false,
+          provider: "worker",
+          model_id: "edit",
+        });
       }
       const sourceBuffer = Buffer.from(await sourceResponse.arrayBuffer());
-      const sourceBase64 = sourceBuffer.toString("base64");
-
-      // Determine mime type from URL or default to webp (Cloudinary serves webp)
       const sourceUrl = job.data.source_image_url;
       const sourceMimeType = sourceUrl.includes(".webp")
         ? "image/webp"
@@ -252,247 +217,96 @@ const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
         ? "image/png"
         : "image/jpeg";
 
-      // Build edit prompt
-      const editPrompt = `Edit this thumbnail image based on the following instructions: "${job.data.edit_instructions}". Keep the overall composition, style, colors, and theme of the original thumbnail intact, but apply the requested changes precisely. The result should look like a natural edit of the original, not a completely new image.`;
+      referenceImages.push(
+        `data:${sourceMimeType};base64,${sourceBuffer.toString("base64")}`
+      );
+      prompt = `Edit this thumbnail image based on the following instructions: "${job.data.edit_instructions}". Keep the overall composition, style, colors, and theme of the original thumbnail intact, but apply the requested changes precisely.`;
+    } else {
+      // ── STANDARD GENERATION JOB
+      const canUseReferenceImage =
+        userPlan === "creator" || userPlan === "pro";
 
-      const geminiResponse: any = await ai.models.generateContent({
-        model: "gemini-3-pro-image-preview",
-        contents: [
-          {
-            role: "user",
-            parts: [
-              { inlineData: { mimeType: sourceMimeType, data: sourceBase64 } },
-              { text: editPrompt },
-            ],
-          },
-        ],
-        config: { responseModalities: ["TEXT", "IMAGE"] },
-      });
-
-      if (!geminiResponse?.candidates?.[0]?.content?.parts) {
-        throw new Error("Failed to edit image with Gemini");
-      }
-
-      const editParts = geminiResponse.candidates[0].content.parts;
-      let editImageData: string | null = null;
-      for (const part of editParts) {
-        if (part.inlineData?.data) {
-          editImageData = part.inlineData.data;
-          break;
-        }
-      }
-      if (!editImageData) throw new Error("Gemini did not return an edited image");
-
-      let finalBuffer: Buffer = Buffer.from(editImageData, "base64");
-
-      // Add watermark for starter plan
-      if (userPlan === "starter") {
-        finalBuffer = await addWatermark(finalBuffer);
-      }
-
-      // Upload to Cloudinary
-      const webpBuffer = await sharp(finalBuffer).webp({ quality: 90 }).toBuffer();
-      const uploadResult = await new Promise<{ secure_url: string }>(
-        (resolve, reject) => {
-          const stream = cloudinary.uploader.upload_stream(
-            { resource_type: "image", format: "webp", folder: "thumbgen" },
-            (err, result) => {
-              if (err || !result) return reject(err ?? new Error("Cloudinary upload failed"));
-              resolve(result as { secure_url: string });
-            }
+      if (canUseReferenceImage) {
+        if (
+          Array.isArray(job.data.reference_images) &&
+          job.data.reference_images.length > 0
+        ) {
+          referenceImages.push(...job.data.reference_images.filter(Boolean));
+        } else if (job.data.reference_image) {
+          referenceImages.push(job.data.reference_image);
+        } else if (job.data.youtube_reference_url) {
+          const ytRef = await fetchYouTubeThumbnail(
+            job.data.youtube_reference_url
           );
-          stream.end(webpBuffer);
+          if (ytRef) {
+            referenceImages.push(ytRef);
+          }
         }
-      );
-
-      // Update thumbnail in DB
-      const completedThumbnail = await Thumbnail.findByIdAndUpdate(
-        thumbnailId,
-        { image_url: uploadResult.secure_url, isGenerating: false },
-        { new: true }
-      );
-
-      // Commit reserved credits in credit_ledger (or fallback for legacy jobs without jobId)
-      if (job.data.jobId) {
-        const resActual = await inspectImageResolution(webpBuffer);
-        await defaultCreditService.commitJobCredits({
-          jobId: job.data.jobId,
-          generationMeta: {
-            provider: "legacy",
-            model_id: "gemini-3-pro-image-preview",
-            fallback_used: false,
-            attempts: [],
-            latency_ms: null,
-            billed_cost_usd: null,
-            request_params: null,
-            resolution_actual: resActual,
-            upscaled: false,
-          },
-          assets: {
-            original_url: uploadResult.secure_url,
-            watermarked_url:
-              userPlan === "starter" ? uploadResult.secure_url : null,
-            preview_webp_url: uploadResult.secure_url,
-            delivery_url: uploadResult.secure_url,
-          },
-        });
-      } else {
-        await User.findByIdAndUpdate(userId, {
-          $inc: { credits: -creditsRequired },
-        });
       }
 
-      // Notify SSE subscribers
-      await publisher.publish(
-        `thumbnail:complete:${thumbnailId}`,
-        JSON.stringify({ thumbnail: completedThumbnail })
-      );
-
-      console.log(`Thumbnail edit ${thumbnailId} completed successfully`);
-      return { success: true, thumbnailId };
-    }
-
-    // ── STANDARD GENERATION (unchanged) ─────────────────────────────────────
-    const canUseReferenceImage = userPlan === "creator" || userPlan === "pro";
-    const usingReferenceImage = reference_image && canUseReferenceImage;
-
-
-    // Build prompt
-    let prompt = `Create a ${stylePrompts[style] || stylePrompts["Bold & Graphic"]
+      prompt = `Create a ${
+        stylePrompts[style] || stylePrompts["Bold & Graphic"]
       } for: "${title}"`;
 
-    if (color_scheme && colorSchemeDescriptions[color_scheme]) {
-      prompt += ` Use a ${colorSchemeDescriptions[color_scheme]} color scheme.`;
-    }
-
-    if (user_prompt) {
-      prompt += ` Additional details: ${user_prompt}.`;
-    }
-
-    if (usingReferenceImage) {
-      prompt += ` Incorporate the person/subject from the reference image prominently in the thumbnail, maintaining their likeness and features.`;
-    }
-
-    // Add platform-specific prompt enhancement
-    const platformSpec = platform ? PLATFORM_CONFIG[platform] : null;
-    if (platformSpec) {
-      prompt += ` ${platformSpec.promptHint}`;
-    }
-
-    prompt += ` The thumbnail should be ${aspect_ratio}, visually stunning, and designed to maximize click-through rate. Make it bold, professional, and impossible to ignore.`;
-
-    let imageBase64: string;
-
-    if (usingReferenceImage) {
-      // Reference image — always uses Gemini (unchanged)
-      const base64Data = reference_image!.includes("base64,")
-        ? reference_image!.split("base64,")[1]
-        : reference_image;
-
-      const mimeType = reference_image!.includes("data:")
-        ? reference_image!.split(";")[0].split(":")[1]
-        : "image/jpeg";
-
-      const geminiResponse: any = await ai.models.generateContent({
-        model: "gemini-3-pro-image-preview",
-        contents: [
-          {
-            role: "user",
-            parts: [
-              { inlineData: { mimeType, data: base64Data } },
-              {
-                text: `Using the person/subject from this reference image, ${prompt} Make sure to incorporate the person's likeness and features prominently in the generated thumbnail.`,
-              },
-            ],
-          },
-        ],
-        config: { responseModalities: ["TEXT", "IMAGE"] },
-      });
-
-      if (!geminiResponse?.candidates?.[0]?.content?.parts) {
-        throw new Error("Failed to generate image with reference");
+      if (color_scheme && colorSchemeDescriptions[color_scheme]) {
+        prompt += ` Use a ${colorSchemeDescriptions[color_scheme]} color scheme.`;
       }
 
-      const parts = geminiResponse.candidates[0].content.parts;
-      let imageData: string | null = null;
-
-      for (const part of parts) {
-        if (part.inlineData?.data) {
-          imageData = part.inlineData.data;
-          break;
-        }
+      if (user_prompt) {
+        prompt += ` Additional details: ${user_prompt}.`;
       }
 
-      if (!imageData) throw new Error("Failed to generate image");
-      imageBase64 = imageData;
-    } else if (resolution === "4k") {
-      // Premium 4K — OpenRouter
-      imageBase64 = await generateWithOpenRouter(prompt, aspect_ratio);
-    } else {
-      // Fast 2K — Grok (model chosen by plan)
-      imageBase64 = await generateWithGrok(prompt, aspect_ratio, userPlan);
-    }
-
-    let finalBuffer: Buffer = Buffer.from(imageBase64, "base64");
-
-    // Add watermark for starter plan
-    if (userPlan === "starter") {
-      finalBuffer = await addWatermark(finalBuffer);
-    }
-
-    // ── Cloudinary upload: buffer stream + WebP (7.1) ────────────────────────
-    // Sending a raw buffer stream avoids the base64 string encode/decode
-    // roundtrip. WebP output is ~30% smaller than PNG, reducing upload time
-    // and CDN delivery cost.
-    const webpBuffer = await sharp(finalBuffer).webp({ quality: 90 }).toBuffer();
-
-    const uploadResult = await new Promise<{ secure_url: string }>(
-      (resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          {
-            resource_type: "image",
-            format: "webp",
-            folder: `thumbgen`,
-          },
-          (err, result) => {
-            if (err || !result) return reject(err ?? new Error("Cloudinary upload failed"));
-            resolve(result as { secure_url: string });
-          }
-        );
-        stream.end(webpBuffer);
+      if (referenceImages.length > 0) {
+        prompt += ` Incorporate the person/subject from the reference image prominently in the thumbnail, maintaining their likeness and features.`;
       }
+
+      const platformSpec = platform ? PLATFORM_CONFIG[platform] : null;
+      if (platformSpec) {
+        prompt += ` ${platformSpec.promptHint}`;
+      }
+
+      prompt += ` The thumbnail should be ${aspect_ratio}, visually stunning, and designed to maximize click-through rate. Make it bold, professional, and impossible to ignore.`;
+    }
+
+    const modeId = resolveRequestedMode(
+      job.data.mode,
+      resolutionTier,
+      referenceImages.length > 0
     );
 
-    // Update thumbnail in DB
-    const completedThumbnail = await Thumbnail.findByIdAndUpdate(
-      thumbnailId,
-      { image_url: uploadResult.secure_url, isGenerating: false },
-      { new: true }
-    );
+    const generateInput: GenerateInput = {
+      mode: modeId,
+      prompt,
+      aspectRatio: aspect_ratio,
+      resolution: resolutionTier,
+      referenceImages: referenceImages.length > 0 ? referenceImages : undefined,
+    };
 
-    // Commit reserved credits in credit_ledger (or fallback for legacy jobs without jobId)
-    if (job.data.jobId) {
-      const resActual = await inspectImageResolution(webpBuffer);
+    const { output, meta } = await executeGenerationWithFallback(generateInput);
+
+    let deliveryBuffer: Buffer = output.assetBytes;
+    const isStarter = userPlan === "starter" || userPlan === "free";
+    if (isStarter) {
+      deliveryBuffer = await addWatermark(deliveryBuffer);
+    }
+
+    const webpBuffer = await sharp(deliveryBuffer)
+      .webp({ quality: 90 })
+      .toBuffer();
+    const deliveryUrl = await uploadBufferToCloudinary(webpBuffer, "webp");
+
+    const assets = {
+      original_url: isStarter ? null : deliveryUrl,
+      watermarked_url: isStarter ? deliveryUrl : null,
+      preview_webp_url: deliveryUrl,
+      delivery_url: deliveryUrl,
+    };
+
+    if (jobId) {
       await defaultCreditService.commitJobCredits({
-        jobId: job.data.jobId,
-        generationMeta: {
-          provider: "legacy",
-          model_id: "legacy-worker",
-          fallback_used: false,
-          attempts: [],
-          latency_ms: null,
-          billed_cost_usd: null,
-          request_params: null,
-          resolution_actual: resActual,
-          upscaled: false,
-        },
-        assets: {
-          original_url: uploadResult.secure_url,
-          watermarked_url:
-            userPlan === "starter" ? uploadResult.secure_url : null,
-          preview_webp_url: uploadResult.secure_url,
-          delivery_url: uploadResult.secure_url,
-        },
+        jobId,
+        generationMeta: meta,
+        assets,
       });
     } else {
       await User.findByIdAndUpdate(userId, {
@@ -500,46 +314,91 @@ const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
       });
     }
 
-    // ── 2.3: Notify SSE subscribers via Redis pub/sub ─────────────────────────
-    // Any Express process subscribed to this channel will push the event
-    // to the waiting browser, eliminating polling entirely.
+    const completedThumbnail = await Thumbnail.findByIdAndUpdate(
+      thumbnailId,
+      {
+        image_url: deliveryUrl,
+        original_url: assets.original_url ?? undefined,
+        watermarked_url: assets.watermarked_url ?? undefined,
+        preview_webp_url: assets.preview_webp_url ?? undefined,
+        generation_meta: meta as any,
+        isGenerating: false,
+        error: undefined,
+        error_code: undefined,
+      },
+      { new: true }
+    );
+
     await publisher.publish(
       `thumbnail:complete:${thumbnailId}`,
       JSON.stringify({ thumbnail: completedThumbnail })
     );
 
-    console.log(`Thumbnail ${thumbnailId} completed successfully`);
-    return { success: true, thumbnailId };
+    console.log(
+      `Thumbnail ${thumbnailId} completed via ${meta.provider}/${meta.model_id} (fallback=${meta.fallback_used}, res=${meta.resolution_actual?.dimensions})`
+    );
+    return { success: true, thumbnailId, meta };
   } catch (error: any) {
-    console.error(`Thumbnail ${thumbnailId} failed:`, error.message);
+    const errorCode =
+      error instanceof ProviderError
+        ? error.code
+        : "WORKER_TERMINAL_FAILURE";
+    const errorMessage = error?.message || "Thumbnail generation failed";
 
-    // Mark thumbnail as failed
-    await Thumbnail.findByIdAndUpdate(thumbnailId, {
-      isGenerating: false,
-      error: error.message,
-    });
+    console.error(
+      `Thumbnail ${thumbnailId} failed (${errorCode}):`,
+      errorMessage
+    );
+
+    if (jobId) {
+      try {
+        await defaultCreditService.refundJobCredits({
+          jobId,
+          reason: `Worker failure (${errorCode}): ${errorMessage}`,
+          errorCode,
+          errorMessage,
+        });
+      } catch (refundErr: any) {
+        console.error(
+          `Failed to refund credits for job ${jobId}:`,
+          refundErr?.message
+        );
+      }
+    }
+
+    const failedThumbnail = await Thumbnail.findByIdAndUpdate(
+      thumbnailId,
+      {
+        isGenerating: false,
+        error: errorMessage,
+        error_code: errorCode,
+      },
+      { new: true }
+    );
+
+    await publisher
+      .publish(
+        `thumbnail:complete:${thumbnailId}`,
+        JSON.stringify({
+          thumbnail: failedThumbnail,
+          error: errorMessage,
+          errorCode,
+        })
+      )
+      .catch(() => {});
 
     throw error;
   }
 };
 
-// Create the worker
 const thumbnailWorker = new Worker<ThumbnailJobData>(
   "thumbnail-generation",
   processThumbnailJob,
   {
     connection: redisConnection,
     concurrency: 5,
-    // ── Polling / heartbeat tuning — reduces idle Redis ops significantly ──
-    // drainDelay: seconds to wait before re-polling when queue is empty.
-    // Default is 5 — raising to 10 halves idle BRPOPLPUSH ops.
     drainDelay: 10,
-    // stalledInterval: how often (ms) to check for stalled jobs.
-    // Default 30 000 — raising to 60 000 halves the stall-check Lua scripts.
     stalledInterval: 60_000,
-    // lockRenewTime: how often (ms) to heartbeat the job lock.
-    // Default is lockDuration/2 = 15 000 — raising to 20 000 saves ~25% lock heartbeats.
-    // AI jobs run 10–30s so 20s renew is well within the 30s lockDuration.
     lockRenewTime: 20_000,
     lockDuration: 30_000,
   }
@@ -549,26 +408,8 @@ thumbnailWorker.on("completed", (job) => {
   console.log(`Job ${job.id} completed for thumbnail ${job.data.thumbnailId}`);
 });
 
-thumbnailWorker.on("failed", async (job, err) => {
+thumbnailWorker.on("failed", (job, err) => {
   console.error(`Job ${job?.id} failed:`, err.message);
-  if (job?.data?.jobId) {
-    const maxAttempts = job.opts?.attempts ?? 1;
-    if (job.attemptsMade >= maxAttempts) {
-      try {
-        await defaultCreditService.refundJobCredits({
-          jobId: job.data.jobId,
-          reason: `Terminal worker failure after ${job.attemptsMade} attempt(s): ${err.message}`,
-          errorCode: "WORKER_TERMINAL_FAILURE",
-          errorMessage: err.message,
-        });
-      } catch (refundErr: any) {
-        console.error(
-          `Failed to refund credits for job ${job.data.jobId}:`,
-          refundErr?.message
-        );
-      }
-    }
-  }
 });
 
 export default thumbnailWorker;

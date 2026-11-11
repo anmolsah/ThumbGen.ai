@@ -75,6 +75,10 @@ export const generateThumbnail = async (req: Request, res: Response) => {
     const totalRefCount =
       refArray.length + (youtube_reference_url?.trim() ? 1 : 0);
 
+    const currentQueueDepth = await thumbnailQueue
+      .getWaitingCount()
+      .catch(() => 0);
+
     // 1. Atomically check entitlements, check idempotency, decrement credits, and create Job + reserve ledger entry
     const reservation = await defaultCreditService.reserveCreditsAndCreateJob({
       userId,
@@ -84,6 +88,7 @@ export const generateThumbnail = async (req: Request, res: Response) => {
       aspectRatio: aspect_ratio,
       prompt: effectivePrompt,
       referenceImagesCount: totalRefCount,
+      currentQueueDepth,
     });
 
     // If this is an idempotent replay of an existing request, return the existing job & thumbnail immediately
@@ -186,9 +191,13 @@ export const generateThumbnail = async (req: Request, res: Response) => {
     }
 
     if (error instanceof CreditServiceError) {
+      if (error.retryAfterSeconds) {
+        res.setHeader("Retry-After", String(error.retryAfterSeconds));
+      }
       return res.status(error.status).json({
         code: error.code,
         message: error.message,
+        retryAfterSeconds: error.retryAfterSeconds,
       });
     }
     if (error instanceof ProviderError) {
@@ -244,6 +253,9 @@ export const editThumbnail = async (req: Request, res: Response) => {
 
     const isStrict = req.headers["x-require-idempotency-key"] === "true";
     const idempotencyKey = extractIdempotencyKey(req, isStrict);
+    const currentQueueDepth = await thumbnailQueue
+      .getWaitingCount()
+      .catch(() => 0);
 
     // Reserve credits atomically before updating thumbnail or enqueueing edit job
     const reservation = await defaultCreditService.reserveCreditsAndCreateJob({
@@ -255,6 +267,7 @@ export const editThumbnail = async (req: Request, res: Response) => {
       prompt: edit_instructions.trim(),
       referenceImagesCount: 0,
       thumbnailId: String(sourceThumbnail._id),
+      currentQueueDepth,
     });
 
     if (reservation.idempotentReplay) {
@@ -335,9 +348,13 @@ export const editThumbnail = async (req: Request, res: Response) => {
     }
 
     if (error instanceof CreditServiceError) {
+      if (error.retryAfterSeconds) {
+        res.setHeader("Retry-After", String(error.retryAfterSeconds));
+      }
       return res.status(error.status).json({
         code: error.code,
         message: error.message,
+        retryAfterSeconds: error.retryAfterSeconds,
       });
     }
     if (error instanceof ProviderError) {

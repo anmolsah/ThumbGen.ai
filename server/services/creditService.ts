@@ -21,6 +21,10 @@ import Job, {
 } from "../models/Job.js";
 import User from "../models/User.js";
 import { normalizeResolutionTier } from "../providers/paramMapper.js";
+import {
+  defaultQueueDepthGuard,
+  type QueueDepthGuard,
+} from "./resilience.js";
 
 export type CreditErrorCode =
   | "MISSING_IDEMPOTENCY_KEY"
@@ -30,6 +34,8 @@ export type CreditErrorCode =
   | "MODE_NOT_ALLOWED_FOR_PLAN"
   | "RESOLUTION_NOT_ALLOWED_FOR_PLAN"
   | "REFERENCE_IMAGES_NOT_ALLOWED"
+  | "TOO_MANY_CONCURRENT_JOBS"
+  | "QUEUE_BUSY"
   | "INSUFFICIENT_CREDITS"
   | "JOB_NOT_FOUND"
   | "INVALID_JOB_STATE";
@@ -37,12 +43,19 @@ export type CreditErrorCode =
 export class CreditServiceError extends Error {
   public readonly code: CreditErrorCode;
   public readonly status: number;
+  public readonly retryAfterSeconds?: number;
 
-  constructor(code: CreditErrorCode, status: number, message: string) {
+  constructor(
+    code: CreditErrorCode,
+    status: number,
+    message: string,
+    retryAfterSeconds?: number
+  ) {
     super(message);
     this.name = "CreditServiceError";
     this.code = code;
     this.status = status;
+    this.retryAfterSeconds = retryAfterSeconds;
   }
 }
 
@@ -700,6 +713,12 @@ export interface ReserveAndCreateJobInput {
   prompt: string;
   referenceImagesCount?: number;
   thumbnailId?: string | null;
+  /** Optional current global queue depth for hysteresis load shedding. */
+  currentQueueDepth?: number;
+  /** Whether to enforce per-user active job concurrency caps (default: true). */
+  enforceUserConcurrency?: boolean;
+  /** Optional custom QueueDepthGuard instance for tests. */
+  queueDepthGuard?: QueueDepthGuard;
 }
 
 export interface ReserveAndCreateJobResult {
@@ -874,6 +893,39 @@ export class CreditService {
           modePlanMaxRes ?? "2K"
         } resolution on the ${effectivePlan} plan (requested ${resolutionTier})`
       );
+    }
+
+    // 4b. Global queue depth hysteresis guard (>200 rejects Fast; >400 rejects non-Pro)
+    if (typeof input.currentQueueDepth === "number") {
+      const guard = input.queueDepthGuard ?? defaultQueueDepthGuard;
+      const decision = guard.evaluate(
+        input.currentQueueDepth,
+        effectivePlan,
+        modeId
+      );
+      if (!decision.allowed) {
+        throw new CreditServiceError(
+          "QUEUE_BUSY",
+          503,
+          decision.reason || "Generation queue is currently busy",
+          decision.retryAfterSeconds ?? 30
+        );
+      }
+    }
+
+    // 4c. Per-user active job concurrency cap (Starter: 2, Creator: 4, Pro: 6)
+    if (input.enforceUserConcurrency !== false) {
+      const activeJobsCount = await this.store.countActiveJobsForUser(
+        input.userId
+      );
+      if (activeJobsCount >= planCfg.max_concurrent_jobs) {
+        throw new CreditServiceError(
+          "TOO_MANY_CONCURRENT_JOBS",
+          429,
+          `You already have ${activeJobsCount} active generation job(s) running (maximum ${planCfg.max_concurrent_jobs} concurrent jobs for ${planCfg.name}). Please wait for an active job to finish.`,
+          10
+        );
+      }
     }
 
     const creditsCost = modeCfg.credits;

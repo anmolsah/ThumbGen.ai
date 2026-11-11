@@ -29,6 +29,7 @@ export class ProviderError extends Error {
   public readonly status?: number;
   public readonly provider: string;
   public readonly model_id: string;
+  public attempts?: Array<Record<string, unknown>>;
 
   constructor(params: {
     code: ProviderErrorCode;

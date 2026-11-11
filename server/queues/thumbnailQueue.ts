@@ -27,11 +27,8 @@ export interface ThumbnailJobData {
 const thumbnailQueue = new Queue<ThumbnailJobData>("thumbnail-generation", {
   connection: redisConnection,
   defaultJobOptions: {
-    attempts: 3,
-    backoff: {
-      type: "exponential",
-      delay: 5000,
-    },
+    // Retries and candidate fallback are orchestrated per-model inside executeGenerationWithFallback
+    attempts: 1,
     // ── Reduced housekeeping counts → fewer EVALSHA Lua ops per job ───────
     // BullMQ runs a Lua cleanup script on every completion/failure.
     // Keeping only 10 completed + 10 failed jobs cuts ~30 Redis ops/job.
