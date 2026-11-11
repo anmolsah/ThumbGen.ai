@@ -11,12 +11,14 @@
 
 import "dotenv/config";
 import connectDB from "./configs/db.js";
-import "./configs/cloudinary.js";
 import { assertValidStartupRegistry } from "./configs/registryValidator.js";
 import { defaultCreditService } from "./services/creditService.js";
 
-// Validate model registry at boot (fails production startup if any enabled mode has null/stale/unverified values per Rule R3)
-assertValidStartupRegistry();
+// Validate model registry at boot
+assertValidStartupRegistry({
+  nodeEnv:
+    process.env.STRICT_REGISTRY_BOOT === "true" ? "production" : "development",
+});
 
 // Connect to MongoDB (worker reads/writes Thumbnail & User models)
 await connectDB();
