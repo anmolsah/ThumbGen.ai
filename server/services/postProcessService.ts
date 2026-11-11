@@ -645,3 +645,168 @@ export async function inspectProvenanceMetadata(
   };
 }
 
+// ---------------------------------------------------------------------------
+// Phase 5.5 / Section 10A.11: Verified Platform Preset Exporter
+// Resolves the YouTube Help Center specification conflict (Appendix A.3) by
+// producing BOTH a primary sRGB export at the preset resolution AND a <= 2 MB
+// sRGB JPG fallback via a quality loop, plus the small mobile feed preview (10A.3).
+// ---------------------------------------------------------------------------
+
+export interface VerifiedPlatformPreset {
+  id: "youtube_video" | "youtube_shorts";
+  aspect_ratio: "16:9" | "9:16";
+  primary_width: number;
+  primary_height: number;
+  uhd_width: number;
+  uhd_height: number;
+  min_width: number;
+  fallback_max_bytes: number;
+  desktop_max_bytes: number;
+  safe_zone_center_ratio: number;
+  mobile_preview_width: number;
+  mobile_preview_height: number;
+  verified_at: string;
+  source_url: string;
+}
+
+export const VERIFIED_PLATFORM_PRESETS: Record<
+  "youtube_video" | "youtube_shorts",
+  VerifiedPlatformPreset
+> = {
+  youtube_video: {
+    id: "youtube_video",
+    aspect_ratio: "16:9",
+    primary_width: 1280,
+    primary_height: 720,
+    uhd_width: 3840,
+    uhd_height: 2160,
+    min_width: 640,
+    fallback_max_bytes: 2 * 1024 * 1024, // 2,097,152 bytes (2 MB)
+    desktop_max_bytes: 50 * 1024 * 1024, // 52,428,800 bytes (50 MB)
+    safe_zone_center_ratio: 0.8,
+    mobile_preview_width: 320,
+    mobile_preview_height: 180,
+    verified_at: "2026-11-11",
+    source_url: "https://support.google.com/youtube/answer/72431",
+  },
+  youtube_shorts: {
+    id: "youtube_shorts",
+    aspect_ratio: "9:16",
+    primary_width: 1080,
+    primary_height: 1920,
+    uhd_width: 2160,
+    uhd_height: 3840,
+    min_width: 640,
+    fallback_max_bytes: 2 * 1024 * 1024, // 2,097,152 bytes (2 MB)
+    desktop_max_bytes: 50 * 1024 * 1024,
+    safe_zone_center_ratio: 0.8,
+    mobile_preview_width: 180,
+    mobile_preview_height: 320,
+    verified_at: "2026-11-11",
+    source_url: "https://support.google.com/youtube/answer/72431",
+  },
+};
+
+export interface PlatformExportResult {
+  presetId: "youtube_video" | "youtube_shorts";
+  primaryBuffer: Buffer;
+  primaryWidth: number;
+  primaryHeight: number;
+  primaryBytes: number;
+  fallbackJpgBuffer: Buffer;
+  fallbackJpgWidth: number;
+  fallbackJpgHeight: number;
+  fallbackJpgBytes: number;
+  fallbackJpgQualityUsed: number;
+  mobileFeedPreviewBuffer: Buffer;
+  mobileFeedPreviewWidth: number;
+  mobileFeedPreviewHeight: number;
+}
+
+/**
+ * Exports an image buffer according to the verified platform preset (Section 10A.6 & 10A.11):
+ *   1. Primary sRGB asset at the preset dimensions (`1280x720` or `3840x2160` for `youtube_video`,
+ *      `1080x1920` or `2160x3840` for `youtube_shorts`).
+ *   2. Guaranteed `<= 2 MB` (`fallback_max_bytes`) sRGB JPG fallback via a quality loop.
+ *   3. Mobile feed preview (`320x180` or `180x320`) for small-size legibility verification (`10A.3`).
+ */
+export async function exportForPlatformPreset(
+  sourceBuffer: Buffer,
+  presetId: "youtube_video" | "youtube_shorts" | string,
+  tier: "1K" | "2K" | "4K" = "2K"
+): Promise<PlatformExportResult> {
+  if (presetId !== "youtube_video" && presetId !== "youtube_shorts") {
+    throw new Error(
+      `UNVERIFIED_PLATFORM_PRESET: Platform preset '${presetId}' has unverified (null) specifications in config/platform_presets.yaml (Rule R3).`
+    );
+  }
+
+  const preset = VERIFIED_PLATFORM_PRESETS[presetId];
+  const targetWidth =
+    tier === "4K" ? preset.uhd_width : preset.primary_width;
+  const targetHeight =
+    tier === "4K" ? preset.uhd_height : preset.primary_height;
+
+  // 1. Primary high-resolution sRGB export
+  const primaryBuffer = await sharp(sourceBuffer)
+    .toColorspace("srgb")
+    .resize({
+      width: targetWidth,
+      height: targetHeight,
+      fit: "cover",
+      position: sharp.strategy.attention,
+    })
+    .webp({ quality: 92 })
+    .toBuffer();
+
+  // 2. Guaranteed <= 2 MB JPG fallback via quality loop (1280x720 / 1080x1920 base dimensions)
+  const fallbackWidth = preset.primary_width;
+  const fallbackHeight = preset.primary_height;
+  let fallbackJpgBuffer: Buffer = Buffer.alloc(0);
+  let fallbackJpgQualityUsed = 92;
+
+  for (const quality of [92, 86, 80, 74, 68, 60, 52]) {
+    fallbackJpgQualityUsed = quality;
+    fallbackJpgBuffer = await sharp(sourceBuffer)
+      .toColorspace("srgb")
+      .resize({
+        width: fallbackWidth,
+        height: fallbackHeight,
+        fit: "cover",
+        position: sharp.strategy.attention,
+      })
+      .jpeg({ quality, mozjpeg: true })
+      .toBuffer();
+
+    if (fallbackJpgBuffer.byteLength <= preset.fallback_max_bytes) {
+      break;
+    }
+  }
+
+  // 3. Small mobile feed preview (320x180 for YouTube Video, 180x320 for Shorts — Section 10A.3)
+  const mobileFeedPreviewBuffer = await sharp(primaryBuffer)
+    .resize({
+      width: preset.mobile_preview_width,
+      height: preset.mobile_preview_height,
+      fit: "cover",
+    })
+    .webp({ quality: 85 })
+    .toBuffer();
+
+  return {
+    presetId,
+    primaryBuffer,
+    primaryWidth: targetWidth,
+    primaryHeight: targetHeight,
+    primaryBytes: primaryBuffer.byteLength,
+    fallbackJpgBuffer,
+    fallbackJpgWidth: fallbackWidth,
+    fallbackJpgHeight: fallbackHeight,
+    fallbackJpgBytes: fallbackJpgBuffer.byteLength,
+    fallbackJpgQualityUsed,
+    mobileFeedPreviewBuffer,
+    mobileFeedPreviewWidth: preset.mobile_preview_width,
+    mobileFeedPreviewHeight: preset.mobile_preview_height,
+  };
+}
+

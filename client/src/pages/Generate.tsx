@@ -76,6 +76,8 @@ const Generate = () => {
 
   const [title, setTitle] = useState("");
   const [titleError, setTitleError] = useState("");
+  const [overlayTitle, setOverlayTitle] = useState("");
+  const [overlayPosition, setOverlayPosition] = useState<"top" | "bottom">("bottom");
   const [additionalDetails, setAdditionalDetails] = useState("");
   const [errorBanner, setErrorBanner] = useState<string | null>(null);
 
@@ -93,6 +95,7 @@ const Generate = () => {
   const [styleDropdownOpen, setStyleDropdownOpen] = useState(false);
 
   const [referenceImage, setReferenceImage] = useState<string | null>(null);
+  const [hasLikenessRights, setHasLikenessRights] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [youtubeUrl, setYoutubeUrl] = useState("");
@@ -201,10 +204,16 @@ const Generate = () => {
 
   const removeReferenceImage = () => {
     setReferenceImage(null);
+    setHasLikenessRights(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
+
+  const overlayWordCount = overlayTitle
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
 
   const handleGenerate = async () => {
     if (!isLoggedIn) return toast.error("Please sign in to generate thumbnails");
@@ -219,6 +228,16 @@ const Generate = () => {
       setTitleError("Enter a title or topic for your thumbnail");
       window.scrollTo({ top: 0, behavior: "smooth" });
       toast.error("Title is required to generate a thumbnail");
+      return;
+    }
+
+    if (overlayWordCount > 5) {
+      toast.error("Headline overlay must be 5 words or fewer for mobile feed legibility");
+      return;
+    }
+
+    if (referenceImage && canUploadImage && !hasLikenessRights) {
+      toast.error("Please confirm that you have rights to the uploaded reference photo");
       return;
     }
 
@@ -654,9 +673,62 @@ const Generate = () => {
                 </div>
 
                 <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-medium text-zinc-300">
+                      Code-Rendered Headline Overlay{" "}
+                      <span className="text-zinc-400 font-normal">(max 5 words)</span>
+                    </label>
+                    <span
+                      className={`text-[11px] font-mono tabular-nums ${
+                        overlayWordCount > 5 ? "text-red-400" : "text-zinc-400"
+                      }`}
+                    >
+                      {overlayWordCount}/5 words
+                    </span>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={overlayTitle}
+                      onChange={(e) => setOverlayTitle(e.target.value)}
+                      maxLength={42}
+                      placeholder="e.g., WHY I SWITCHED"
+                      className="flex-1 px-3.5 py-2 rounded-lg border border-white/[0.08] bg-[#090a0c] text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-brand-400"
+                    />
+                    <div className="inline-flex rounded-lg border border-white/[0.08] bg-[#090a0c] p-0.5">
+                      <button
+                        type="button"
+                        onClick={() => setOverlayPosition("top")}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium ${
+                          overlayPosition === "top"
+                            ? "bg-[#171a20] text-zinc-100"
+                            : "text-zinc-400 hover:text-zinc-200"
+                        }`}
+                      >
+                        Top
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setOverlayPosition("bottom")}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium ${
+                          overlayPosition === "bottom"
+                            ? "bg-[#171a20] text-zinc-100"
+                            : "text-zinc-400 hover:text-zinc-200"
+                        }`}
+                      >
+                        Bottom
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-zinc-400">
+                    Rendered via crisp vector overlay with WCAG ≥4.5:1 contrast check so the image model focuses strictly on photography.
+                  </p>
+                </div>
+
+                <div className="space-y-1.5">
                   <label className="block text-xs font-medium text-zinc-300">
                     Scene &amp; Subject Direction{" "}
-                    <span className="text-zinc-500 font-normal">(optional)</span>
+                    <span className="text-zinc-400 font-normal">(optional)</span>
                   </label>
                   <textarea
                     value={additionalDetails}
@@ -799,20 +871,33 @@ const Generate = () => {
                         className="hidden"
                       />
                       {referenceImage ? (
-                        <div className="relative group rounded-lg overflow-hidden border border-white/[0.12] bg-[#090a0c]">
-                          <img
-                            src={referenceImage}
-                            alt="Reference upload"
-                            className="w-full h-36 object-cover"
-                          />
-                          <button
-                            type="button"
-                            onClick={removeReferenceImage}
-                            className="absolute top-2 right-2 p-1.5 bg-[#090a0c]/85 hover:bg-red-600 text-zinc-200 hover:text-white rounded-md border border-white/[0.12]"
-                            aria-label="Remove reference image"
-                          >
-                            <XIcon className="size-4" />
-                          </button>
+                        <div className="space-y-2.5">
+                          <div className="relative group rounded-lg overflow-hidden border border-white/[0.12] bg-[#090a0c]">
+                            <img
+                              src={referenceImage}
+                              alt="Reference upload"
+                              className="w-full h-36 object-cover"
+                            />
+                            <button
+                              type="button"
+                              onClick={removeReferenceImage}
+                              className="absolute top-2 right-2 p-1.5 bg-[#090a0c]/85 hover:bg-red-600 text-zinc-200 hover:text-white rounded-md border border-white/[0.12]"
+                              aria-label="Remove reference image"
+                            >
+                              <XIcon className="size-4" />
+                            </button>
+                          </div>
+                          <label className="flex items-start gap-2.5 cursor-pointer select-none text-xs text-zinc-300">
+                            <input
+                              type="checkbox"
+                              checked={hasLikenessRights}
+                              onChange={(e) => setHasLikenessRights(e.target.checked)}
+                              className="mt-0.5 rounded border-white/20 bg-[#090a0c] text-brand-500 focus:ring-brand-400"
+                            />
+                            <span className="leading-snug text-zinc-300">
+                              I confirm that I own or have explicit permission to use the likeness in this reference photo (Section 10A.5).
+                            </span>
+                          </label>
                         </div>
                       ) : (
                         <button
@@ -828,9 +913,14 @@ const Generate = () => {
                       )}
                     </>
                   ) : (
-                    <div className="w-full py-4 px-3 rounded-lg border border-white/[0.06] bg-[#090a0c]/50 flex items-center justify-center gap-2 text-xs text-zinc-500">
-                      <ImageIcon className="size-4" />
-                      <span>Upgrade to Creator or Pro to condition on reference photos</span>
+                    <div className="w-full py-3.5 px-3.5 rounded-lg border border-white/[0.06] bg-[#090a0c]/50 space-y-1 text-xs text-zinc-400">
+                      <div className="flex items-center gap-2 font-medium text-zinc-300">
+                        <ImageIcon className="size-4 text-amber-400 shrink-0" />
+                        <span>Reference photo locking requires Creator or Pro</span>
+                      </div>
+                      <p className="text-[11px] text-zinc-400 leading-relaxed">
+                        Starter relies on the server-side brief compiler and automated QA gate only and cannot lock onto a specific person’s likeness.
+                      </p>
                     </div>
                   )}
                 </div>
@@ -900,6 +990,9 @@ const Generate = () => {
                   thumbnail={thumbnail}
                   isLoading={loading}
                   aspectRatio={aspectRatio}
+                  overlayTitle={overlayTitle}
+                  overlayPosition={overlayPosition}
+                  videoTitle={title}
                 />
               </div>
 

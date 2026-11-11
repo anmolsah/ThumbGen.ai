@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "llm_brief_model": null,
+  "presets": {
+    "photoreal_candid": {
+      "id": "photoreal_candid",
+      "label": "Photoreal Candid",
+      "is_person_preset": true,
+      "allowed_layouts": ["text-left-subject-right", "text-top-subject-bottom"],
+      "default_camera": "50mm prime lens, eye-level slightly off-axis, natural shallow depth of field",
+      "default_surface_detail": "natural skin pores, fabric weave, matte metal",
+      "person_directives": [
+        "visible skin texture",
+        "asymmetric candid expression",
+        "gaze not locked on the lens",
+        "one real light source",
+        "one specific background detail"
+      ],
+      "default_palette": ["#18181B", "#F4F4F5", "#E11D48"]
+    },
+    "bold_graphic": {
+      "id": "bold_graphic",
+      "label": "Bold Graphic",
+      "is_person_preset": false,
+      "allowed_layouts": ["text-left-subject-right", "split-comparison"],
+      "default_camera": "35mm wide angle, crisp foreground subject separation",
+      "default_surface_detail": "matte anodized aluminum, tactile paper grain, high-contrast shadow edge",
+      "person_directives": [],
+      "default_palette": ["#09090B", "#FAFAFA", "#F59E0B"]
+    },
+    "product_focus": {
+      "id": "product_focus",
+      "label": "Product Hero",
+      "is_person_preset": false,
+      "allowed_layouts": ["text-left-subject-right", "subject-center-left-text-top"],
+      "default_camera": "85mm macro-telephoto, low hero angle, crisp edge definition",
+      "default_surface_detail": "brushed steel micro-scratches, knurled metal, slate stone",
+      "person_directives": [],
+      "default_palette": ["#111827", "#F9FAFB", "#10B981"]
+    },
+    "minimal_clean": {
+      "id": "minimal_clean",
+      "label": "Minimal Clean",
+      "is_person_preset": false,
+      "allowed_layouts": ["text-left-subject-right", "negative-space-top"],
+      "default_camera": "50mm orthographic feel, clean negative space",
+      "default_surface_detail": "unbleached cotton paper, raw concrete, matte ceramic",
+      "person_directives": [],
+      "default_palette": ["#1C1917", "#F5F5F4", "#2563EB"]
+    },
+    "typographic_led": {
+      "id": "typographic_led",
+      "label": "Typographic Led",
+      "is_person_preset": false,
+      "allowed_layouts": ["large-title-left-60", "large-title-top-50"],
+      "default_camera": "50mm tight framing on secondary visual anchor",
+      "default_surface_detail": "dark textured backdrop, subtle directional key shadow",
+      "person_directives": [],
+      "default_palette": ["#0A0A0C", "#FFFFFF", "#F97316"]
+    }
+  },
+  "curated_light_pools": [
+    "single warm tungsten key light from camera-left casting a distinct shadow",
+    "north-facing window daylight from 45-degrees right with natural falloff",
+    "overhead workbench fluorescent tube with crisp downward specular highlight",
+    "late-afternoon hard sunlight from side-left creating strong chiaroscuro contrast",
+    "cool monitor practical light from front-left paired with dim ambient room tone",
+    "single diffused softbox from high-right leaving the opposite cheek in shadow"
+  ],
+  "curated_background_pools": [
+    "unpolished concrete wall with a steel electrical conduit pipe",
+    "cluttered wooden workbench with coiled braided cables and a soldering stand",
+    "shelving unit with plain cardboard archive boxes and a label maker",
+    "dark acoustic foam studio panels with an aluminum mic boom arm",
+    "rain-streaked industrial window glass overlooking brick buildings",
+    "matte slate kitchen counter with a stainless steel timer"
+  ]
+}
+

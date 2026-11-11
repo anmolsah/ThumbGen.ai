@@ -1,0 +1,67 @@
+# config/platform_presets.yaml
+# Platform specifications per PLAN.md Section 10A.11 & Appendix A.3.
+# Rule R3: Only verified official specifications are populated; unverified platforms remain null.
+version: 1
+platforms:
+  youtube_video:
+    aspect_ratio: "16:9"
+    primary_width: 1280
+    primary_height: 720
+    uhd_width: 3840
+    uhd_height: 2160
+    min_width: 640
+    fallback_max_bytes: 2097152 # 2 MB universal JPG fallback (phone + legacy Studio limit)
+    desktop_max_bytes: 52428800 # 50 MB desktop studio limit
+    formats: ["JPG", "PNG", "WEBP"]
+    safe_zone_center_ratio: 0.80
+    ui_overlays:
+      duration_badge:
+        zone: "bottom-right"
+        x_ratio_start: 0.82
+        y_ratio_start: 0.82
+    mobile_preview_width: 320
+    mobile_preview_height: 180
+    verified_at: "2026-11-11"
+    source_url: "https://support.google.com/youtube/answer/72431"
+
+  youtube_shorts:
+    aspect_ratio: "9:16"
+    primary_width: 1080
+    primary_height: 1920
+    uhd_width: 2160
+    uhd_height: 3840
+    min_width: 640
+    fallback_max_bytes: 2097152 # 2 MB phone upload limit
+    desktop_max_bytes: 52428800
+    formats: ["JPG", "PNG"]
+    safe_zone_center_ratio: 0.80
+    ui_overlays:
+      shorts_chrome:
+        zone: "bottom-and-right"
+        x_ratio_start: 0.80
+        y_ratio_start: 0.78
+    mobile_preview_width: 180
+    mobile_preview_height: 320
+    verified_at: "2026-11-11"
+    source_url: "https://support.google.com/youtube/answer/72431"
+
+  instagram_feed:
+    aspect_ratio: null # TODO(verify): verify from official Meta Help Center
+    primary_width: null # TODO(verify)
+    primary_height: null # TODO(verify)
+    fallback_max_bytes: null # TODO(verify)
+    formats: null # TODO(verify)
+    safe_zone_center_ratio: 0.80
+    verified_at: null # TODO(verify)
+    source_url: null # TODO(verify)
+
+  twitter_x:
+    aspect_ratio: null # TODO(verify): verify from official X Help Center
+    primary_width: null # TODO(verify)
+    primary_height: null # TODO(verify)
+    fallback_max_bytes: null # TODO(verify)
+    formats: null # TODO(verify)
+    safe_zone_center_ratio: 0.80
+    verified_at: null # TODO(verify)
+    source_url: null # TODO(verify)
+

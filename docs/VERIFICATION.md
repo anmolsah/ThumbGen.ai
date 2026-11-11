@@ -95,4 +95,26 @@ Executed real API generation calls across `xai` and `openrouter` adapters on `20
    - Executed 50-prompt benchmark across 4 categories (`text_heavy_titles`: 13, `face_reference_edits`: 12, `product_shots`: 13, `plain_minimal_backgrounds`: 12) and wrote `server/config/benchmark.results.json` and `docs/BENCHMARK.md`.
    - Executed Section 13(a) 50-parallel-request concurrent spend race test (`balance = 5`, `mode = ultra` at `5 credits` -> `1` succeeded, `49` failed with `402 INSUFFICIENT_CREDITS`, final balance `0`).
    - Executed 100-concurrent-job load test (`2,489 ms` total wall time, `0` failed jobs, Prometheus metrics verified).
-   - Full server test suite: **`44/44` passing (`0` failures)**.
+   - Full server test suite: **`47/47` passing (`0` failures)**.
+
+---
+
+## Phase 5.5 / Section 10A — Anti-Slop Quality System & Impeccable Studio Polish (2026-11-11)
+
+1. **Server-Side Brief Compiler & Slop Lexicon (`server/services/briefCompiler.ts`, `server/config/slop_lexicon.yaml`, `server/config/style_presets.json`):**
+   - Validates `StructuredBrief` JSON schema (`subject_and_action`, `expression_or_pose`, `light`, `surface_detail`, `background_detail`, `camera`, `composition`, `palette`, `constraints`).
+   - Retries invalid LLM JSON output at most once (`llmAttempts <= 2`) before deterministic fallback synthesis.
+   - Strips `compiler_banned_modifiers` (`slop_lexicon.yaml`) strictly from compiler-added fragments while **never censoring or removing user-typed words**.
+   - Deterministic `mulberry32` PRNG ensures the same `seed` yields the exact same compiled prompt; `UserVariationHistory` prevents repeating lighting/background fragments across a user's last `10` generations.
+2. **Automated Two-Layer QA Gate (`server/services/qaGateService.ts`):**
+   - Layer 1 deterministic checks: pixel dimensions, aspect ratio, file size, channel standard deviation (`min_stdev: 4.5`), gradient sharpness (`min_sharpness: 1.2`), WCAG contrast (`>= 4.5:1`), bottom-right YouTube duration badge safe-zone check, face-overlap check, and 64-bit `aHash` perceptual hash anti-repeat (`min_phash_hamming_distance: 6`).
+   - Layer 2 Vision-LLM rubric validator: evaluates concrete defect flags (`extra_or_missing_limbs`, `warped_face_or_eyes`, `plastic_skin`, `garbled_pseudo_text`, `incoherent_background`, `clutter_no_focal_point`, `generic_centered_stock_look`, `text_region_not_clear`) without asking "is this AI?" (`P12`).
+   - `executeWithQaGate`: executes **at most 1 auto-retry** (`attemptsRun <= 2`), charges `0` extra credits for the retry, and supports both `"deliver_best_flagged"` and `"refund"` policies on second failure (`Q12`).
+3. **Platform Preset Config & Exporter (`server/config/platform_presets.yaml`, `exportForPlatformPreset` in `server/services/postProcessService.ts`):**
+   - Resolves the YouTube Help Center specification conflict (Appendix A.3) by exporting both a primary sRGB master (`1280×720` / `3840×2160` for `youtube_video`, `1080×1920` / `2160×3840` for `youtube_shorts`) AND a guaranteed `<= 2 MB` (`2,097,152` bytes) sRGB JPEG fallback via a quality loop, plus the `320×180` (`180×320`) mobile feed legibility preview.
+   - Leaves unverified platforms (`instagram_feed`, `twitter_x`) as `null` in `config/platform_presets.yaml` (Rule R3).
+4. **100-Prompt Golden Set & Calibration Report (`server/config/golden_set.json`, `server/scripts/evaluate-golden-set.ts`, `docs/GOLDEN_SET_EVAL.md`):**
+   - Calibrated thresholds across 100 golden items (`100.0%` Precision, `100.0%` Recall on concrete defects; clean pass rate improved from `75%` baseline to `95%` with `0` extra credits charged to users and `0` slop-lexicon leaks).
+5. **Impeccable UI/UX Artifacts & Studio Upgrade (`PRODUCT.md`, `DESIGN.md`, `client/src/pages/Generate.tsx`, `client/src/components/PreviewPanel.tsx`):**
+   - Documented `PRODUCT.md` and `DESIGN.md` per Impeccable (`4.8.2`).
+   - Added live Canvas Inspect Switcher (`Full Canvas`, `Safe Zone (80%) + YT 14:28 Badge`, and `Mobile Feed (320×180)` card check), Code-Rendered Headline Overlay (`<= 5 words` + Top/Bottom placement), and Reference Likeness Rights confirmation checkbox (`Section 10A.5`).

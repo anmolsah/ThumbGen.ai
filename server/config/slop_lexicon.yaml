@@ -1,0 +1,18 @@
+# config/slop_lexicon.yaml
+# Generic modifiers the brief compiler avoids adding (PLAN.md Section 10A.2).
+# IMPORTANT: This list only constrains what the compiler adds; NEVER censor or remove words the user typed.
+version: 1
+compiler_banned_modifiers:
+  - "masterpiece"
+  - "ultra-detailed"
+  - "8k"
+  - "hyper-realistic"
+  - "cinematic lighting"
+  - "volumetric"
+  - "glowing"
+  - "trending on artstation"
+  - "soft even studio lighting"
+  - "unreal engine"
+  - "octane render"
+  - "award-winning"
+

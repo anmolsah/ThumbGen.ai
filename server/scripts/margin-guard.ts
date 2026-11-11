@@ -42,9 +42,15 @@ export interface MarginGuardReport {
 
 export function evaluateMarginGuard(
   registry: RegistryConfig,
-  options?: { failOnUnverified?: boolean }
+  options?: {
+    failOnUnverified?: boolean;
+    retryRate?: number;
+    qaCostUsd?: number;
+  }
 ): MarginGuardReport {
   const maxRatio = registry.margin_guard?.max_cost_to_revenue_ratio ?? 0.35;
+  const retryRate = Math.max(0, options?.retryRate ?? 0);
+  const qaCostUsd = Math.max(0, options?.qaCostUsd ?? 0);
   const { planId: lowestPlanId, valuePerCreditUsd } =
     computeLowestPlanCreditValue(registry.plans);
 
@@ -79,10 +85,12 @@ export function evaluateMarginGuard(
         continue;
       }
 
-      const ratio = cand.est_cost_usd / revenueUsd;
+      const effectiveCostUsd =
+        cand.est_cost_usd * (1 + retryRate) + qaCostUsd;
+      const ratio = effectiveCostUsd / revenueUsd;
       const passed = ratio <= maxRatio + 1e-12;
       const minCreditsRequired = Math.ceil(
-        cand.est_cost_usd / (valuePerCreditUsd * maxRatio)
+        effectiveCostUsd / (valuePerCreditUsd * maxRatio)
       );
 
       if (!passed) {
@@ -95,7 +103,7 @@ export function evaluateMarginGuard(
         credits: mode.credits,
         provider: cand.provider,
         modelId: cand.model_id,
-        estCostUsd: cand.est_cost_usd,
+        estCostUsd: Number(effectiveCostUsd.toFixed(6)),
         revenueUsd,
         maxAllowedCostUsd,
         ratio,

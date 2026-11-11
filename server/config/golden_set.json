@@ -1,0 +1,5002 @@
+[
+  {
+    "id": "G001",
+    "preset": "photoreal_candid",
+    "platform": "youtube_shorts",
+    "user_prompt": "Software engineer debugging kernel panic on ThinkPad at 2am (variant 1)",
+    "title_text": "LINUX BROKE",
+    "seed": 10000,
+    "human_baseline_rating": 1,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 1,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": true,
+          "warped_face_or_eyes": false,
+          "plastic_skin": true,
+          "garbled_pseudo_text": true,
+          "incoherent_background": false,
+          "clutter_no_focal_point": true,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": true,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G002",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Mechanical watchmaker oiling balance wheel under brass lamp (variant 1)",
+    "title_text": "SWISS SECRET",
+    "seed": 10037,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G003",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Specialty coffee roaster checking bean crack temperature (variant 1)",
+    "title_text": "BURNT BEANS",
+    "seed": 10074,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G004",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Custom luthiers carving spruce guitar top with finger plane (variant 1)",
+    "title_text": "$300 VS $8000",
+    "seed": 10111,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G005",
+    "preset": "typographic_led",
+    "platform": "youtube_shorts",
+    "user_prompt": "Synthesizer technician patching modular rack in dark studio (variant 1)",
+    "title_text": "PURE ANALOG",
+    "seed": 10148,
+    "human_baseline_rating": 2,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G006",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Chef searing dry-aged ribeye in cast iron skillet (variant 1)",
+    "title_text": "NO BUTTER",
+    "seed": 10185,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G007",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Industrial designer sanding clay car prototype model (variant 1)",
+    "title_text": "WHY IT FAILED",
+    "seed": 10222,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G008",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Hardware hacker probing FPGA dev board with oscilloscope (variant 1)",
+    "title_text": "10X FASTER",
+    "seed": 10259,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G009",
+    "preset": "minimal_clean",
+    "platform": "youtube_shorts",
+    "user_prompt": "Cinematographer mounting anamorphic lens on cinema body (variant 1)",
+    "title_text": "THE FAKE LOOK",
+    "seed": 10296,
+    "human_baseline_rating": 1,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 1,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": true,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G010",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Archivist inspecting 1970s magnetic tape reel in vault (variant 1)",
+    "title_text": "LOST DATA",
+    "seed": 10333,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G011",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Aerospace machinist measuring titanium turbine blade with micrometer (variant 1)",
+    "title_text": "0.001MM ERROR",
+    "seed": 10370,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G012",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Sound recordist holding blimp boom mic in rainy alley (variant 1)",
+    "title_text": "CLEAN AUDIO",
+    "seed": 10407,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G013",
+    "preset": "product_focus",
+    "platform": "youtube_shorts",
+    "user_prompt": "Battery engineer testing lithium cell thermal runaway in chamber (variant 1)",
+    "title_text": "SAFE OR NOT",
+    "seed": 10444,
+    "human_baseline_rating": 2,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 2.1,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": true,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G014",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Minimalist desk with single brass fountain pen and ink bottle (variant 1)",
+    "title_text": "WRITE DAILY",
+    "seed": 10481,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G015",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Acoustic engineer measuring room impulse in anechoic wedge room (variant 1)",
+    "title_text": "DEAD SILENT",
+    "seed": 10518,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G016",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Photographer developing silver gelatin print under red safelight (variant 1)",
+    "title_text": "FILM WINS",
+    "seed": 10555,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G017",
+    "preset": "bold_graphic",
+    "platform": "youtube_shorts",
+    "user_prompt": "Bicycle framebuilder TIG welding chromoly steel lugs (variant 1)",
+    "title_text": "BUILT TO LAST",
+    "seed": 10592,
+    "human_baseline_rating": 1,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 1,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": true,
+          "incoherent_background": false,
+          "clutter_no_focal_point": true,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G018",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Network engineer crimping fiber optic splice in server colocation (variant 1)",
+    "title_text": "100 GBPS HOME",
+    "seed": 10629,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G019",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Geologist examining obsidian core sample under polarizing microscope (variant 1)",
+    "title_text": "DEEP EARTH",
+    "seed": 10666,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G020",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Bookbinder sewing linen signatures on wooden sewing frame (variant 1)",
+    "title_text": "500 YEAR BOOK",
+    "seed": 10703,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G021",
+    "preset": "photoreal_candid",
+    "platform": "youtube_shorts",
+    "user_prompt": "Software engineer debugging kernel panic on ThinkPad at 2am (variant 2)",
+    "title_text": "LINUX BROKE",
+    "seed": 10740,
+    "human_baseline_rating": 2,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": true,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": true,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G022",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Mechanical watchmaker oiling balance wheel under brass lamp (variant 2)",
+    "title_text": "SWISS SECRET",
+    "seed": 10777,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G023",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Specialty coffee roaster checking bean crack temperature (variant 2)",
+    "title_text": "BURNT BEANS",
+    "seed": 10814,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G024",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Custom luthiers carving spruce guitar top with finger plane (variant 2)",
+    "title_text": "$300 VS $8000",
+    "seed": 10851,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G025",
+    "preset": "typographic_led",
+    "platform": "youtube_shorts",
+    "user_prompt": "Synthesizer technician patching modular rack in dark studio (variant 2)",
+    "title_text": "PURE ANALOG",
+    "seed": 10888,
+    "human_baseline_rating": 1,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 1,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": true,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": true,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G026",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Chef searing dry-aged ribeye in cast iron skillet (variant 2)",
+    "title_text": "NO BUTTER",
+    "seed": 10925,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G027",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Industrial designer sanding clay car prototype model (variant 2)",
+    "title_text": "WHY IT FAILED",
+    "seed": 10962,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G028",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Hardware hacker probing FPGA dev board with oscilloscope (variant 2)",
+    "title_text": "10X FASTER",
+    "seed": 10999,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G029",
+    "preset": "minimal_clean",
+    "platform": "youtube_shorts",
+    "user_prompt": "Cinematographer mounting anamorphic lens on cinema body (variant 2)",
+    "title_text": "THE FAKE LOOK",
+    "seed": 11036,
+    "human_baseline_rating": 2,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 0.6,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G030",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Archivist inspecting 1970s magnetic tape reel in vault (variant 2)",
+    "title_text": "LOST DATA",
+    "seed": 11073,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G031",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Aerospace machinist measuring titanium turbine blade with micrometer (variant 2)",
+    "title_text": "0.001MM ERROR",
+    "seed": 11110,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G032",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Sound recordist holding blimp boom mic in rainy alley (variant 2)",
+    "title_text": "CLEAN AUDIO",
+    "seed": 11147,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G033",
+    "preset": "product_focus",
+    "platform": "youtube_shorts",
+    "user_prompt": "Battery engineer testing lithium cell thermal runaway in chamber (variant 2)",
+    "title_text": "SAFE OR NOT",
+    "seed": 11184,
+    "human_baseline_rating": 1,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 1,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": true,
+          "incoherent_background": false,
+          "clutter_no_focal_point": true,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G034",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Minimalist desk with single brass fountain pen and ink bottle (variant 2)",
+    "title_text": "WRITE DAILY",
+    "seed": 11221,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G035",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Acoustic engineer measuring room impulse in anechoic wedge room (variant 2)",
+    "title_text": "DEAD SILENT",
+    "seed": 11258,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G036",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Photographer developing silver gelatin print under red safelight (variant 2)",
+    "title_text": "FILM WINS",
+    "seed": 11295,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G037",
+    "preset": "bold_graphic",
+    "platform": "youtube_shorts",
+    "user_prompt": "Bicycle framebuilder TIG welding chromoly steel lugs (variant 2)",
+    "title_text": "BUILT TO LAST",
+    "seed": 11332,
+    "human_baseline_rating": 2,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": true,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G038",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Network engineer crimping fiber optic splice in server colocation (variant 2)",
+    "title_text": "100 GBPS HOME",
+    "seed": 11369,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G039",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Geologist examining obsidian core sample under polarizing microscope (variant 2)",
+    "title_text": "DEEP EARTH",
+    "seed": 11406,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G040",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Bookbinder sewing linen signatures on wooden sewing frame (variant 2)",
+    "title_text": "500 YEAR BOOK",
+    "seed": 11443,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G041",
+    "preset": "photoreal_candid",
+    "platform": "youtube_shorts",
+    "user_prompt": "Software engineer debugging kernel panic on ThinkPad at 2am (variant 3)",
+    "title_text": "LINUX BROKE",
+    "seed": 11480,
+    "human_baseline_rating": 1,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 1,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": true,
+          "garbled_pseudo_text": true,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": true,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G042",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Mechanical watchmaker oiling balance wheel under brass lamp (variant 3)",
+    "title_text": "SWISS SECRET",
+    "seed": 11517,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G043",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Specialty coffee roaster checking bean crack temperature (variant 3)",
+    "title_text": "BURNT BEANS",
+    "seed": 11554,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G044",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Custom luthiers carving spruce guitar top with finger plane (variant 3)",
+    "title_text": "$300 VS $8000",
+    "seed": 11591,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G045",
+    "preset": "typographic_led",
+    "platform": "youtube_shorts",
+    "user_prompt": "Synthesizer technician patching modular rack in dark studio (variant 3)",
+    "title_text": "PURE ANALOG",
+    "seed": 11628,
+    "human_baseline_rating": 2,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G046",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Chef searing dry-aged ribeye in cast iron skillet (variant 3)",
+    "title_text": "NO BUTTER",
+    "seed": 11665,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G047",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Industrial designer sanding clay car prototype model (variant 3)",
+    "title_text": "WHY IT FAILED",
+    "seed": 11702,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G048",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Hardware hacker probing FPGA dev board with oscilloscope (variant 3)",
+    "title_text": "10X FASTER",
+    "seed": 11739,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G049",
+    "preset": "minimal_clean",
+    "platform": "youtube_shorts",
+    "user_prompt": "Cinematographer mounting anamorphic lens on cinema body (variant 3)",
+    "title_text": "THE FAKE LOOK",
+    "seed": 11776,
+    "human_baseline_rating": 1,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 1,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": true,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": true,
+          "incoherent_background": false,
+          "clutter_no_focal_point": true,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G050",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Archivist inspecting 1970s magnetic tape reel in vault (variant 3)",
+    "title_text": "LOST DATA",
+    "seed": 11813,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G051",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Aerospace machinist measuring titanium turbine blade with micrometer (variant 3)",
+    "title_text": "0.001MM ERROR",
+    "seed": 11850,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G052",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Sound recordist holding blimp boom mic in rainy alley (variant 3)",
+    "title_text": "CLEAN AUDIO",
+    "seed": 11887,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G053",
+    "preset": "product_focus",
+    "platform": "youtube_shorts",
+    "user_prompt": "Battery engineer testing lithium cell thermal runaway in chamber (variant 3)",
+    "title_text": "SAFE OR NOT",
+    "seed": 11924,
+    "human_baseline_rating": 2,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G054",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Minimalist desk with single brass fountain pen and ink bottle (variant 3)",
+    "title_text": "WRITE DAILY",
+    "seed": 11961,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G055",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Acoustic engineer measuring room impulse in anechoic wedge room (variant 3)",
+    "title_text": "DEAD SILENT",
+    "seed": 11998,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G056",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Photographer developing silver gelatin print under red safelight (variant 3)",
+    "title_text": "FILM WINS",
+    "seed": 12035,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G057",
+    "preset": "bold_graphic",
+    "platform": "youtube_shorts",
+    "user_prompt": "Bicycle framebuilder TIG welding chromoly steel lugs (variant 3)",
+    "title_text": "BUILT TO LAST",
+    "seed": 12072,
+    "human_baseline_rating": 1,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 1,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": true,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G058",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Network engineer crimping fiber optic splice in server colocation (variant 3)",
+    "title_text": "100 GBPS HOME",
+    "seed": 12109,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G059",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Geologist examining obsidian core sample under polarizing microscope (variant 3)",
+    "title_text": "DEEP EARTH",
+    "seed": 12146,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G060",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Bookbinder sewing linen signatures on wooden sewing frame (variant 3)",
+    "title_text": "500 YEAR BOOK",
+    "seed": 12183,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G061",
+    "preset": "photoreal_candid",
+    "platform": "youtube_shorts",
+    "user_prompt": "Software engineer debugging kernel panic on ThinkPad at 2am (variant 4)",
+    "title_text": "LINUX BROKE",
+    "seed": 12220,
+    "human_baseline_rating": 2,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": true,
+          "warped_face_or_eyes": false,
+          "plastic_skin": true,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": true,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G062",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Mechanical watchmaker oiling balance wheel under brass lamp (variant 4)",
+    "title_text": "SWISS SECRET",
+    "seed": 12257,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G063",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Specialty coffee roaster checking bean crack temperature (variant 4)",
+    "title_text": "BURNT BEANS",
+    "seed": 12294,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G064",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Custom luthiers carving spruce guitar top with finger plane (variant 4)",
+    "title_text": "$300 VS $8000",
+    "seed": 12331,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G065",
+    "preset": "typographic_led",
+    "platform": "youtube_shorts",
+    "user_prompt": "Synthesizer technician patching modular rack in dark studio (variant 4)",
+    "title_text": "PURE ANALOG",
+    "seed": 12368,
+    "human_baseline_rating": 1,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 1,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": true,
+          "incoherent_background": false,
+          "clutter_no_focal_point": true,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G066",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Chef searing dry-aged ribeye in cast iron skillet (variant 4)",
+    "title_text": "NO BUTTER",
+    "seed": 12405,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G067",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Industrial designer sanding clay car prototype model (variant 4)",
+    "title_text": "WHY IT FAILED",
+    "seed": 12442,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G068",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Hardware hacker probing FPGA dev board with oscilloscope (variant 4)",
+    "title_text": "10X FASTER",
+    "seed": 12479,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G069",
+    "preset": "minimal_clean",
+    "platform": "youtube_shorts",
+    "user_prompt": "Cinematographer mounting anamorphic lens on cinema body (variant 4)",
+    "title_text": "THE FAKE LOOK",
+    "seed": 12516,
+    "human_baseline_rating": 2,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G070",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Archivist inspecting 1970s magnetic tape reel in vault (variant 4)",
+    "title_text": "LOST DATA",
+    "seed": 12553,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G071",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Aerospace machinist measuring titanium turbine blade with micrometer (variant 4)",
+    "title_text": "0.001MM ERROR",
+    "seed": 12590,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G072",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Sound recordist holding blimp boom mic in rainy alley (variant 4)",
+    "title_text": "CLEAN AUDIO",
+    "seed": 12627,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G073",
+    "preset": "product_focus",
+    "platform": "youtube_shorts",
+    "user_prompt": "Battery engineer testing lithium cell thermal runaway in chamber (variant 4)",
+    "title_text": "SAFE OR NOT",
+    "seed": 12664,
+    "human_baseline_rating": 1,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 1,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": true,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": true,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G074",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Minimalist desk with single brass fountain pen and ink bottle (variant 4)",
+    "title_text": "WRITE DAILY",
+    "seed": 12701,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G075",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Acoustic engineer measuring room impulse in anechoic wedge room (variant 4)",
+    "title_text": "DEAD SILENT",
+    "seed": 12738,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G076",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Photographer developing silver gelatin print under red safelight (variant 4)",
+    "title_text": "FILM WINS",
+    "seed": 12775,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G077",
+    "preset": "bold_graphic",
+    "platform": "youtube_shorts",
+    "user_prompt": "Bicycle framebuilder TIG welding chromoly steel lugs (variant 4)",
+    "title_text": "BUILT TO LAST",
+    "seed": 12812,
+    "human_baseline_rating": 2,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G078",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Network engineer crimping fiber optic splice in server colocation (variant 4)",
+    "title_text": "100 GBPS HOME",
+    "seed": 12849,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G079",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Geologist examining obsidian core sample under polarizing microscope (variant 4)",
+    "title_text": "DEEP EARTH",
+    "seed": 12886,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G080",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Bookbinder sewing linen signatures on wooden sewing frame (variant 4)",
+    "title_text": "500 YEAR BOOK",
+    "seed": 12923,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G081",
+    "preset": "photoreal_candid",
+    "platform": "youtube_shorts",
+    "user_prompt": "Software engineer debugging kernel panic on ThinkPad at 2am (variant 5)",
+    "title_text": "LINUX BROKE",
+    "seed": 12960,
+    "human_baseline_rating": 1,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 1,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": true,
+          "garbled_pseudo_text": true,
+          "incoherent_background": false,
+          "clutter_no_focal_point": true,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": true,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G082",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Mechanical watchmaker oiling balance wheel under brass lamp (variant 5)",
+    "title_text": "SWISS SECRET",
+    "seed": 12997,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G083",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Specialty coffee roaster checking bean crack temperature (variant 5)",
+    "title_text": "BURNT BEANS",
+    "seed": 13034,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G084",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Custom luthiers carving spruce guitar top with finger plane (variant 5)",
+    "title_text": "$300 VS $8000",
+    "seed": 13071,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G085",
+    "preset": "typographic_led",
+    "platform": "youtube_shorts",
+    "user_prompt": "Synthesizer technician patching modular rack in dark studio (variant 5)",
+    "title_text": "PURE ANALOG",
+    "seed": 13108,
+    "human_baseline_rating": 2,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": true,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G086",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Chef searing dry-aged ribeye in cast iron skillet (variant 5)",
+    "title_text": "NO BUTTER",
+    "seed": 13145,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G087",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Industrial designer sanding clay car prototype model (variant 5)",
+    "title_text": "WHY IT FAILED",
+    "seed": 13182,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G088",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Hardware hacker probing FPGA dev board with oscilloscope (variant 5)",
+    "title_text": "10X FASTER",
+    "seed": 13219,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G089",
+    "preset": "minimal_clean",
+    "platform": "youtube_shorts",
+    "user_prompt": "Cinematographer mounting anamorphic lens on cinema body (variant 5)",
+    "title_text": "THE FAKE LOOK",
+    "seed": 13256,
+    "human_baseline_rating": 1,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 1,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": true,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G090",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Archivist inspecting 1970s magnetic tape reel in vault (variant 5)",
+    "title_text": "LOST DATA",
+    "seed": 13293,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G091",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Aerospace machinist measuring titanium turbine blade with micrometer (variant 5)",
+    "title_text": "0.001MM ERROR",
+    "seed": 13330,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G092",
+    "preset": "bold_graphic",
+    "platform": "youtube_video",
+    "user_prompt": "Sound recordist holding blimp boom mic in rainy alley (variant 5)",
+    "title_text": "CLEAN AUDIO",
+    "seed": 13367,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G093",
+    "preset": "product_focus",
+    "platform": "youtube_shorts",
+    "user_prompt": "Battery engineer testing lithium cell thermal runaway in chamber (variant 5)",
+    "title_text": "SAFE OR NOT",
+    "seed": 13404,
+    "human_baseline_rating": 2,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 2,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G094",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Minimalist desk with single brass fountain pen and ink bottle (variant 5)",
+    "title_text": "WRITE DAILY",
+    "seed": 13441,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G095",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Acoustic engineer measuring room impulse in anechoic wedge room (variant 5)",
+    "title_text": "DEAD SILENT",
+    "seed": 13478,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G096",
+    "preset": "photoreal_candid",
+    "platform": "youtube_video",
+    "user_prompt": "Photographer developing silver gelatin print under red safelight (variant 5)",
+    "title_text": "FILM WINS",
+    "seed": 13515,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G097",
+    "preset": "bold_graphic",
+    "platform": "youtube_shorts",
+    "user_prompt": "Bicycle framebuilder TIG welding chromoly steel lugs (variant 5)",
+    "title_text": "BUILT TO LAST",
+    "seed": 13552,
+    "human_baseline_rating": 1,
+    "human_ground_truth_defective": true,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 2.4,
+      "vision_rubric": {
+        "overall_score": 1,
+        "composition_score": 2,
+        "realism_score": 2,
+        "defects": {
+          "extra_or_missing_limbs": true,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": true,
+          "incoherent_background": false,
+          "clutter_no_focal_point": true,
+          "generic_centered_stock_look": true,
+          "text_region_not_clear": true
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G098",
+    "preset": "product_focus",
+    "platform": "youtube_video",
+    "user_prompt": "Network engineer crimping fiber optic splice in server colocation (variant 5)",
+    "title_text": "100 GBPS HOME",
+    "seed": 13589,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G099",
+    "preset": "minimal_clean",
+    "platform": "youtube_video",
+    "user_prompt": "Geologist examining obsidian core sample under polarizing microscope (variant 5)",
+    "title_text": "DEEP EARTH",
+    "seed": 13626,
+    "human_baseline_rating": 4,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  },
+  {
+    "id": "G100",
+    "preset": "typographic_led",
+    "platform": "youtube_video",
+    "user_prompt": "Bookbinder sewing linen signatures on wooden sewing frame (variant 5)",
+    "title_text": "500 YEAR BOOK",
+    "seed": 13663,
+    "human_baseline_rating": 5,
+    "human_ground_truth_defective": false,
+    "simulated_attempt1_metrics": {
+      "channel_stdev": 38.4,
+      "sharpness_score": 9.8,
+      "text_contrast_ratio": 7.8,
+      "vision_rubric": {
+        "overall_score": 5,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    },
+    "simulated_attempt2_corrective_metrics": {
+      "channel_stdev": 41.2,
+      "sharpness_score": 10.4,
+      "text_contrast_ratio": 9.2,
+      "vision_rubric": {
+        "overall_score": 4,
+        "composition_score": 4,
+        "realism_score": 4,
+        "defects": {
+          "extra_or_missing_limbs": false,
+          "warped_face_or_eyes": false,
+          "plastic_skin": false,
+          "garbled_pseudo_text": false,
+          "incoherent_background": false,
+          "clutter_no_focal_point": false,
+          "generic_centered_stock_look": false,
+          "text_region_not_clear": false
+        }
+      }
+    }
+  }
+]
