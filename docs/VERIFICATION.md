@@ -118,3 +118,28 @@ Executed real API generation calls across `xai` and `openrouter` adapters on `20
 5. **Impeccable UI/UX Artifacts & Studio Upgrade (`PRODUCT.md`, `DESIGN.md`, `client/src/pages/Generate.tsx`, `client/src/components/PreviewPanel.tsx`):**
    - Documented `PRODUCT.md` and `DESIGN.md` per Impeccable (`4.8.2`).
    - Added live Canvas Inspect Switcher (`Full Canvas`, `Safe Zone (80%) + YT 14:28 Badge`, and `Mobile Feed (320×180)` card check), Code-Rendered Headline Overlay (`<= 5 words` + Top/Bottom placement), and Reference Likeness Rights confirmation checkbox (`Section 10A.5`).
+
+---
+
+## Phase 9 — Cloudflare R2 Storage Migration, 30-Render Framer Showcase & Studio Features 1, 4, 5 (2026-11-12)
+
+1. **Cloudflare R2 Storage Migration & Complete Cloudinary Removal (`server/services/r2StorageService.ts`, `server/services/postProcessService.ts`, `server/workers/thumbnailWorker.ts`, `server/server.ts`, `server/workerProcess.ts`):**
+   - Implemented zero-dependency S3 Signature V4 Cloudflare R2 uploader (`uploadToCloudflareR2`) and `ListObjectsV2` discovery (`listR2BucketObjects`) in `server/services/r2StorageService.ts`.
+   - Removed `cloudinary` and `@google/genai` completely from `server/package.json`, `server/package-lock.json`, `server/services/postProcessService.ts`, `server/workers/thumbnailWorker.ts`, `server/server.ts`, `server/workerProcess.ts`, and deleted `server/configs/cloudinary.ts` and `server/configs/ai.ts`.
+   - Verified live R2 upload and edge CDN fetch: `https://pub-8ac5b71703ef48afa4b9f02603e3ba50.r2.dev/healthcheck/r2_verify_probe.webp` -> `HTTP 200 OK`.
+2. **30-Thumbnail Cloudflare R2 Showcase & Emil Kowalski Motion (`client/src/data/r2ShowcaseConfig.ts`, `client/src/sections/HeroSection.tsx`, `client/src/sections/ShowcaseSection.tsx`, `client/src/globals.css`):**
+   - Removed all 17 static local thumbnail files (`thumb_1`..`thumb_17`, `thumb12.jpg`) from `client/src/assets/`.
+   - Connected 30 real object keys from the `thumbgen` Cloudflare R2 bucket (`https://pub-8ac5b71703ef48afa4b9f02603e3ba50.r2.dev`) and verified `HTTP 200 OK` across all `30/30` URLs (`0` failures).
+   - Built Framer-level interactive animations using `motion/react` and Emil Kowalski's skills (`emil-design-eng`, `animate`, `choreograph`, `gestures`, `apple-design`, `animation-performance`):
+     - `HeroSection.tsx`: 8-column 3D Spotlight Stage (`useMotionValue` + `useTransform` zero-re-render pointer tilt) + 4-column Stage Queue with shared-layout indicators (`layoutId="hero-cat-pill"`, `layoutId="hero-stage-ring"`).
+     - `ShowcaseSection.tsx`: 3 interactive modes (`Fanned Deck (30)` with 1:1 drag/flick physics + 30-slot filmstrip dock scrubber, `Kinetic Stream (30)` dual-track cinema wall with focus dimming, and `Bento Matrix (30)` with spring layout morphing + magnetic 3D tilt cards) plus a drag-to-dismiss spring Lightbox Inspector with keyboard `←`/`→` scrubbing.
+3. **Studio Features 1, 4, and 5 (`client/src/components/PreviewPanel.tsx`, `client/src/pages/Generate.tsx`, `server/controllers/ThumbnailController.ts`, `server/routes/ThumbnailRoutes.ts`):**
+   - **Feature 1:** YouTube Context Simulator (`Mobile 320×180`, `YT Home Grid` 2-up comparison, `Sidebar 168×94`) with `YT Dark (#0f0f0f)` / `YT Light (#ffffff)` theme toggle and live Competitor YouTube URL comparison.
+   - **Feature 4:** One-Click Multi-Platform Smart-Crop & `<= 2 MB` Export Pack (`GET /api/thumbnail/export/:id?variant=master|yt_jpg_2mb|shorts_9_16|square_1_1|portrait_4_5` at `0` extra credits).
+   - **Feature 5:** Interactive Draggable Headline & Pointer Arrow Layer Inspector (`Top`, `Bottom`, `Left`, `Right` + direct canvas drag `xPercent`/`yPercent` + pointer arrow `none|right|left|down` + 5 studio accent swatches), composited server-side via Sharp SVG.
+4. **Final Verification Suite:**
+   - `npm --prefix server test` -> **`48/48` tests passing (`0` failures)**.
+   - `.\server\node_modules\.bin\tsc -p server/tsconfig.json --noEmit` -> **exit code 0**.
+   - `.\server\node_modules\.bin\tsc -p client/tsconfig.app.json --noEmit` -> **exit code 0**.
+   - `npm --prefix client run build` -> **built in `24.42s` with `0` errors**.
+

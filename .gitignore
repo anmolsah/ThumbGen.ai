@@ -1,9 +1,5 @@
 # Docs folder (personal notes)
-docs/*
-!docs/AUDIT.md
-!docs/VERIFICATION.md
-!docs/BENCHMARK.md
-!PLAN.md
+docs/
 
 
 #third ui/ux opn source
