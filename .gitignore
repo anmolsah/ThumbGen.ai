@@ -3,3 +3,4 @@ docs/*
 !docs/AUDIT.md
 !docs/VERIFICATION.md
 !docs/BENCHMARK.md
+!PLAN.md
