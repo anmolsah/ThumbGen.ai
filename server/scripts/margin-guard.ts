@@ -190,3 +190,4 @@ const isMain =
 if (isMain) {
   main();
 }
+

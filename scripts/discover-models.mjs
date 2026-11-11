@@ -20,3 +20,4 @@ const res = spawnSync(
 );
 
 process.exit(res.status ?? 1);
+

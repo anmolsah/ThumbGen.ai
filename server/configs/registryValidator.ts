@@ -546,3 +546,4 @@ export function assertValidStartupRegistry(options?: {
 
   return registry;
 }
+

@@ -286,3 +286,4 @@ test("margin guard passes when all modes are <= 35% cost-to-revenue and fails wh
   assert.equal(valRes.valid, false);
   assert.ok(valRes.errors.some((e) => e.code === "MARGIN_GUARD_EXCEEDED"));
 });
+
