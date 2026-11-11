@@ -24,6 +24,7 @@ import {
 } from "../services/creditService.js";
 import { executeGenerationWithFallback } from "../services/resilience.js";
 import {
+  applyServerTextOverlay,
   processAndStoreAssets,
   sanitizeThumbnailForPlan,
 } from "../services/postProcessService.js";
@@ -289,10 +290,24 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
 
     const { output, meta } = await executeGenerationWithFallback(generateInput);
 
+    // Optional code-rendered headline & pointer arrow overlay (Section 10A.4 / Feature 5)
+    let rawBytesForPostProcess = output.assetBytes;
+    if (job.data.overlay_title && job.data.overlay_title.trim()) {
+      const overlayOut = await applyServerTextOverlay(output.assetBytes, {
+        text: job.data.overlay_title.trim(),
+        position: job.data.overlay_position || "bottom",
+        textColorHex: job.data.overlay_accent || "#FFFFFF",
+        pointerArrow: job.data.overlay_arrow || "none",
+        xPercent: job.data.overlay_x_percent,
+        yPercent: job.data.overlay_y_percent,
+      });
+      rawBytesForPostProcess = overlayOut.buffer;
+    }
+
     // Phase 5 post-processing: generates `original`, `watermarked`, and `preview_webp` (<=640px)
     // under independent cryptographic keys and verifies actual pixel dimensions.
     const processed = await processAndStoreAssets({
-      rawAssetBytes: output.assetBytes,
+      rawAssetBytes: rawBytesForPostProcess,
       requestedResolution: resolutionTier,
       aspectRatio: aspect_ratio,
       userPlan,

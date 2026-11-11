@@ -19,6 +19,13 @@ export interface ThumbnailJobData {
   reference_images?: string[];
   userPlan: string;
   creditsRequired: number;
+  // Code-rendered headline & arrow overlay (Section 10A.4 / Feature 5)
+  overlay_title?: string;
+  overlay_position?: "top" | "bottom" | "left" | "right";
+  overlay_accent?: string;
+  overlay_arrow?: "none" | "right" | "left" | "down";
+  overlay_x_percent?: number;
+  overlay_y_percent?: number;
   // Edit-specific fields
   edit_instructions?: string;
   source_image_url?: string;

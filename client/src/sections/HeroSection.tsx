@@ -1,47 +1,47 @@
 "use client";
-import { ArrowRightIcon, CheckIcon, LayersIcon, SlidersHorizontalIcon } from "lucide-react";
+import { useState } from "react";
+import {
+  ArrowRightIcon,
+  CheckIcon,
+  LayersIcon,
+  SlidersHorizontalIcon,
+  CloudIcon,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import {
+  R2_SHOWCASE_30,
+  resolveR2ThumbnailUrl,
+  buildR2FallbackDataUri,
+  DEFAULT_R2_BASE_URL,
+  type ShowcaseCategory,
+} from "../data/r2ShowcaseConfig";
 
-import thumb_1 from "../assets/thumb_1.jpg";
-import thumb_2 from "../assets/thumb_2.jpg";
-import thumb_3 from "../assets/thumb_3.jpg";
-import thumb_13 from "../assets/thumb_13.png";
-
-const showcaseSamples = [
-  {
-    src: thumb_13,
-    title: "India's Highest Jump — Full Documentary",
-    mode: "Ultra 4K",
-    specs: "5504×3072 · 16:9 · 5 cr",
-  },
-  {
-    src: thumb_1,
-    title: "Top Smartwatch Under 1499",
-    mode: "Text & Reference",
-    specs: "2752×1536 · 16:9 · 3 cr",
-  },
-  {
-    src: thumb_2,
-    title: "How to Make 100K in 10 Days",
-    mode: "Standard 2K",
-    specs: "2560×1440 · 16:9 · 2 cr",
-  },
-  {
-    src: thumb_3,
-    title: "Learn Next.js 16 with a Real Project",
-    mode: "Fastest 2K",
-    specs: "2048×1152 · 16:9 · 1 cr",
-  },
+const HERO_CATEGORIES: ShowcaseCategory[] = [
+  "All",
+  "Photoreal Candid",
+  "Bold & Graphic",
+  "Product Hero",
+  "Tech & Systems",
+  "Minimal Clean",
 ];
 
 export default function HeroSection() {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
+  const [activeCategory, setActiveCategory] = useState<ShowcaseCategory>("All");
 
   const handlePrimaryAction = () => {
     navigate(isLoggedIn ? "/generate" : "/login");
   };
+
+  const filteredItems =
+    activeCategory === "All"
+      ? R2_SHOWCASE_30.slice(0, 4)
+      : R2_SHOWCASE_30.filter((item) => item.category === activeCategory).slice(
+          0,
+          4
+        );
 
   return (
     <section className="pt-28 pb-20 border-b border-white/[0.08] bg-[#090a0c]">
@@ -102,38 +102,68 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Live Product App-Frame Showcase (taste-skill software app-frame rule) */}
+        {/* Live Product App-Frame Showcase (30 Cloudflare R2 Thumbnails with Emil Kowalski Choreography) */}
         <div className="mt-10 rounded-2xl border border-white/[0.1] bg-[#111317] overflow-hidden">
           {/* App Frame Toolbar */}
           <div className="px-5 py-3.5 border-b border-white/[0.08] bg-[#0d0f13] flex flex-wrap items-center justify-between gap-4 text-xs">
-            <div className="flex items-center gap-3 text-zinc-300 font-medium">
+            <div className="flex items-center gap-3 text-zinc-200 font-medium">
               <SlidersHorizontalIcon className="size-4 text-brand-400" />
-              <span>ThumbGen Studio — Output Verification Matrix</span>
+              <span>ThumbGen Studio — Cloudflare R2 Output Matrix (30 Renders)</span>
             </div>
-            <div className="flex items-center gap-4 text-zinc-400 font-mono text-[11px] tabular-nums">
-              <span>MODES: 4 VERIFIED</span>
-              <span className="text-white/20">|</span>
-              <span>RATIOS: 16:9 · 9:16 · 1:1 · 4:5</span>
+
+            {/* Category Filter Pills (Emil Kowalski tactile press + instant feedback) */}
+            <div className="flex flex-wrap items-center gap-1.5">
+              {HERO_CATEGORIES.map((cat) => {
+                const isSelected = activeCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setActiveCategory(cat)}
+                    className={`px-2.5 py-1 rounded-md text-[11px] font-medium ${
+                      isSelected
+                        ? "bg-zinc-100 text-zinc-950 font-semibold"
+                        : "bg-[#111317] text-zinc-400 hover:text-zinc-200 border border-white/[0.08]"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* 4-Mode Output Grid inside App Frame */}
-          <div className="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
-            {showcaseSamples.map((item, idx) => (
+          {/* 4-Mode Output Grid inside App Frame with 35ms Stagger Choreography */}
+          <div
+            key={activeCategory}
+            className="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-5"
+          >
+            {filteredItems.map((item, idx) => (
               <div
-                key={idx}
-                className="group rounded-xl border border-white/[0.08] bg-[#090a0c] overflow-hidden flex flex-col justify-between"
+                key={item.id}
+                style={{ animationDelay: `${Math.min(idx * 35, 140)}ms` }}
+                className="group animate-card-deal hover-lift rounded-xl border border-white/[0.08] bg-[#090a0c] overflow-hidden flex flex-col justify-between transition-colors duration-150 hover:border-white/[0.18]"
               >
-                <div className="relative aspect-video bg-black overflow-hidden">
+                <div className="relative aspect-video bg-[#090a0c] overflow-hidden">
                   <img
-                    src={item.src}
+                    src={resolveR2ThumbnailUrl(item)}
                     alt={item.title}
                     loading={idx < 2 ? "eager" : "lazy"}
-                    className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
+                    className="w-full h-full object-cover transition-transform duration-200 ease-[var(--ease-out)] group-hover:scale-[1.015]"
+                    onError={(e) => {
+                      const img = e.currentTarget;
+                      const fallback = buildR2FallbackDataUri(item);
+                      if (img.src !== fallback) {
+                        img.src = fallback;
+                      }
+                    }}
                   />
-                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-[#090a0c]/85 border border-white/[0.12] backdrop-blur-sm text-[11px] font-medium text-zinc-200 flex items-center gap-1.5">
+                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-[#090a0c]/88 border border-white/[0.12] text-[11px] font-medium text-zinc-200 flex items-center gap-1.5">
                     <LayersIcon className="size-3 text-brand-400" />
                     <span>{item.mode}</span>
+                  </div>
+                  <div className="absolute top-3 right-3 px-2 py-0.5 rounded bg-[#090a0c]/85 border border-white/[0.1] text-[10px] font-mono text-zinc-300 tabular-nums">
+                    R2 #{String(item.index).padStart(2, "0")}
                   </div>
                 </div>
                 <div className="px-4 py-3 border-t border-white/[0.06] flex items-center justify-between gap-3">
@@ -141,11 +171,26 @@ export default function HeroSection() {
                     {item.title}
                   </span>
                   <span className="text-[11px] font-mono text-zinc-400 tabular-nums shrink-0">
-                    {item.specs}
+                    {item.dimensions} · 16:9 · {item.credits} cr
                   </span>
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* R2 Status Bar */}
+          <div className="px-5 py-2.5 border-t border-white/[0.06] bg-[#0d0f13] flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-zinc-400 tabular-nums">
+            <span className="inline-flex items-center gap-1.5">
+              <CloudIcon className="size-3.5 text-brand-400" />
+              <span>
+                STORAGE: CLOUDFLARE R2 EDGE CDN (30/30 OBJECT KEYS CONFIGURED)
+              </span>
+            </span>
+            <span>
+              {DEFAULT_R2_BASE_URL
+                ? `ENDPOINT: ${DEFAULT_R2_BASE_URL}`
+                : "SET VITE_R2_PUBLIC_URL IN .ENV FOR LIVE R2 BUCKET STREAM"}
+            </span>
           </div>
         </div>
       </div>

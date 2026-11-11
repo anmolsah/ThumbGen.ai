@@ -106,6 +106,38 @@ button:disabled {
   animation: hero-enter 320ms var(--ease-out) forwards;
 }
 
+/* Emil Kowalski choreographed card reveal (transform + opacity only, starts at scale 0.96, capped stagger) */
+@keyframes card-deal {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-card-deal {
+  animation: card-deal 220ms var(--ease-out) both;
+}
+
+/* Emil Kowalski modal / lightbox entrance (never scale(0), starts at 0.95) */
+@keyframes modal-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-modal-pop {
+  animation: modal-pop 180ms var(--ease-out) forwards;
+}
+
 @keyframes marquee {
   from {
     transform: translateX(0);

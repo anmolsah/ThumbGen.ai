@@ -15,7 +15,10 @@ import StyleSelector from "../components/StyleSelector";
 import ColorSchemeSelector from "../components/ColorSchemeSelector";
 import PlatformSelector from "../components/PlatformSelector";
 import ResolutionSelector from "../components/ResolutionSelector";
-import PreviewPanel from "../components/PreviewPanel";
+import PreviewPanel, {
+  type OverlayPositionPreset,
+  type OverlayArrowDirection,
+} from "../components/PreviewPanel";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import api from "../configs/api";
@@ -77,7 +80,13 @@ const Generate = () => {
   const [title, setTitle] = useState("");
   const [titleError, setTitleError] = useState("");
   const [overlayTitle, setOverlayTitle] = useState("");
-  const [overlayPosition, setOverlayPosition] = useState<"top" | "bottom">("bottom");
+  const [overlayPosition, setOverlayPosition] =
+    useState<OverlayPositionPreset>("bottom");
+  const [overlayAccent, setOverlayAccent] = useState<string>("#FFFFFF");
+  const [overlayArrow, setOverlayArrow] =
+    useState<OverlayArrowDirection>("none");
+  const [overlayXPercent, setOverlayXPercent] = useState<number | null>(null);
+  const [overlayYPercent, setOverlayYPercent] = useState<number | null>(null);
   const [additionalDetails, setAdditionalDetails] = useState("");
   const [errorBanner, setErrorBanner] = useState<string | null>(null);
 
@@ -253,6 +262,12 @@ const Generate = () => {
         aspect_ratio: aspectRatio,
         color_scheme: colorSchemeId,
         text_overlay: true,
+        overlay_title: overlayTitle.trim() || undefined,
+        overlay_position: overlayPosition,
+        overlay_accent: overlayAccent,
+        overlay_arrow: overlayArrow,
+        overlay_x_percent: overlayXPercent ?? undefined,
+        overlay_y_percent: overlayYPercent ?? undefined,
         mode,
         resolution,
         platform,
@@ -287,6 +302,12 @@ const Generate = () => {
   const handleNewGenerate = () => {
     setTitle("");
     setTitleError("");
+    setOverlayTitle("");
+    setOverlayPosition("bottom");
+    setOverlayAccent("#FFFFFF");
+    setOverlayArrow("none");
+    setOverlayXPercent(null);
+    setOverlayYPercent(null);
     setErrorBanner(null);
     setAdditionalDetails("");
     setStyle("Bold & Graphic");
@@ -636,19 +657,19 @@ const Generate = () => {
 
           <div className="grid lg:grid-cols-[440px_1fr] xl:grid-cols-[480px_1fr] gap-8 items-start">
             {/* LEFT INSPECTOR COLUMN */}
-            <div className={`space-y-5 ${id ? "pointer-events-none opacity-75" : ""}`}>
-              {/* SECTION 1: CONCEPT & PROMPT */}
+            <div className="space-y-5">
+              {/* SECTION 1: CONCEPT & DRAGGABLE HEADLINE OVERLAY INSPECTOR (Feature 5) */}
               <section className="p-5 rounded-xl bg-[#111317] border border-white/[0.08] space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xs font-mono uppercase tracking-wider text-zinc-400">
-                    1. Concept &amp; Copy
+                    1. Concept &amp; Layer Inspector
                   </h2>
                   <span className="text-[11px] font-mono text-zinc-500 tabular-nums">
                     {title.length}/100
                   </span>
                 </div>
 
-                <div className="space-y-1.5">
+                <div className={`space-y-1.5 ${id ? "pointer-events-none opacity-75" : ""}`}>
                   <label className="block text-xs font-medium text-zinc-300">
                     Video Title or Hook <span className="text-red-400">*</span>
                   </label>
@@ -672,11 +693,14 @@ const Generate = () => {
                   )}
                 </div>
 
-                <div className="space-y-1.5">
+                {/* Feature 5: Interactive Draggable Headline + Pointer Arrow + Accent Swatches (Always Active at 0 Credits) */}
+                <div className="p-3.5 rounded-lg bg-[#090a0c] border border-white/[0.08] space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-medium text-zinc-300">
-                      Code-Rendered Headline Overlay{" "}
-                      <span className="text-zinc-400 font-normal">(max 5 words)</span>
+                    <label className="block text-xs font-medium text-zinc-200">
+                      Draggable Headline &amp; Arrow Overlay{" "}
+                      <span className="text-brand-400 font-mono text-[10px]">
+                        (0 cr live layer)
+                      </span>
                     </label>
                     <span
                       className={`text-[11px] font-mono tabular-nums ${
@@ -686,46 +710,113 @@ const Generate = () => {
                       {overlayWordCount}/5 words
                     </span>
                   </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={overlayTitle}
-                      onChange={(e) => setOverlayTitle(e.target.value)}
-                      maxLength={42}
-                      placeholder="e.g., WHY I SWITCHED"
-                      className="flex-1 px-3.5 py-2 rounded-lg border border-white/[0.08] bg-[#090a0c] text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-brand-400"
-                    />
-                    <div className="inline-flex rounded-lg border border-white/[0.08] bg-[#090a0c] p-0.5">
+
+                  <input
+                    type="text"
+                    value={overlayTitle}
+                    onChange={(e) => setOverlayTitle(e.target.value)}
+                    maxLength={42}
+                    placeholder="e.g., WHY I SWITCHED (drag on canvas)"
+                    className="w-full px-3 py-2 rounded-lg border border-white/[0.08] bg-[#111317] text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-brand-400"
+                  />
+
+                  {/* Quick-Snap Position Presets + Custom Drag Readout */}
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="inline-flex rounded-lg border border-white/[0.08] bg-[#111317] p-0.5">
+                      {(["top", "bottom", "left", "right"] as const).map((pos) => (
+                        <button
+                          key={pos}
+                          type="button"
+                          onClick={() => {
+                            setOverlayPosition(pos);
+                            setOverlayXPercent(null);
+                            setOverlayYPercent(null);
+                          }}
+                          className={`px-2.5 py-1 rounded-md text-[11px] font-medium capitalize ${
+                            overlayPosition === pos && overlayXPercent === null
+                              ? "bg-[#171a20] text-zinc-100 border border-white/[0.1]"
+                              : "text-zinc-400 hover:text-zinc-200"
+                          }`}
+                        >
+                          {pos}
+                        </button>
+                      ))}
+                    </div>
+
+                    {overlayXPercent !== null && overlayYPercent !== null && (
                       <button
                         type="button"
-                        onClick={() => setOverlayPosition("top")}
-                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium ${
-                          overlayPosition === "top"
-                            ? "bg-[#171a20] text-zinc-100"
-                            : "text-zinc-400 hover:text-zinc-200"
-                        }`}
+                        onClick={() => {
+                          setOverlayXPercent(null);
+                          setOverlayYPercent(null);
+                        }}
+                        className="text-[10px] font-mono text-brand-400 hover:text-brand-300 tabular-nums"
                       >
-                        Top
+                        Custom ({overlayXPercent}%, {overlayYPercent}%) · Reset
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => setOverlayPosition("bottom")}
-                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium ${
-                          overlayPosition === "bottom"
-                            ? "bg-[#171a20] text-zinc-100"
-                            : "text-zinc-400 hover:text-zinc-200"
-                        }`}
-                      >
-                        Bottom
-                      </button>
+                    )}
+                  </div>
+
+                  {/* Pointer Arrow Selector + High-Contrast Accent Color Swatches */}
+                  <div className="pt-2 border-t border-white/[0.06] flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[11px] text-zinc-400">Arrow:</span>
+                      <div className="inline-flex rounded-lg border border-white/[0.08] bg-[#111317] p-0.5">
+                        {(
+                          [
+                            { id: "none", label: "None" },
+                            { id: "right", label: "→" },
+                            { id: "left", label: "←" },
+                            { id: "down", label: "↓" },
+                          ] as const
+                        ).map((arr) => (
+                          <button
+                            key={arr.id}
+                            type="button"
+                            onClick={() => setOverlayArrow(arr.id)}
+                            className={`px-2 py-0.5 rounded text-[11px] font-mono ${
+                              overlayArrow === arr.id
+                                ? "bg-zinc-100 text-zinc-950 font-semibold"
+                                : "text-zinc-400 hover:text-zinc-200"
+                            }`}
+                          >
+                            {arr.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[11px] text-zinc-400">Accent:</span>
+                      {[
+                        { hex: "#FFFFFF", name: "Pure White" },
+                        { hex: "#F43F5E", name: "Signal Red" },
+                        { hex: "#F59E0B", name: "Amber Gold" },
+                        { hex: "#10B981", name: "Emerald" },
+                        { hex: "#38BDF8", name: "Cyan Ice" },
+                      ].map((swatch) => (
+                        <button
+                          key={swatch.hex}
+                          type="button"
+                          title={swatch.name}
+                          onClick={() => setOverlayAccent(swatch.hex)}
+                          style={{ backgroundColor: swatch.hex }}
+                          className={`size-5 rounded-full border ${
+                            overlayAccent === swatch.hex
+                              ? "ring-2 ring-brand-400 ring-offset-2 ring-offset-[#090a0c] border-white"
+                              : "border-white/20 opacity-80 hover:opacity-100"
+                          }`}
+                        />
+                      ))}
                     </div>
                   </div>
-                  <p className="text-[11px] text-zinc-400">
-                    Rendered via crisp vector overlay with WCAG ≥4.5:1 contrast check so the image model focuses strictly on photography.
+
+                  <p className="text-[11px] text-zinc-400 leading-snug">
+                    Drag the headline directly on the stage preview or snap to any zone. Composited server-side via crisp SVG in all 4 export variants.
                   </p>
                 </div>
 
-                <div className="space-y-1.5">
+                <div className={`space-y-1.5 ${id ? "pointer-events-none opacity-75" : ""}`}>
                   <label className="block text-xs font-medium text-zinc-300">
                     Scene &amp; Subject Direction{" "}
                     <span className="text-zinc-400 font-normal">(optional)</span>
@@ -739,6 +830,8 @@ const Generate = () => {
                   />
                 </div>
               </section>
+
+              <div className={`space-y-5 ${id ? "pointer-events-none opacity-75" : ""}`}>
 
               {/* SECTION 2: GENERATION MODE & RESOLUTION */}
               <section className="p-5 rounded-xl bg-[#111317] border border-white/[0.08] space-y-5">
@@ -971,6 +1064,7 @@ const Generate = () => {
                   )}
                 </div>
               </section>
+              </div>
             </div>
 
             {/* RIGHT STICKY CANVAS & ACTIONS */}
@@ -992,7 +1086,16 @@ const Generate = () => {
                   aspectRatio={aspectRatio}
                   overlayTitle={overlayTitle}
                   overlayPosition={overlayPosition}
+                  overlayAccent={overlayAccent}
+                  overlayArrow={overlayArrow}
+                  overlayXPercent={overlayXPercent}
+                  overlayYPercent={overlayYPercent}
+                  onOverlayDragChange={(x, y) => {
+                    setOverlayXPercent(x);
+                    setOverlayYPercent(y);
+                  }}
                   videoTitle={title}
+                  competitorYoutubeUrl={youtubeUrl}
                 />
               </div>
 

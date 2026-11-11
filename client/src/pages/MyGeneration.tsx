@@ -35,9 +35,19 @@ const MyGeneration = () => {
     }
   };
 
-  const handleDownload = (image_url: string) => {
+  const handleDownload = (thumbId: string, image_url: string) => {
+    const apiBase =
+      import.meta.env.VITE_BASE_URL ||
+      (typeof window !== "undefined" &&
+      window.location.origin.includes("localhost")
+        ? "http://localhost:3000"
+        : "");
     const link = document.createElement("a");
-    link.href = image_url.replace("/upload", "/upload/fl_attachment");
+    link.href = thumbId
+      ? `${apiBase}/api/thumbnail/export/${thumbId}?variant=master`
+      : image_url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -196,7 +206,9 @@ const MyGeneration = () => {
                           <>
                             <button
                               type="button"
-                              onClick={() => handleDownload(thumb.image_url!)}
+                              onClick={() =>
+                                handleDownload(thumb._id, thumb.image_url!)
+                              }
                               aria-label="Download full-resolution thumbnail"
                               className="p-1.5 rounded-md bg-[#090a0c] border border-white/[0.08] text-zinc-300 hover:text-white hover:border-white/[0.2]"
                             >

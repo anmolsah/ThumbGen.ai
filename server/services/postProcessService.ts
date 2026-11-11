@@ -23,6 +23,10 @@ import {
   type ResolutionActual,
 } from "../providers/types.js";
 import { resolveEffectivePlanId } from "./creditService.js";
+import {
+  getR2ConfigFromEnv,
+  uploadToCloudflareR2,
+} from "./r2StorageService.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -177,7 +181,10 @@ export interface PostProcessOutput {
 export async function processAndStoreAssets(
   input: PostProcessInput
 ): Promise<PostProcessOutput> {
-  const upload = input.uploadFn ?? uploadToCloudinaryWithKey;
+  const defaultStorageUpload: AssetUploadFn = getR2ConfigFromEnv()
+    ? (buf, pubId, fmt) => uploadToCloudflareR2(buf, pubId, fmt)
+    : uploadToCloudinaryWithKey;
+  const upload = input.uploadFn ?? defaultStorageUpload;
   const effectivePlan: PlanId =
     resolveEffectivePlanId(input.userPlan) ?? "starter";
   const isStarter = effectivePlan === "starter";
@@ -319,6 +326,9 @@ export interface TextOverlayOptions {
   effectPreset?: string; // checked against BANNED_TEXT_EFFECTS
   faceRegions?: BoundingBox[];
   position?: "top" | "bottom" | "left" | "right";
+  xPercent?: number; // 0..100 custom horizontal center from draggable canvas
+  yPercent?: number; // 0..100 custom vertical center from draggable canvas
+  pointerArrow?: "none" | "right" | "left" | "down";
 }
 
 export interface TextOverlayResult {
@@ -435,19 +445,67 @@ export async function applyServerTextOverlay(
       width: boxWidth,
       height: boxHeight,
     },
+    left: {
+      left: Math.round(imgWidth * 0.05),
+      top: Math.round((imgHeight - boxHeight) / 2),
+      width: Math.round(imgWidth * 0.52),
+      height: boxHeight,
+    },
+    right: {
+      left: Math.round(imgWidth * 0.43),
+      top: Math.round((imgHeight - boxHeight) / 2),
+      width: Math.round(imgWidth * 0.52),
+      height: boxHeight,
+    },
   };
 
   const preferredOrder =
-    options.position === "top" ? ["top", "bottom"] : ["bottom", "top"];
+    options.position === "top"
+      ? ["top", "bottom"]
+      : options.position === "left"
+      ? ["left", "top", "bottom"]
+      : options.position === "right"
+      ? ["right", "top", "bottom"]
+      : ["bottom", "top"];
   const faces = options.faceRegions ?? [];
 
   let placedRegion = candidateBoxes[preferredOrder[0]];
-  for (const posKey of preferredOrder) {
-    const candidate = candidateBoxes[posKey];
-    const collides = faces.some((face) => boxesOverlap(candidate, face));
-    if (!collides) {
-      placedRegion = candidate;
-      break;
+  if (
+    typeof options.xPercent === "number" &&
+    typeof options.yPercent === "number"
+  ) {
+    const customW =
+      options.position === "left" || options.position === "right"
+        ? Math.round(imgWidth * 0.52)
+        : boxWidth;
+    const clampedLeft = Math.max(
+      0,
+      Math.min(
+        imgWidth - customW,
+        Math.round((options.xPercent / 100) * imgWidth - customW / 2)
+      )
+    );
+    const clampedTop = Math.max(
+      0,
+      Math.min(
+        imgHeight - boxHeight,
+        Math.round((options.yPercent / 100) * imgHeight - boxHeight / 2)
+      )
+    );
+    placedRegion = {
+      left: clampedLeft,
+      top: clampedTop,
+      width: customW,
+      height: boxHeight,
+    };
+  } else {
+    for (const posKey of preferredOrder) {
+      const candidate = candidateBoxes[posKey];
+      const collides = faces.some((face) => boxesOverlap(candidate, face));
+      if (!collides) {
+        placedRegion = candidate;
+        break;
+      }
     }
   }
 
@@ -518,6 +576,22 @@ export async function applyServerTextOverlay(
     ? `<rect x="0" y="0" width="${placedRegion.width}" height="${placedRegion.height}" rx="12" fill="rgba(10,10,12,0.82)"/>`
     : "";
 
+  const arrowDir = options.pointerArrow ?? "none";
+  const arrowSvg =
+    arrowDir === "right"
+      ? `<g transform="translate(${placedRegion.width - 54}, ${Math.round(
+          placedRegion.height / 2 - 16
+        )})"><path d="M0 16 H32 M20 4 L34 16 L20 28" stroke="#F43F5E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>`
+      : arrowDir === "left"
+      ? `<g transform="translate(18, ${Math.round(
+          placedRegion.height / 2 - 16
+        )})"><path d="M34 16 H2 M14 4 L0 16 L14 28" stroke="#F43F5E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>`
+      : arrowDir === "down"
+      ? `<g transform="translate(${Math.round(
+          placedRegion.width / 2 - 16
+        )}, ${placedRegion.height - 36})"><path d="M16 0 V26 M6 16 L16 28 L26 16" stroke="#F43F5E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>`
+      : "";
+
   const svgOverlay = `<svg width="${placedRegion.width}" height="${placedRegion.height}" xmlns="http://www.w3.org/2000/svg">
     ${scrimRect}
     <text
@@ -534,6 +608,7 @@ export async function applyServerTextOverlay(
       font-size="${fontSize}px"
       letter-spacing="0.02em"
     >${escapeXml(cleanText)}</text>
+    ${arrowSvg}
   </svg>`;
 
   const compositedBuffer = await sharp(imageBuffer)

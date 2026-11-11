@@ -33,7 +33,11 @@ import {
   executeWithQaGate,
   computePerceptualHash64,
 } from "../services/qaGateService.js";
-import { exportForPlatformPreset } from "../services/postProcessService.js";
+import {
+  exportForPlatformPreset,
+  applyServerTextOverlay,
+} from "../services/postProcessService.js";
+import { getR2ConfigFromEnv } from "../services/r2StorageService.js";
 
 test("Section 13 Brief Compiler: schema validation, max 1 LLM retry, user words preserved verbatim, deterministic seed, and per-user variation", async () => {
   // 1. User types words that happen to be in slop_lexicon.yaml ("masterpiece", "8k", "glowing"):
@@ -279,4 +283,64 @@ test("Section 13 Platform Preset Exporter: YouTube 16:9 & Shorts 9:16 dimensions
     /UNVERIFIED_PLATFORM_PRESET/
   );
 });
+
+test("Studio Features 4, 5 & Cloudflare R2 Storage Config: draggable headline + vector pointer arrow overlay and R2 env detection", async () => {
+  const baseBuffer = await sharp({
+    create: {
+      width: 1280,
+      height: 720,
+      channels: 3,
+      background: { r: 18, g: 20, b: 28 },
+    },
+  })
+    .png()
+    .toBuffer();
+
+  // Feature 5: Draggable custom (xPercent, yPercent) + accent color + pointer arrow ("right")
+  const overlaid = await applyServerTextOverlay(baseBuffer, {
+    text: "WHY WE SWITCHED",
+    position: "left",
+    xPercent: 34,
+    yPercent: 42,
+    textColorHex: "#F59E0B",
+    pointerArrow: "right",
+  });
+
+  const meta = await sharp(overlaid.buffer).metadata();
+  assert.equal(meta.width, 1280);
+  assert.equal(meta.height, 720);
+  assert.ok(overlaid.finalContrastRatio >= 4.5);
+
+  // Verify R2 configuration detection when env vars are set
+  const prevAccountId = process.env.R2_ACCOUNT_ID;
+  const prevKey = process.env.R2_ACCESS_KEY_ID;
+  const prevSecret = process.env.R2_SECRET_ACCESS_KEY;
+  const prevBucket = process.env.R2_BUCKET_NAME;
+  const prevPub = process.env.R2_PUBLIC_BASE_URL;
+
+  try {
+    process.env.R2_ACCOUNT_ID = "test_acc_123";
+    process.env.R2_ACCESS_KEY_ID = "test_key_id";
+    process.env.R2_SECRET_ACCESS_KEY = "test_secret";
+    process.env.R2_BUCKET_NAME = "thumbgen-assets";
+    process.env.R2_PUBLIC_BASE_URL = "https://pub-123.r2.dev/";
+
+    const cfg = getR2ConfigFromEnv();
+    assert.ok(cfg);
+    assert.equal(cfg.bucketName, "thumbgen-assets");
+    assert.equal(cfg.publicBaseUrl, "https://pub-123.r2.dev");
+  } finally {
+    if (prevAccountId === undefined) delete process.env.R2_ACCOUNT_ID;
+    else process.env.R2_ACCOUNT_ID = prevAccountId;
+    if (prevKey === undefined) delete process.env.R2_ACCESS_KEY_ID;
+    else process.env.R2_ACCESS_KEY_ID = prevKey;
+    if (prevSecret === undefined) delete process.env.R2_SECRET_ACCESS_KEY;
+    else process.env.R2_SECRET_ACCESS_KEY = prevSecret;
+    if (prevBucket === undefined) delete process.env.R2_BUCKET_NAME;
+    else process.env.R2_BUCKET_NAME = prevBucket;
+    if (prevPub === undefined) delete process.env.R2_PUBLIC_BASE_URL;
+    else process.env.R2_PUBLIC_BASE_URL = prevPub;
+  }
+});
+
 
