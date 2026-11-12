@@ -5,6 +5,7 @@ import { CreditServiceError, defaultCreditService, } from "../services/creditSer
 import { applyServerTextOverlay, exportForPlatformPreset, sanitizeJobAssetsForPlan, sanitizeThumbnailForPlan, smartCropFromMaster, } from "../services/postProcessService.js";
 import { defaultGenerationRateLimiter, defaultObservability, } from "../services/observabilityService.js";
 import { ProviderError } from "../providers/types.js";
+import { fetchLiveShowcaseThumbnails } from "../services/showcaseService.js";
 function extractIdempotencyKey(req, strictRequired) {
     const headerVal = req.headers["idempotency-key"] ||
         req.headers["x-idempotency-key"];
@@ -438,22 +439,15 @@ export const deleteThumbnail = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-// Get showcase thumbnails for homepage (public, no auth required)
+// Get showcase thumbnails for homepage (strictly Cloudflare R2 bucket objects; NEVER fetch generated images from database)
 export const getShowcaseThumbnails = async (req, res) => {
     try {
-        // Get latest 12 completed thumbnails for showcase
-        const thumbnails = await Thumbnail.find({
-            isGenerating: false,
-            image_url: { $exists: true, $ne: "" },
-        })
-            .select("title image_url style")
-            .sort({ createdAt: -1 })
-            .limit(12);
-        res.json({ thumbnails });
+        const liveItems = await fetchLiveShowcaseThumbnails();
+        return res.json({ thumbnails: liveItems, count: liveItems.length, source: "cloudflare_r2" });
     }
     catch (error) {
-        console.log(error);
-        res.status(500).json({ message: error.message });
+        console.error("Error fetching Cloudflare R2 showcase thumbnails:", error);
+        res.status(500).json({ message: error.message || "Failed to fetch Cloudflare R2 thumbnails" });
     }
 };
 /**

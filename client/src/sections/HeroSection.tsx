@@ -5,7 +5,6 @@ import {
   CheckIcon,
   LayersIcon,
   SlidersHorizontalIcon,
-  CloudIcon,
   SparklesIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -19,8 +18,9 @@ import {
   useReducedMotion,
 } from "motion/react";
 import { useAuth } from "../context/AuthContext";
+import api from "../configs/api";
 import {
-  R2_SHOWCASE_30,
+  R2_SHOWCASE_ITEMS,
   resolveR2ThumbnailUrl,
   buildR2FallbackDataUri,
   type R2ShowcaseItem,
@@ -44,21 +44,53 @@ export default function HeroSection() {
   const { isLoggedIn } = useAuth();
   const prefersReducedMotion = useReducedMotion();
 
+  const [showcaseItems, setShowcaseItems] = useState<R2ShowcaseItem[]>(R2_SHOWCASE_ITEMS);
   const [activeCategory, setActiveCategory] = useState<ShowcaseCategory>("All");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
+  // Sync dynamically with Cloudflare R2 bucket objects via server showcase endpoint
+  useEffect(() => {
+    let isMounted = true;
+    api
+      .get("/api/thumbnail/showcase")
+      .then((res) => {
+        if (
+          isMounted &&
+          Array.isArray(res.data?.thumbnails) &&
+          res.data.thumbnails.length > 0
+        ) {
+          // Strictly ensure only Cloudflare R2 bucket items are loaded (never database images)
+          const r2ItemsOnly = res.data.thumbnails.filter(
+            (t: any) =>
+              t &&
+              typeof t === "object" &&
+              (t.key || (t.url && t.url.includes("r2.dev")))
+          );
+          if (r2ItemsOnly.length > 0) {
+            setShowcaseItems(r2ItemsOnly);
+          }
+        }
+      })
+      .catch(() => {
+        // Keeps R2_SHOWCASE_ITEMS fallback
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const filteredItems: R2ShowcaseItem[] =
     activeCategory === "All"
-      ? R2_SHOWCASE_30.slice(0, 8)
-      : R2_SHOWCASE_30.filter((item) => item.category === activeCategory).slice(
+      ? showcaseItems.slice(0, 10)
+      : showcaseItems.filter((item) => item.category === activeCategory).slice(
           0,
-          6
+          8
         );
 
   const safeIndex =
     filteredItems.length > 0 ? selectedIndex % filteredItems.length : 0;
-  const activeItem = filteredItems[safeIndex] || R2_SHOWCASE_30[0];
+  const activeItem = filteredItems[safeIndex] || showcaseItems[0] || R2_SHOWCASE_ITEMS[0];
 
   // Reset index when category changes
   useEffect(() => {
@@ -231,46 +263,48 @@ export default function HeroSection() {
                   className="relative aspect-video rounded-xl overflow-hidden border border-white/[0.12] bg-[#090a0c] shadow-2xl"
                 >
                   <AnimatePresence mode="popLayout">
-                    <motion.img
-                      key={activeItem.id}
-                      src={resolveR2ThumbnailUrl(activeItem)}
-                      alt={activeItem.title}
-                      initial={
-                        prefersReducedMotion
-                          ? { opacity: 0 }
-                          : {
-                              opacity: 0,
-                              scale: 0.96,
-                              filter: "blur(4px)",
-                            }
-                      }
-                      animate={{
-                        opacity: 1,
-                        scale: 1,
-                        filter: "blur(0px)",
-                      }}
-                      exit={
-                        prefersReducedMotion
-                          ? { opacity: 0 }
-                          : {
-                              opacity: 0,
-                              scale: 1.02,
-                              filter: "blur(3px)",
-                            }
-                      }
-                      transition={{
-                        duration: 0.24,
-                        ease: EASE_OUT,
-                      }}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const img = e.currentTarget;
-                        const fallback = buildR2FallbackDataUri(activeItem);
-                        if (img.src !== fallback) {
-                          img.src = fallback;
+                    {activeItem && (
+                      <motion.img
+                        key={activeItem.id || "hero-active"}
+                        src={resolveR2ThumbnailUrl(activeItem)}
+                        alt={activeItem.title || "Showcase Thumbnail"}
+                        initial={
+                          prefersReducedMotion
+                            ? { opacity: 0 }
+                            : {
+                                opacity: 0,
+                                scale: 0.96,
+                                filter: "blur(4px)",
+                              }
                         }
-                      }}
-                    />
+                        animate={{
+                          opacity: 1,
+                          scale: 1,
+                          filter: "blur(0px)",
+                        }}
+                        exit={
+                          prefersReducedMotion
+                            ? { opacity: 0 }
+                            : {
+                                opacity: 0,
+                                scale: 1.02,
+                                filter: "blur(3px)",
+                              }
+                        }
+                        transition={{
+                          duration: 0.24,
+                          ease: EASE_OUT,
+                        }}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const img = e.currentTarget;
+                          const fallback = buildR2FallbackDataUri(activeItem);
+                          if (img.src !== fallback) {
+                            img.src = fallback;
+                          }
+                        }}
+                      />
+                    )}
                   </AnimatePresence>
 
                   {/* Prev / Next tactile controls */}
@@ -311,10 +345,10 @@ export default function HeroSection() {
               <div className="mt-4 px-4 py-3 rounded-xl border border-white/[0.08] bg-[#090a0c] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-xs sm:text-sm font-semibold text-zinc-100 truncate">
-                    {activeItem.title}
+                    {activeItem?.title || "Showcase Thumbnail"}
                   </p>
                   <p className="text-[11px] font-medium text-zinc-400 mt-0.5">
-                    {activeItem.category}
+                    {activeItem?.category || "Tech & Systems"}
                   </p>
                 </div>
                 <button
@@ -398,14 +432,8 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* R2 Edge Status Bar */}
-          <div className="px-5 py-2.5 border-t border-white/[0.06] bg-[#0d0f13] flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-zinc-400 tabular-nums">
-            <span className="inline-flex items-center gap-1.5">
-              <CloudIcon className="size-3.5 text-brand-400" />
-              <span>
-                STORAGE: CLOUDFLARE R2 EDGE CDN (30/30 RENDERS VERIFIED LIVE)
-              </span>
-            </span>
+          {/* Interactive Deck Action Bar */}
+          <div className="px-5 py-2.5 border-t border-white/[0.06] bg-[#0d0f13] flex items-center justify-end text-[11px] font-mono text-zinc-400">
             <button
               type="button"
               onClick={() => {
@@ -413,9 +441,10 @@ export default function HeroSection() {
                   .getElementById("showcase")
                   ?.scrollIntoView({ behavior: "smooth" });
               }}
-              className="text-brand-400 hover:text-brand-300 font-semibold"
+              className="text-brand-400 hover:text-brand-300 font-semibold flex items-center gap-1.5"
             >
-              Explore All 30 in Interactive Deck ↓
+              <span>Explore All {showcaseItems.length} Renders in Interactive Deck</span>
+              <span>↓</span>
             </button>
           </div>
         </div>

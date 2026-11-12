@@ -21,12 +21,13 @@ import {
   useReducedMotion,
 } from "motion/react";
 import {
-  R2_SHOWCASE_30,
+  R2_SHOWCASE_ITEMS,
   resolveR2ThumbnailUrl,
   buildR2FallbackDataUri,
   type R2ShowcaseItem,
   type ShowcaseCategory,
 } from "../data/r2ShowcaseConfig";
+import api from "../configs/api";
 
 const CATEGORIES: ShowcaseCategory[] = [
   "All",
@@ -161,21 +162,54 @@ function MagneticGridCard({
 export default function ShowcaseSection() {
   const prefersReducedMotion = useReducedMotion() ?? false;
   const [viewMode, setViewMode] = useState<ShowcaseViewMode>("deck");
+  const [showcaseItems, setShowcaseItems] = useState<R2ShowcaseItem[]>(R2_SHOWCASE_ITEMS);
   const [activeCategory, setActiveCategory] = useState<ShowcaseCategory>("All");
   const [deckIndex, setDeckIndex] = useState(0);
   const [hoveredStreamId, setHoveredStreamId] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<R2ShowcaseItem | null>(null);
 
-  const row1 = R2_SHOWCASE_30.slice(0, 15);
-  const row2 = R2_SHOWCASE_30.slice(15, 30);
+  // Sync dynamically with Cloudflare R2 bucket objects via server showcase endpoint
+  useEffect(() => {
+    let isMounted = true;
+    api
+      .get("/api/thumbnail/showcase")
+      .then((res) => {
+        if (
+          isMounted &&
+          Array.isArray(res.data?.thumbnails) &&
+          res.data.thumbnails.length > 0
+        ) {
+          // Strictly ensure only Cloudflare R2 bucket items are loaded (never database images)
+          const r2ItemsOnly = res.data.thumbnails.filter(
+            (t: any) =>
+              t &&
+              typeof t === "object" &&
+              (t.key || (t.url && t.url.includes("r2.dev")))
+          );
+          if (r2ItemsOnly.length > 0) {
+            setShowcaseItems(r2ItemsOnly);
+          }
+        }
+      })
+      .catch(() => {
+        // Keeps R2_SHOWCASE_ITEMS fallback
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const half = Math.ceil(showcaseItems.length / 2);
+  const row1 = showcaseItems.slice(0, half);
+  const row2 = showcaseItems.slice(half);
 
   const filteredMatrix =
     activeCategory === "All"
-      ? R2_SHOWCASE_30
-      : R2_SHOWCASE_30.filter((item) => item.category === activeCategory);
+      ? showcaseItems
+      : showcaseItems.filter((item) => item.category === activeCategory);
 
-  const totalDeck = R2_SHOWCASE_30.length;
-  const activeDeckItem = R2_SHOWCASE_30[deckIndex] || R2_SHOWCASE_30[0];
+  const totalDeck = showcaseItems.length;
+  const activeDeckItem = showcaseItems[deckIndex] || showcaseItems[0];
 
   const stepDeck = (delta: number) => {
     setDeckIndex((prev) => (prev + delta + totalDeck) % totalDeck);
@@ -188,21 +222,21 @@ export default function ShowcaseSection() {
         if (e.key === "Escape") {
           setSelectedItem(null);
         } else if (e.key === "ArrowRight") {
-          const nextIdx = selectedItem.index % R2_SHOWCASE_30.length;
-          setSelectedItem(R2_SHOWCASE_30[nextIdx]);
+          const nextIdx = selectedItem.index % showcaseItems.length;
+          setSelectedItem(showcaseItems[nextIdx]);
         } else if (e.key === "ArrowLeft") {
           const prevIdx =
-            (selectedItem.index - 2 + R2_SHOWCASE_30.length) %
-            R2_SHOWCASE_30.length;
-          setSelectedItem(R2_SHOWCASE_30[prevIdx]);
+            (selectedItem.index - 2 + showcaseItems.length) %
+            showcaseItems.length;
+          setSelectedItem(showcaseItems[prevIdx]);
         }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedItem]);
+  }, [selectedItem, showcaseItems]);
 
-  // Compute circular signed offset (-15..+14) for Fanned Deck cards
+  // Compute circular signed offset for Fanned Deck cards
   const getSignedOffset = (idx: number): number => {
     let diff = idx - deckIndex;
     if (diff > totalDeck / 2) diff -= totalDeck;
@@ -326,7 +360,7 @@ export default function ShowcaseSection() {
         <div className="max-w-7xl mx-auto px-6 space-y-8">
           {/* Interactive Fanned Card Stage */}
           <div className="relative h-[300px] sm:h-[420px] lg:h-[470px] flex items-center justify-center select-none">
-            {R2_SHOWCASE_30.map((item, idx) => {
+            {showcaseItems.map((item, idx) => {
               const offset = getSignedOffset(idx);
               if (Math.abs(offset) > 2) return null;
 
@@ -420,7 +454,7 @@ export default function ShowcaseSection() {
             </div>
 
             <div className="text-xs font-medium text-zinc-200 truncate max-w-xs sm:max-w-md">
-              {activeDeckItem.title}
+              {activeDeckItem?.title || "Showcase Thumbnail"}
             </div>
 
             <button
@@ -433,10 +467,10 @@ export default function ShowcaseSection() {
             </button>
           </div>
 
-          {/* 30-Slot Interactive Filmstrip Dock Scrubber */}
+          {/* Interactive Filmstrip Dock Scrubber */}
           <div className="space-y-2">
-            <div className="grid grid-cols-6 sm:grid-cols-10 lg:grid-cols-15 gap-1.5 p-2.5 rounded-xl border border-white/[0.08] bg-[#111317]">
-              {R2_SHOWCASE_30.map((item, idx) => {
+            <div className="flex overflow-x-auto pb-2 gap-1.5 p-2.5 rounded-xl border border-white/[0.08] bg-[#111317] scrollbar-thin">
+              {showcaseItems.map((item, idx) => {
                 const isSelected = idx === deckIndex;
                 return (
                   <button
@@ -445,7 +479,7 @@ export default function ShowcaseSection() {
                     onClick={() => setDeckIndex(idx)}
                     onMouseEnter={() => setDeckIndex(idx)}
                     title={`#${String(item.index).padStart(2, "0")} — ${item.title}`}
-                    className="relative aspect-video rounded-md overflow-hidden bg-[#090a0c] focus:outline-none"
+                    className="relative shrink-0 w-14 sm:w-16 aspect-video rounded-md overflow-hidden bg-[#090a0c] focus:outline-none"
                   >
                     <img
                       src={resolveR2ThumbnailUrl(item)}
@@ -523,8 +557,8 @@ export default function ShowcaseSection() {
                 const isSelected = activeCategory === category;
                 const count =
                   category === "All"
-                    ? R2_SHOWCASE_30.length
-                    : R2_SHOWCASE_30.filter((i) => i.category === category)
+                    ? showcaseItems.length
+                    : showcaseItems.filter((i) => i.category === category)
                         .length;
                 return (
                   <button
@@ -627,9 +661,9 @@ export default function ShowcaseSection() {
                     type="button"
                     onClick={() => {
                       const prevIdx =
-                        (selectedItem.index - 2 + R2_SHOWCASE_30.length) %
-                        R2_SHOWCASE_30.length;
-                      setSelectedItem(R2_SHOWCASE_30[prevIdx]);
+                        (selectedItem.index - 2 + showcaseItems.length) %
+                        showcaseItems.length;
+                      setSelectedItem(showcaseItems[prevIdx]);
                     }}
                     className="p-1.5 rounded-lg bg-[#171a20] hover:bg-white/[0.1] text-zinc-300"
                     aria-label="Previous thumbnail"
@@ -640,8 +674,8 @@ export default function ShowcaseSection() {
                     type="button"
                     onClick={() => {
                       const nextIdx =
-                        selectedItem.index % R2_SHOWCASE_30.length;
-                      setSelectedItem(R2_SHOWCASE_30[nextIdx]);
+                        selectedItem.index % showcaseItems.length;
+                      setSelectedItem(showcaseItems[nextIdx]);
                     }}
                     className="p-1.5 rounded-lg bg-[#171a20] hover:bg-white/[0.1] text-zinc-300"
                     aria-label="Next thumbnail"
