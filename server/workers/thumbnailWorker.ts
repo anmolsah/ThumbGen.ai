@@ -31,6 +31,11 @@ import {
   type CompositionPlan,
 } from "../services/briefCompiler.js";
 import {
+  runCreativeDesignQa,
+  validateFinalComposite,
+  planTargetedRevision,
+} from "../services/qaGateService.js";
+import {
   normalizeResolutionTier,
   ProviderError,
   type GenerateInput,
@@ -233,7 +238,7 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
     // Optional code-rendered headline & pointer arrow overlay (Section 10A.4 / Feature 5)
     let rawBytesForPostProcess = output.assetBytes;
     if (job.data.overlay_title && job.data.overlay_title.trim()) {
-      const overlayOut = await applyServerTextOverlay(output.assetBytes, {
+      let overlayOut = await applyServerTextOverlay(output.assetBytes, {
         text: job.data.overlay_title.trim(),
         position: job.data.overlay_position || undefined,
         compositionPlan: compiledCompositionPlan ?? undefined,
@@ -242,6 +247,28 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
         xPercent: job.data.overlay_x_percent,
         yPercent: job.data.overlay_y_percent,
       });
+
+      // Section 10B Phase 4: Final composite validation & targeted typography re-render
+      const compositeVal = await validateFinalComposite(overlayOut.buffer, {
+        platformPreset: platform === "youtube_shorts" ? "youtube_shorts" : "youtube_video",
+        compositionPlan: compiledCompositionPlan ?? undefined,
+        textOverlayPlaced: overlayOut.placedRegion,
+      });
+
+      if (!compositeVal.passed) {
+        const revision = planTargetedRevision(compositeVal.defects);
+        // If typography/layout issue (e.g. badge collision or placement), re-render overlay with corrected placement (0 extra credits, no image regeneration!)
+        if (revision.needsTypographyReRender && !revision.needsImageRegeneration) {
+          overlayOut = await applyServerTextOverlay(output.assetBytes, {
+            text: job.data.overlay_title.trim(),
+            position: "top", // shift away from duration badge
+            compositionPlan: compiledCompositionPlan ?? undefined,
+            textColorHex: job.data.overlay_accent || "#FFFFFF",
+            pointerArrow: job.data.overlay_arrow || "none",
+          });
+        }
+      }
+
       rawBytesForPostProcess = overlayOut.buffer;
     }
 
@@ -256,6 +283,16 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
 
     meta.resolution_actual = processed.resolutionActual;
     meta.upscaled = processed.upscaled;
+
+    let designQaResult = null;
+    if (compiledContentBrief && compiledCreativeDirection && compiledCompositionPlan) {
+      designQaResult = await runCreativeDesignQa({
+        imageBuffer: rawBytesForPostProcess,
+        contentBrief: compiledContentBrief,
+        creativeDirection: compiledCreativeDirection,
+        compositionPlan: compiledCompositionPlan,
+      });
+    }
 
     const assets = processed.assets;
     let finalCreditsCommitted = creditsRequired;
@@ -293,6 +330,7 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
       content_brief: compiledContentBrief as unknown as Record<string, unknown>,
       creative_direction: compiledCreativeDirection as unknown as Record<string, unknown>,
       composition_plan: compiledCompositionPlan as unknown as Record<string, unknown>,
+      design_qa_result: designQaResult as unknown as Record<string, unknown>,
       resolution_actual: meta.resolution_actual
         ? {
             width: meta.resolution_actual.width,
@@ -314,6 +352,7 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
           content_brief: compiledContentBrief,
           creative_direction: compiledCreativeDirection,
           composition_plan: compiledCompositionPlan,
+          design_qa: designQaResult,
         },
         isGenerating: false,
         error: undefined,

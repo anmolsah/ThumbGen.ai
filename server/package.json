@@ -11,6 +11,7 @@
         "postinstall": "npm rebuild sharp",
         "discover-models": "node --import tsx/esm scripts/discover-models.ts",
         "validate-registry": "node --import tsx/esm scripts/validate-registry.ts",
+        "evaluate-creative-benchmark": "node --import tsx/esm scripts/evaluate-creative-benchmark.ts",
         "margin-guard": "node --import tsx/esm scripts/margin-guard.ts",
         "test": "node --import tsx/esm --test tests/*.test.ts"
     },
