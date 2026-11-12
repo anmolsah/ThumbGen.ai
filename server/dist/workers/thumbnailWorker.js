@@ -81,6 +81,7 @@ export const processThumbnailJob = async (job) => {
         let prompt;
         let compiledContentBrief = null;
         let compiledCreativeDirection = null;
+        let compiledCompositionPlan = null;
         const referenceImages = [];
         if (job.data.source_image_url && job.data.edit_instructions) {
             // ── EDIT JOB: fetch source image and pass as reference image to Provider Adapter Layer
@@ -135,6 +136,7 @@ export const processThumbnailJob = async (job) => {
             prompt = compiled.finalPrompt;
             compiledContentBrief = compiled.contentBrief;
             compiledCreativeDirection = compiled.creativeDirection;
+            compiledCompositionPlan = compiled.compositionPlan;
             if (color_scheme && colorSchemeDescriptions[color_scheme]) {
                 prompt += ` Color Scheme: ${colorSchemeDescriptions[color_scheme]}.`;
             }
@@ -153,7 +155,8 @@ export const processThumbnailJob = async (job) => {
         if (job.data.overlay_title && job.data.overlay_title.trim()) {
             const overlayOut = await applyServerTextOverlay(output.assetBytes, {
                 text: job.data.overlay_title.trim(),
-                position: job.data.overlay_position || "bottom",
+                position: job.data.overlay_position || undefined,
+                compositionPlan: compiledCompositionPlan ?? undefined,
                 textColorHex: job.data.overlay_accent || "#FFFFFF",
                 pointerArrow: job.data.overlay_arrow || "none",
                 xPercent: job.data.overlay_x_percent,
@@ -205,6 +208,7 @@ export const processThumbnailJob = async (job) => {
             request_params: meta.request_params ?? undefined,
             content_brief: compiledContentBrief,
             creative_direction: compiledCreativeDirection,
+            composition_plan: compiledCompositionPlan,
             resolution_actual: meta.resolution_actual
                 ? {
                     width: meta.resolution_actual.width,
@@ -222,6 +226,7 @@ export const processThumbnailJob = async (job) => {
                 ...meta,
                 content_brief: compiledContentBrief,
                 creative_direction: compiledCreativeDirection,
+                composition_plan: compiledCompositionPlan,
             },
             isGenerating: false,
             error: undefined,

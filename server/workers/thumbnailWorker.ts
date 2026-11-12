@@ -28,6 +28,7 @@ import {
   compileThumbnailBrief,
   type ContentBrief,
   type CreativeDirection,
+  type CompositionPlan,
 } from "../services/briefCompiler.js";
 import {
   normalizeResolutionTier,
@@ -142,6 +143,7 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
     let prompt: string;
     let compiledContentBrief: ContentBrief | null = null;
     let compiledCreativeDirection: CreativeDirection | null = null;
+    let compiledCompositionPlan: CompositionPlan | null = null;
     const referenceImages: string[] = [];
 
     if (job.data.source_image_url && job.data.edit_instructions) {
@@ -205,6 +207,7 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
       prompt = compiled.finalPrompt;
       compiledContentBrief = compiled.contentBrief;
       compiledCreativeDirection = compiled.creativeDirection;
+      compiledCompositionPlan = compiled.compositionPlan;
 
       if (color_scheme && colorSchemeDescriptions[color_scheme]) {
         prompt += ` Color Scheme: ${colorSchemeDescriptions[color_scheme]}.`;
@@ -232,7 +235,8 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
     if (job.data.overlay_title && job.data.overlay_title.trim()) {
       const overlayOut = await applyServerTextOverlay(output.assetBytes, {
         text: job.data.overlay_title.trim(),
-        position: job.data.overlay_position || "bottom",
+        position: job.data.overlay_position || undefined,
+        compositionPlan: compiledCompositionPlan ?? undefined,
         textColorHex: job.data.overlay_accent || "#FFFFFF",
         pointerArrow: job.data.overlay_arrow || "none",
         xPercent: job.data.overlay_x_percent,
@@ -288,6 +292,7 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
       request_params: meta.request_params ?? undefined,
       content_brief: compiledContentBrief as unknown as Record<string, unknown>,
       creative_direction: compiledCreativeDirection as unknown as Record<string, unknown>,
+      composition_plan: compiledCompositionPlan as unknown as Record<string, unknown>,
       resolution_actual: meta.resolution_actual
         ? {
             width: meta.resolution_actual.width,
@@ -308,6 +313,7 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
           ...(meta as any),
           content_brief: compiledContentBrief,
           creative_direction: compiledCreativeDirection,
+          composition_plan: compiledCompositionPlan,
         },
         isGenerating: false,
         error: undefined,

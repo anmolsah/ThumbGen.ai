@@ -483,6 +483,328 @@ export function validateCreativeDirection(candidate) {
     };
 }
 /**
+ * Verified platform presets (Rule R3 / Section 10A.11):
+ * - youtube_video: 1280x720, 16:9, mobile preview 320x180
+ * - youtube_shorts: 1080x1920, 9:16, mobile preview 180x320
+ */
+export function getCanvasSpec(platformPreset) {
+    if (platformPreset === "youtube_shorts") {
+        return {
+            width: 1080,
+            height: 1920,
+            aspect_ratio: "9:16",
+            platform_preset: "youtube_shorts",
+            safe_zone_center_ratio: 0.8,
+            mobile_preview_width: 180,
+            mobile_preview_height: 320,
+        };
+    }
+    return {
+        width: 1280,
+        height: 720,
+        aspect_ratio: "16:9",
+        platform_preset: "youtube_video",
+        safe_zone_center_ratio: 0.8,
+        mobile_preview_width: 320,
+        mobile_preview_height: 180,
+    };
+}
+/**
+ * Validates that an unknown object conforms to the `CompositionPlan` JSON schema (Section 10B.4 Stage 3)
+ * and detects layout collisions (e.g. face/text collision, direct region collisions).
+ */
+export function validateCompositionPlan(candidate) {
+    const errors = [];
+    if (!candidate || typeof candidate !== "object") {
+        return { valid: false, errors: ["CompositionPlan must be a non-null JSON object"] };
+    }
+    const obj = candidate;
+    if (typeof obj.focal_point !== "string" || !obj.focal_point.trim()) {
+        errors.push("Missing or empty 'focal_point'");
+    }
+    if (!obj.canvas || typeof obj.canvas !== "object") {
+        errors.push("Missing 'canvas' object");
+    }
+    else {
+        if (typeof obj.canvas.width !== "number" || obj.canvas.width <= 0) {
+            errors.push("Invalid canvas.width");
+        }
+        if (typeof obj.canvas.height !== "number" || obj.canvas.height <= 0) {
+            errors.push("Invalid canvas.height");
+        }
+        if (typeof obj.canvas.aspect_ratio !== "string" || !obj.canvas.aspect_ratio.trim()) {
+            errors.push("Invalid canvas.aspect_ratio");
+        }
+        if (typeof obj.canvas.platform_preset !== "string" || !obj.canvas.platform_preset.trim()) {
+            errors.push("Invalid canvas.platform_preset");
+        }
+    }
+    const validSubjectPositions = [
+        "right-two-thirds",
+        "left-two-thirds",
+        "center",
+        "three-quarter-hero",
+        "isolated-subject",
+        "off-center-rule-of-thirds",
+    ];
+    if (!validSubjectPositions.includes(obj.subject_position)) {
+        errors.push(`Invalid 'subject_position': '${obj.subject_position}'. Must be one of ${validSubjectPositions.join(", ")}`);
+    }
+    const validSubjectScales = [
+        "close-up",
+        "medium-hero",
+        "wide-environmental",
+        "isolated-subject",
+    ];
+    if (!validSubjectScales.includes(obj.subject_scale)) {
+        errors.push(`Invalid 'subject_scale': '${obj.subject_scale}'. Must be one of ${validSubjectScales.join(", ")}`);
+    }
+    if (typeof obj.background_role !== "string" || !obj.background_role.trim()) {
+        errors.push("Missing or empty 'background_role'");
+    }
+    if (!obj.text_region || typeof obj.text_region !== "object") {
+        errors.push("Missing 'text_region' object");
+    }
+    else {
+        const validRegions = [
+            "left-third",
+            "top-band",
+            "bottom-band",
+            "center-dominant",
+            "right-third",
+            "none",
+        ];
+        if (!validRegions.includes(obj.text_region.region)) {
+            errors.push(`Invalid text_region.region: '${obj.text_region.region}'. Must be one of ${validRegions.join(", ")}`);
+        }
+        if (typeof obj.text_region.max_area_ratio !== "number" ||
+            obj.text_region.max_area_ratio < 0.1 ||
+            obj.text_region.max_area_ratio > 0.7) {
+            errors.push("text_region.max_area_ratio must be a number between 0.1 and 0.7");
+        }
+    }
+    if (!obj.negative_space || typeof obj.negative_space !== "object") {
+        errors.push("Missing 'negative_space' object");
+    }
+    else {
+        if (typeof obj.negative_space.region !== "string" || !obj.negative_space.region.trim()) {
+            errors.push("Missing negative_space.region");
+        }
+        if (typeof obj.negative_space.purpose !== "string" || !obj.negative_space.purpose.trim()) {
+            errors.push("Missing negative_space.purpose");
+        }
+    }
+    if (!Array.isArray(obj.visual_hierarchy) ||
+        obj.visual_hierarchy.length === 0 ||
+        !obj.visual_hierarchy.every((x) => typeof x === "string")) {
+        errors.push("'visual_hierarchy' must be a non-empty array of strings");
+    }
+    if (typeof obj.element_budget !== "number" || obj.element_budget < 1 || obj.element_budget > 5) {
+        errors.push("'element_budget' must be an integer between 1 and 5");
+    }
+    if (!obj.overlap_constraints || typeof obj.overlap_constraints !== "object") {
+        errors.push("Missing 'overlap_constraints' object");
+    }
+    else {
+        if (typeof obj.overlap_constraints.face_text_collision !== "boolean") {
+            errors.push("overlap_constraints.face_text_collision must be a boolean");
+        }
+        if (typeof obj.overlap_constraints.avoid_bottom_right_badge !== "boolean") {
+            errors.push("overlap_constraints.avoid_bottom_right_badge must be a boolean");
+        }
+    }
+    // Conflict and safety checks
+    if (obj.overlap_constraints?.face_text_collision === true) {
+        errors.push("CONFLICT: face_text_collision cannot be true; face and text overlap is strictly prohibited (Section 10B.4 Stage 3)");
+    }
+    if (obj.canvas?.platform_preset === "youtube_video" &&
+        obj.overlap_constraints?.avoid_bottom_right_badge === false) {
+        errors.push("CONFLICT: avoid_bottom_right_badge must be true for youtube_video to protect bottom-right duration badge");
+    }
+    if (obj.text_region &&
+        obj.subject_position &&
+        ((obj.text_region.region === "left-third" && obj.subject_position === "left-two-thirds") ||
+            (obj.text_region.region === "right-third" && obj.subject_position === "right-two-thirds"))) {
+        errors.push(`CONFLICT: text_region '${obj.text_region.region}' collides with subject_position '${obj.subject_position}'`);
+    }
+    if (errors.length > 0) {
+        return { valid: false, errors };
+    }
+    return { valid: true, errors: [], plan: obj };
+}
+/**
+ * Section 10B.4 Stage 3: Composition Planner Engine
+ * Translates chosen creative direction and content brief into an actionable layout plan.
+ * Adapts across all 6 families with verified platform bounds and negative space discipline.
+ */
+export function generateCompositionPlan(brief, direction, options) {
+    const canvas = getCanvasSpec(options?.platformPreset || brief.platform_preset);
+    const hasTitle = Boolean((options?.titleText || brief.title_text || "").trim().length > 0);
+    let subjectPosition = "right-two-thirds";
+    let subjectScale = "medium-hero";
+    let cameraPerspective = "eye-level natural 50mm portrait lens";
+    let backgroundRole = "authentic ambient environment with soft falloff, subordinate to primary subject";
+    let textRegion = hasTitle ? "left-third" : "none";
+    let maxAreaRatio = 0.32;
+    let safeZonePadding = 0.08;
+    let negativeSpaceRegion = "left-third";
+    let negativeSpacePurpose = "clean negative space dedicated to high-contrast typography";
+    let hierarchy = [
+        direction.primary_subject || brief.topic,
+        "headline statement",
+        "ambient environment",
+    ];
+    let budget = options?.elementBudget ?? 2;
+    switch (direction.family_id) {
+        case "editorial_photography":
+            subjectPosition = "right-two-thirds";
+            subjectScale = "medium-hero";
+            cameraPerspective = "eye-level natural 50mm portrait lens";
+            backgroundRole =
+                "authentic ambient environment with soft falloff, subordinate to primary subject";
+            textRegion = hasTitle ? "left-third" : "none";
+            maxAreaRatio = 0.32;
+            negativeSpaceRegion = "left-third";
+            negativeSpacePurpose =
+                "clean negative space dedicated to high-contrast typography";
+            hierarchy = [
+                direction.primary_subject || brief.topic,
+                "headline statement",
+                "ambient environment",
+            ];
+            budget = 2;
+            break;
+        case "documentary_storytelling":
+            subjectPosition = "three-quarter-hero";
+            subjectScale = "wide-environmental";
+            cameraPerspective =
+                "wide observational 35mm lens with authentic environmental depth";
+            backgroundRole =
+                "factual scene evidence providing context and historical weight to the story";
+            textRegion = hasTitle ? "bottom-band" : "none";
+            maxAreaRatio = 0.28;
+            negativeSpaceRegion = "upper-sky-band";
+            negativeSpacePurpose =
+                "unobstructed atmospheric sky or setting allowing scene scale to register";
+            hierarchy = [
+                direction.primary_subject || brief.topic,
+                "environmental evidence",
+                "title context",
+            ];
+            budget = 3;
+            break;
+        case "investigative_editorial":
+            subjectPosition = "center";
+            subjectScale = "close-up";
+            cameraPerspective =
+                "stark, direct eye-level perspective with sharp evidentiary focus";
+            backgroundRole =
+                "stark high-contrast backdrop emphasizing the visual contrast";
+            textRegion = hasTitle ? "top-band" : "none";
+            maxAreaRatio = 0.3;
+            negativeSpaceRegion = "bilateral-margins";
+            negativeSpacePurpose =
+                "stark margins preventing clutter and isolating the core clue";
+            hierarchy = [
+                direction.primary_subject || brief.topic,
+                "headline revelation",
+                "evidentiary backdrop",
+            ];
+            budget = 2;
+            break;
+        case "bold_graphic_design":
+            subjectPosition = "right-two-thirds";
+            subjectScale = "isolated-subject";
+            cameraPerspective = "frontal orthographic graphic perspective";
+            backgroundRole = "clean geometric color block supporting contrast";
+            textRegion = hasTitle ? "left-third" : "none";
+            maxAreaRatio = 0.4;
+            safeZonePadding = 0.06;
+            negativeSpaceRegion = "center-gutter";
+            negativeSpacePurpose =
+                "disciplined boundary separating typography grid from vector anchor";
+            hierarchy = [
+                "headline typography",
+                direction.primary_subject || brief.topic,
+                "geometric color accents",
+            ];
+            budget = 3;
+            break;
+        case "product_focused":
+            subjectPosition = "center";
+            subjectScale = "close-up";
+            cameraPerspective = "crisp three-quarter tabletop macro perspective";
+            backgroundRole =
+                "subordinate neutral surface with soft contextual falloff";
+            textRegion = hasTitle ? "left-third" : "none";
+            maxAreaRatio = 0.3;
+            negativeSpaceRegion = "top-and-left";
+            negativeSpacePurpose = "clean backdrop for model moniker";
+            hierarchy = [
+                direction.primary_subject || brief.topic,
+                "verdict headline",
+                "neutral backdrop",
+            ];
+            budget = 2;
+            break;
+        case "typographic_led":
+            subjectPosition = "right-two-thirds";
+            subjectScale = "isolated-subject";
+            cameraPerspective = "minimal textured backdrop perspective";
+            backgroundRole =
+                "subdued textured canvas providing maximum contrast for text";
+            textRegion = "center-dominant";
+            maxAreaRatio = 0.55;
+            safeZonePadding = 0.06;
+            negativeSpaceRegion = "perimeter-safe-zone";
+            negativeSpacePurpose =
+                "generous breathing room around dominant headline";
+            hierarchy = [
+                "display typography hook",
+                direction.primary_subject || brief.topic,
+            ];
+            budget = 2;
+            break;
+    }
+    const basePlan = {
+        canvas,
+        focal_point: direction.family_id === "bold_graphic_design" ||
+            direction.family_id === "typographic_led"
+            ? (hasTitle ? brief.title_text || "headline hook" : direction.primary_subject || brief.topic)
+            : direction.primary_subject || brief.topic,
+        secondary_focus: direction.supporting_element || undefined,
+        subject_position: subjectPosition,
+        subject_scale: subjectScale,
+        camera_perspective: cameraPerspective,
+        background_role: backgroundRole,
+        text_region: {
+            region: textRegion,
+            max_area_ratio: maxAreaRatio,
+            safe_zone_padding: safeZonePadding,
+        },
+        negative_space: {
+            region: negativeSpaceRegion,
+            purpose: negativeSpacePurpose,
+        },
+        visual_hierarchy: hierarchy,
+        element_budget: budget,
+        overlap_constraints: {
+            face_text_collision: false,
+            avoid_bottom_right_badge: canvas.platform_preset === "youtube_video",
+            key_object_clearance: "maintain minimum 15% distance between subject edge and typography box",
+        },
+        mobile_crop_check: {
+            preview_width: canvas.mobile_preview_width,
+            preview_height: canvas.mobile_preview_height,
+            legibility_target: "primary focal point and title text must be distinguishable at feed preview dimensions without squinting",
+        },
+    };
+    if (options?.compositionPlanOverride) {
+        return { ...basePlan, ...options.compositionPlanOverride };
+    }
+    return basePlan;
+}
+/**
  * Per-user history tracker (Section 10A.8): avoids reusing the same light or background-detail
  * fragments within the last N generations (default 10) when no explicit deterministic seed is pinned.
  */
@@ -731,7 +1053,7 @@ export function selectCreativeDirection(brief, options) {
     };
     return direction;
 }
-function synthesizeDeterministicBrief(input, preset, seed, contentBrief, creativeDirection) {
+function synthesizeDeterministicBrief(input, preset, seed, contentBrief, creativeDirection, compositionPlan) {
     const presetsFile = loadStylePresets();
     const rng = createSeededRng(seed);
     const lights = presetsFile.curated_light_pools;
@@ -764,12 +1086,20 @@ function synthesizeDeterministicBrief(input, preset, seed, contentBrief, creativ
         defaultVariationHistory.record(input.userId, chosenLight, chosenBg);
     }
     const hasTitle = Boolean(input.titleText && input.titleText.trim().length > 0);
-    const reservedRegion = hasTitle ? "left-third" : "none";
+    const rawRegion = compositionPlan.text_region.region;
+    const mappedTextRegion = !hasTitle
+        ? "none"
+        : rawRegion === "top-band"
+            ? "top-band"
+            : rawRegion === "bottom-band"
+                ? "bottom-band"
+                : "left-third";
     const baseConstraints = [
         "one primary focal subject, maximum 3 visual elements",
         "keep key subject within center 80% safe zone and clear of bottom-right duration badge",
         "no AI-rendered pseudo-text, no watermarks, no random logos, accurate hand anatomy",
         `CREATIVE_DIRECTION: family=${creativeDirection.family_id}, thesis=${stripSlopFromCompilerFragment(creativeDirection.visual_thesis)}`,
+        `COMPOSITION_PLAN: focal_point=${stripSlopFromCompilerFragment(compositionPlan.focal_point)}, position=${compositionPlan.subject_position}, scale=${compositionPlan.subject_scale}, text_region=${compositionPlan.text_region.region}, budget=${compositionPlan.element_budget} elements`,
         `COMPOSITION_INTENT: ${stripSlopFromCompilerFragment(creativeDirection.composition_intent)}`,
         `TRUTHFULNESS: avoid ${contentBrief.must_not_imply.join(", ")}`,
     ];
@@ -787,6 +1117,13 @@ function synthesizeDeterministicBrief(input, preset, seed, contentBrief, creativ
     const palette = input.brandKit?.palette && input.brandKit.palette.length >= 2
         ? input.brandKit.palette.slice(0, 3)
         : preset.default_palette;
+    const focalDesc = mappedTextRegion === "left-third"
+        ? "primary subject positioned on right two-thirds, clean negative space on left-third reserved for code typography"
+        : mappedTextRegion === "top-band"
+            ? "primary subject positioned in lower two-thirds, clean top-band negative space reserved for code typography"
+            : mappedTextRegion === "bottom-band"
+                ? "primary subject positioned in upper two-thirds, clean bottom-band negative space reserved for code typography"
+                : "primary subject positioned off-center following rule of thirds inside 80% safe zone";
     return {
         // NEVER alter or strip words from input.userPrompt (Section 10A.2)
         subject_and_action: input.userPrompt.trim(),
@@ -798,12 +1135,10 @@ function synthesizeDeterministicBrief(input, preset, seed, contentBrief, creativ
         background_detail: chosenBg,
         camera: stripSlopFromCompilerFragment(preset.default_camera),
         composition: {
-            focal_point: reservedRegion === "left-third"
-                ? "primary subject positioned on right two-thirds, clean negative space on left-third reserved for code typography"
-                : "primary subject positioned off-center following rule of thirds inside 80% safe zone",
-            reserved_text_region: reservedRegion,
-            safe_zone_center_ratio: 0.8,
-            avoid_bottom_right_badge: true,
+            focal_point: focalDesc,
+            reserved_text_region: mappedTextRegion,
+            safe_zone_center_ratio: compositionPlan.canvas.safe_zone_center_ratio,
+            avoid_bottom_right_badge: compositionPlan.overlap_constraints.avoid_bottom_right_badge,
         },
         palette,
         constraints: baseConstraints,
@@ -811,7 +1146,7 @@ function synthesizeDeterministicBrief(input, preset, seed, contentBrief, creativ
 }
 /**
  * Compiles a user prompt + style/platform presets into a validated `StructuredBrief`,
- * `ContentBrief`, `CreativeDirection`, and deterministic final prompt string (Section 10A.2 & 10B).
+ * `ContentBrief`, `CreativeDirection`, `CompositionPlan`, and deterministic final prompt string (Section 10A.2 & 10B).
  */
 export async function compileThumbnailBrief(input) {
     const userPromptRaw = input.userPrompt.trim();
@@ -830,6 +1165,14 @@ export async function compileThumbnailBrief(input) {
         userStyleOverride: typeof input.stylePreset === "string" ? input.stylePreset : undefined,
         forceFamily: input.forceCreativeFamily || input.creativeDirectionFamily,
         seed: seedUsed,
+    });
+    // Stage 3: Composition Planner
+    const compositionPlan = generateCompositionPlan(contentBrief, creativeDirection, {
+        platformPreset: input.platformPreset,
+        seed: seedUsed,
+        titleText: input.titleText,
+        elementBudget: input.elementBudget,
+        compositionPlanOverride: input.compositionPlanOverride,
     });
     let validatedBrief = null;
     let llmAttempts = 0;
@@ -862,7 +1205,7 @@ export async function compileThumbnailBrief(input) {
     }
     if (!validatedBrief) {
         usedFallbackSynthesis = true;
-        validatedBrief = synthesizeDeterministicBrief(input, presetCfg, seedUsed, contentBrief, creativeDirection);
+        validatedBrief = synthesizeDeterministicBrief(input, presetCfg, seedUsed, contentBrief, creativeDirection, compositionPlan);
     }
     // Step 2: Deterministic template turns the validated JSON into the final model prompt.
     // Notice: userPromptRaw is preserved intact inside subject_and_action; compiler sections are slop-free.
@@ -889,6 +1232,7 @@ export async function compileThumbnailBrief(input) {
         structuredBrief: validatedBrief,
         contentBrief,
         creativeDirection,
+        compositionPlan,
         finalPrompt: promptParts.join(" "),
         negativePrompt,
         seedUsed,

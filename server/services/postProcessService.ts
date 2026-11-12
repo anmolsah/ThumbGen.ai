@@ -23,6 +23,7 @@ import {
 } from "../providers/types.js";
 import { resolveEffectivePlanId } from "./creditService.js";
 import { uploadToCloudflareR2 } from "./r2StorageService.js";
+import type { CompositionPlan } from "./briefCompiler.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -302,6 +303,7 @@ export interface TextOverlayOptions {
   effectPreset?: string; // checked against BANNED_TEXT_EFFECTS
   faceRegions?: BoundingBox[];
   position?: "top" | "bottom" | "left" | "right";
+  compositionPlan?: CompositionPlan; // Section 10B Phase 2 integration
   xPercent?: number; // 0..100 custom horizontal center from draggable canvas
   yPercent?: number; // 0..100 custom vertical center from draggable canvas
   pointerArrow?: "none" | "right" | "left" | "down";
@@ -435,15 +437,25 @@ export async function applyServerTextOverlay(
     },
   };
 
+  let effectivePosition = options.position;
+  if (!effectivePosition && options.compositionPlan) {
+    const reg = options.compositionPlan.text_region.region;
+    if (reg === "left-third") effectivePosition = "left";
+    else if (reg === "right-third") effectivePosition = "right";
+    else if (reg === "top-band") effectivePosition = "top";
+    else if (reg === "bottom-band") effectivePosition = "bottom";
+  }
+
   const preferredOrder =
-    options.position === "top"
+    effectivePosition === "top"
       ? ["top", "bottom"]
-      : options.position === "left"
+      : effectivePosition === "left"
       ? ["left", "top", "bottom"]
-      : options.position === "right"
+      : effectivePosition === "right"
       ? ["right", "top", "bottom"]
       : ["bottom", "top"];
   const faces = options.faceRegions ?? [];
+  const avoidBadge = options.compositionPlan?.overlap_constraints?.avoid_bottom_right_badge ?? false;
 
   let placedRegion = candidateBoxes[preferredOrder[0]];
   if (
@@ -451,7 +463,7 @@ export async function applyServerTextOverlay(
     typeof options.yPercent === "number"
   ) {
     const customW =
-      options.position === "left" || options.position === "right"
+      effectivePosition === "left" || effectivePosition === "right"
         ? Math.round(imgWidth * 0.52)
         : boxWidth;
     const clampedLeft = Math.max(
@@ -477,8 +489,12 @@ export async function applyServerTextOverlay(
   } else {
     for (const posKey of preferredOrder) {
       const candidate = candidateBoxes[posKey];
-      const collides = faces.some((face) => boxesOverlap(candidate, face));
-      if (!collides) {
+      const collidesWithFace = faces.some((face) => boxesOverlap(candidate, face));
+      const inDurationBadgeZone =
+        avoidBadge &&
+        candidate.left + candidate.width > imgWidth * 0.78 &&
+        candidate.top + candidate.height > imgHeight * 0.78;
+      if (!collidesWithFace && !inDurationBadgeZone) {
         placedRegion = candidate;
         break;
       }

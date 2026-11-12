@@ -308,18 +308,31 @@ export async function applyServerTextOverlay(imageBuffer, options) {
             height: boxHeight,
         },
     };
-    const preferredOrder = options.position === "top"
+    let effectivePosition = options.position;
+    if (!effectivePosition && options.compositionPlan) {
+        const reg = options.compositionPlan.text_region.region;
+        if (reg === "left-third")
+            effectivePosition = "left";
+        else if (reg === "right-third")
+            effectivePosition = "right";
+        else if (reg === "top-band")
+            effectivePosition = "top";
+        else if (reg === "bottom-band")
+            effectivePosition = "bottom";
+    }
+    const preferredOrder = effectivePosition === "top"
         ? ["top", "bottom"]
-        : options.position === "left"
+        : effectivePosition === "left"
             ? ["left", "top", "bottom"]
-            : options.position === "right"
+            : effectivePosition === "right"
                 ? ["right", "top", "bottom"]
                 : ["bottom", "top"];
     const faces = options.faceRegions ?? [];
+    const avoidBadge = options.compositionPlan?.overlap_constraints?.avoid_bottom_right_badge ?? false;
     let placedRegion = candidateBoxes[preferredOrder[0]];
     if (typeof options.xPercent === "number" &&
         typeof options.yPercent === "number") {
-        const customW = options.position === "left" || options.position === "right"
+        const customW = effectivePosition === "left" || effectivePosition === "right"
             ? Math.round(imgWidth * 0.52)
             : boxWidth;
         const clampedLeft = Math.max(0, Math.min(imgWidth - customW, Math.round((options.xPercent / 100) * imgWidth - customW / 2)));
@@ -334,8 +347,11 @@ export async function applyServerTextOverlay(imageBuffer, options) {
     else {
         for (const posKey of preferredOrder) {
             const candidate = candidateBoxes[posKey];
-            const collides = faces.some((face) => boxesOverlap(candidate, face));
-            if (!collides) {
+            const collidesWithFace = faces.some((face) => boxesOverlap(candidate, face));
+            const inDurationBadgeZone = avoidBadge &&
+                candidate.left + candidate.width > imgWidth * 0.78 &&
+                candidate.top + candidate.height > imgHeight * 0.78;
+            if (!collidesWithFace && !inDurationBadgeZone) {
                 placedRegion = candidate;
                 break;
             }
