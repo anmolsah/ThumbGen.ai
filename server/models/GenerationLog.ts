@@ -15,6 +15,10 @@ export interface IGenerationLog extends Document {
   status: "succeeded" | "failed";
   error_code: string | null;
   request_params: Record<string, unknown>;
+  content_brief?: Record<string, unknown>;
+  creative_direction?: Record<string, unknown>;
+  composition_plan?: Record<string, unknown>;
+  design_qa_result?: Record<string, unknown>;
   resolution_actual?: {
     width: number;
     height: number;
@@ -44,6 +48,10 @@ const GenerationLogSchema = new Schema<IGenerationLog>(
     },
     error_code: { type: String, default: null },
     request_params: { type: Schema.Types.Mixed, default: {} },
+    content_brief: { type: Schema.Types.Mixed },
+    creative_direction: { type: Schema.Types.Mixed },
+    composition_plan: { type: Schema.Types.Mixed },
+    design_qa_result: { type: Schema.Types.Mixed },
     resolution_actual: {
       width: { type: Number },
       height: { type: Number },

@@ -313,6 +313,924 @@ Log every QA result per generation. Add QA cost to the margin guard (Section 6).
 ### 10A.11 Platform presets (config, verified per platform)
 `config/platform_presets.yaml`: per platform, the aspect ratio(s), pixel dimensions, max file size by upload context, formats, safe zones, UI overlays, `verified_at`, `source_url`. Fill **only** from the platform's official documentation; leave unverified values `null` (Rule R3).
 
+# 10B. Anti-AI-Slop Creative Direction \& Design Quality System
+
+**Document type:** Product / engineering implementation specification  
+**Status:** Proposed --- validate through benchmark before treating
+thresholds or tactics as proven  
+**Intended use:** Add this specification to the thumbnail-generation
+product plan and provide it to the implementation AI/engineering agent.  
+**Relationship to existing plan:** This section extends the existing
+**10A. Anti-slop quality system**. It does not replace 10A or authorize
+removing its safeguards.
+
+\---
+
+## 1\. Executive summary
+
+The current 10A system primarily detects image-generation defects:
+anatomy problems, incoherent objects, plastic-looking skin, clutter,
+poor contrast, unsafe framing, and similar issues.
+
+Those checks are necessary, but they do not guarantee professional
+thumbnail design. An image can be technically clean and still look
+generic, formulaic, overdramatic, or recognizably like an AI-generated
+poster.
+
+The missing capability is **creative art direction**.
+
+Add a Creative Direction \& Design Quality layer that decides *what
+visual idea should communicate the content*, *how that idea should be
+composed*, and *how the final thumbnail should be designed*. Evaluate
+technical image quality and design quality separately.
+
+### Target pipeline
+
+`User brief → Content understanding → Creative direction → Composition plan → Image generation → Technical QA + Design QA → Code-rendered typography/layout → Final validation → Delivery`
+
+The exact ordering of final QA and typography validation may be adapted
+to the existing architecture, but the system must evaluate the actual
+final composite, not only the raw generated image.
+
+### Core product principle
+
+**Do not optimize for "looking less AI-generated." Optimize for
+specific, relevant, intentional, professionally art-directed
+thumbnails.**
+
+Do not claim that outputs are undetectable as AI, and do not build
+features intended to evade platform AI-labeling or disclosure rules.
+
+\---
+
+## 2\. Problem statement
+
+Observed failure pattern:
+
+* Exaggerated or generic facial expressions used without a content
+reason.
+* Predictable "shocked face + dramatic background + giant headline"
+compositions.
+* Decorative particles, smoke, glow, lens effects, symbols, or props
+that add no information.
+* Gold bevel / 3D typography and multiple competing text treatments.
+* Too many visual elements competing for attention.
+* Generic cinematic lighting and overly polished environments.
+* Repeated layouts across unrelated topics.
+* A thumbnail that communicates a broad genre but not the specific
+story.
+
+These are not necessarily image defects. They are often **art-direction
+and design defects**.
+
+### What success looks like
+
+A successful thumbnail should:
+
+1. Communicate the actual video topic or story.
+2. Have one clear visual idea and a deliberate focal hierarchy.
+3. Use visual elements that have a reason to exist.
+4. Feel designed for this particular brief, not selected from a generic
+template.
+5. Remain legible and understandable at the platform's small feed size.
+6. Use typography and graphic elements as part of a coherent layout.
+7. Avoid unsupported claims or visual fabrication involving real people
+or events.
+8. Preserve the user's requested style where feasible, while explaining
+genuine limitations.
+
+\---
+
+## 3\. Scope and non-goals
+
+### In scope
+
+* Content understanding and thumbnail intent extraction.
+* Creative direction selection.
+* Composition and layout planning.
+* Contextual cliché detection.
+* Independent design-quality evaluation.
+* Better use of user-provided references and brand kits.
+* Final-composite QA.
+* Golden-set benchmarking and measurable release gates.
+* Logging and reproducibility.
+
+### Out of scope
+
+* Claiming AI detection or AI-undetectability.
+* Evading platform disclosure, provenance, or labeling requirements.
+* Automatically copying another creator's exact thumbnail or a
+protected visual identity.
+* Treating every listed cliché as forbidden.
+* Replacing human design review for subjective or high-impact cases.
+* Introducing a new image model before testing whether the current
+model and improved direction solve the problem.
+
+\---
+
+## 4\. Architecture: extend 10A with a creative layer
+
+The new system should be modular. Do not combine every responsibility
+into one giant prompt.
+
+### Proposed stages
+
+#### Stage 1 --- Content understanding
+
+Convert the user's request into a structured content brief.
+
+Required fields (adapt names to the existing schema):
+
+* `topic`: the main subject.
+* `specific\\\_story`: the particular fact, question, event, claim, or
+angle the video covers.
+* `audience`: intended viewer, if known.
+* `viewer\\\_curiosity`: the truthful question or information gap that
+may make the viewer interested.
+* `emotional\\\_tone`: e.g. curiosity, urgency, wonder, concern, humor,
+calm, inspiration.
+* `content\\\_format`: e.g. documentary, tutorial, commentary, product
+review, news, entertainment.
+* `must\\\_show`: objects, people, places, or evidence that must appear.
+* `must\\\_not\\\_imply`: events, claims, relationships, or outcomes the
+thumbnail must not falsely suggest.
+* `title\\\_text`: optional text for the code renderer; do not send it to
+the image model by default.
+* `platform\\\_preset`: selected platform and verified dimensions / safe
+zones.
+* `reference\\\_assets`: optional user-authorized images and brand
+assets.
+
+The system must distinguish verified facts supplied by the user from
+creative interpretation. Do not invent evidence or depict an unverified
+event as real.
+
+If the prompt is too vague to determine a specific story, either ask one
+concise clarification or produce a conservative concept that does not
+fabricate specifics.
+
+#### Stage 2 --- Creative direction engine
+
+Generate a small set of internally usable creative directions, then
+select one. Do not expose a long questionnaire to the user.
+
+Each direction should describe:
+
+* `concept\\\_name`
+* `visual\\\_thesis`: one sentence explaining the visual idea.
+* `story\\\_device`: the specific visual device used to communicate the
+story.
+* `primary\\\_subject`
+* `supporting\\\_element`: optional; include only if it adds meaning.
+* `emotional\\\_tone`
+* `visual\\\_language`: e.g. editorial photography, documentary still,
+bold graphic, product-led, typographic-led, illustrative.
+* `composition\\\_intent`
+* `typography\\\_intent`
+* `palette\\\_intent`
+* `why\\\_this\\\_fits`: connection to the actual content.
+* `risks`: possible misleading implication, cliché, or legibility
+issue.
+
+Select the direction that best fits the brief, not the direction with
+the most dramatic effects.
+
+**Important:** creative directions are not fixed templates. They are
+art-direction choices. Avoid mapping every request to the same "person
+on one side, text on the other" layout.
+
+#### Stage 3 --- Composition planner
+
+Turn the chosen direction into an actionable layout plan.
+
+Suggested fields:
+
+* `canvas`: dimensions and platform preset.
+* `focal\\\_point`: the one element viewers should notice first.
+* `secondary\\\_focus`: optional and subordinate.
+* `subject\\\_position`: normalized coordinates or named region.
+* `subject\\\_scale`: relative size / crop intent.
+* `camera\\\_perspective`: only when relevant.
+* `background\\\_role`: context, contrast, or evidence; not decorative
+filler.
+* `text\\\_region`: reserved region and maximum area.
+* `negative\\\_space`: where and why it is needed.
+* `visual\\\_hierarchy`: ordered list of elements by attention priority.
+* `element\\\_budget`: maximum number of meaningful visual elements.
+* `overlap\\\_constraints`: face, text, logo, and key-object collision
+rules.
+* `mobile\\\_crop\\\_check`: preview dimensions from verified platform
+configuration.
+
+A composition is not good merely because it is asymmetric or has
+negative space. Every placement must support the story and hierarchy.
+
+#### Stage 4 --- Image generation
+
+Pass the selected creative direction and composition plan into the
+existing 10A deterministic prompt compiler.
+
+Keep responsibilities separate:
+
+* The image model creates photographic / illustrative imagery.
+* The code renderer creates title text, logos, badges, lines, shapes,
+and other precise graphic elements.
+* Do not ask the image model to render readable title text by default.
+* Do not add effects, objects, people, or symbols unless they support
+the visual thesis.
+
+Continue to honor model capability discovery, reference-image
+permissions, and provenance checks from 10A.
+
+#### Stage 5 --- Independent QA
+
+Run two distinct evaluations:
+
+1. **Technical Image QA** --- existing 10A defect checks.
+2. **Creative Design QA** --- new checks defined in Section 7.
+
+Do not collapse them into one opaque score. Preserve individual
+dimensions, evidence, and pass/fail reasons.
+
+#### Stage 6 --- Typography, layout and final composite
+
+Use the approved code-based renderer from 10A. Apply the composition
+plan to the actual generated image.
+
+After compositing, run final checks on the complete thumbnail,
+including:
+
+* Text clipping and contrast.
+* Text / face / key-object overlap.
+* Platform safe zones.
+* Hierarchy at feed-size preview.
+* Whether the final title changes or misrepresents the story.
+* Whether graphic additions create clutter.
+
+The final QA must inspect the **final composite**. Raw-image QA alone is
+insufficient.
+
+\---
+
+## 5\. Creative direction library
+
+Create an owner-editable set of creative direction families. These are
+starting points, not rigid templates.
+
+Suggested initial families:
+
+### 5.1 Editorial photography
+
+Use when the topic benefits from a credible, magazine-like treatment.
+
+Characteristics: - Strong authentic photograph or realistic scene. -
+Restrained headline. - Deliberate crop and negative space. - Limited
+graphic decoration. - Natural or contextually motivated light.
+
+### 5.2 Documentary storytelling
+
+Use when the content is about a real place, person, event,
+investigation, or experience.
+
+Characteristics: - Scene-specific visual evidence. - Observational
+framing. - Contextual environmental detail. - Controlled color and
+typography. - No invented evidence or fake documentary artifacts.
+
+### 5.3 Investigative editorial
+
+Use when the content explores a question, mystery, comparison, or claim.
+
+Characteristics: - One meaningful clue, object, contrast, or location. -
+Clear relationship between the headline and visual. - Evidence-led
+rather than decoration-led. - Avoid arbitrary magnifying glasses,
+warning symbols, circles, arrows, and labels.
+
+### 5.4 Bold graphic design
+
+Use when the topic benefits from a graphic rather than photographic
+treatment.
+
+Characteristics: - Strong typographic hierarchy. - Limited shapes and
+colors. - Intentional geometry and spacing. - Distinctive layout. - No
+unnecessary 3D, bevel, glow, or texture effects.
+
+### 5.5 Product-focused
+
+Use for product reviews, demonstrations, comparisons, and commerce
+content.
+
+Characteristics: - Product is recognizable and accurately represented. -
+Product scale and crop support the message. - Background is
+subordinate. - Claims and comparison cues are truthful.
+
+### 5.6 Typographic-led
+
+Use when the headline or a short phrase is the main hook.
+
+Characteristics: - Typography is the primary visual element. - One
+supporting visual at most unless the brief justifies more. - Clear type
+scale, spacing, alignment, and contrast. - No competing headline
+treatments.
+
+### Selection rules
+
+* Select based on content type, story, audience, and reference assets.
+* Avoid selecting the same direction for every request.
+* Do not force variation for its own sake.
+* Allow a user-selected style preset to override the automatic choice,
+within safety and feasibility constraints.
+* Record the selected direction and its rationale for evaluation.
+
+\---
+
+## 6\. Contextual creative-cliché detection
+
+Create `config/creative\\\_cliche\\\_lexicon.yaml`.
+
+The lexicon should identify recurring patterns, not impose universal
+bans.
+
+Initial candidate patterns to test:
+
+* Exaggerated shocked face without a story reason.
+* Gold 3D / bevel headline treatment.
+* Random floating particles, sparks, or glowing dots.
+* Excessive smoke, fog, or volumetric rays.
+* Decorative magnifying glass unrelated to the topic.
+* Arbitrary arrows, circles, warning signs, or question marks.
+* Unnecessary wooden signboards or fake labels.
+* Multiple competing headlines.
+* Generic "cinematic" background unrelated to the actual setting.
+* Overly symmetrical stock-poster composition.
+* Generic person cutout pasted over a dramatic background.
+* Excessive outlines, shadows, glow, and texture applied together.
+* Repeated split composition across unrelated topics.
+
+### Required behavior
+
+For each detected pattern, return:
+
+* `pattern\\\_id`
+* `severity`: informational, warning, or blocking candidate.
+* `location\\\_or\\\_region`: where it appears, if identifiable.
+* `evidence`: visible reason for the flag.
+* `contextual\\\_reason`: why it may be inappropriate for this brief.
+* `suggested\\\_fix`: a specific design change.
+
+A pattern must not be rejected only because it appears in the lexicon.
+Evaluate whether it is justified by the story and selected direction.
+
+Do not flag a user's explicitly requested style merely because it is
+unusual. Preserve the user's intent unless it conflicts with safety,
+truthfulness, or technical feasibility.
+
+\---
+
+## 7\. Creative Design QA rubric
+
+Create a separate structured rubric for the vision model or evaluation
+service.
+
+The evaluator must judge concrete design qualities, not answer "does
+this look AI-generated?"
+
+### Required dimensions
+
+Score each dimension from 1 to 5 and provide concise visual evidence.
+
+\---
+
+Dimension                           What to evaluate
+
+\---
+
+Content specificity                 Does the image communicate this
+particular story rather than only
+its broad category?
+
+Concept strength                    Is there one understandable visual
+idea?
+
+Composition and hierarchy           Is the order of attention clear and
+intentional?
+
+Typography and layout               Are text scale, spacing, alignment,
+contrast, and placement coherent?
+
+Visual relevance                    Does each major element support the
+content?
+
+Originality / non-formulaic design  Does it avoid an interchangeable
+stock-poster composition?
+
+Restraint                           Are effects and decorative elements
+justified?
+
+Small-size readability              Does the idea remain clear at the
+verified feed-size preview?
+
+Truthfulness                        Does the visual avoid implying
+unsupported events, evidence, or
+claims?
+---
+
+### Suggested score anchors
+
+* **1 --- Broken:** materially confusing, misleading, cluttered, or
+poorly composed.
+* **2 --- Weak:** recognizable topic, but major design issues reduce
+clarity or credibility.
+* **3 --- Acceptable:** understandable and usable, but generic or
+lacking a strong visual idea.
+* **4 --- Strong:** specific, coherent, intentional, and
+professionally composed.
+* **5 --- Excellent:** memorable, distinctive, highly relevant, and
+polished without unnecessary effects.
+
+These anchors are initial definitions. Validate consistency between
+evaluators and human reviewers before using scores as automatic release
+gates.
+
+### Required JSON response
+
+Use a schema similar to the following; adapt it to the project's
+existing validation library and conventions.
+
+``` json
+{
+  "schema\\\_version": "1.0",
+  "overall\\\_assessment": "pass | revise | fail",
+  "scores": {
+    "content\\\_specificity": 1,
+    "concept\\\_strength": 1,
+    "composition\\\_hierarchy": 1,
+    "typography\\\_layout": 1,
+    "visual\\\_relevance": 1,
+    "originality": 1,
+    "restraint": 1,
+    "small\\\_size\\\_readability": 1,
+    "truthfulness": 1
+  },
+  "flags": \\\[
+    {
+      "code": "UNMOTIVATED\\\_DECORATION",
+      "severity": "warning",
+      "evidence": "A decorative glowing symbol does not explain or support the topic.",
+      "suggested\\\_fix": "Remove it and use the actual location as the supporting visual."
+    }
+  ],
+  "strengths": \\\[
+    "The primary location is recognizable and visually dominant."
+  ],
+  "revision\\\_brief": \\\[
+    "Remove the decorative symbol.",
+    "Reduce headline area and restore negative space."
+  ],
+  "confidence": 0.0
+}
+```
+
+Validation requirements: - Enforce the schema and numeric bounds. -
+Reject malformed output and log the failure. - Do not treat model
+confidence as calibrated probability unless validated. - Require
+evidence for every blocking flag. - Keep the raw evaluator response for
+debugging, subject to privacy and retention policy. - Never ask the
+evaluator to detect whether an image was AI-generated.
+
+### Gate policy
+
+Do not hard-code score thresholds before human calibration.
+
+Initially run Design QA in **shadow mode**: - Generate and deliver
+according to the existing approved process. - Record the design
+evaluation. - Compare it with human ratings. - Measure false positives
+and false negatives. - Tune thresholds using the golden set.
+
+Only enable automatic blocking or retries after the owner approves
+calibrated thresholds.
+
+\---
+
+## 8\. Revision and retry policy
+
+A retry must correct a named defect, not simply ask the image model to
+"make it better" or "make it less AI."
+
+Examples:
+
+* If the concept is generic: change the visual thesis, not just the
+lighting.
+* If the composition is crowded: remove or subordinate specific
+elements.
+* If the typography is weak: revise the code-rendered layout, not the
+generated image.
+* If the background is irrelevant: replace it with a scene tied to the
+actual story.
+* If the visual is misleading: remove the unsupported implication.
+
+Recommended control flow:
+
+1. Run technical QA and Design QA.
+2. Identify the highest-impact actionable defect.
+3. Determine whether it belongs to the image, composition plan, or
+typography renderer.
+4. Revise only the responsible stage where possible.
+5. Allow no more than one automatic image-generation retry initially,
+consistent with 10A.
+6. Re-run the relevant checks.
+7. If it still fails, follow the existing owner-approved delivery /
+refund behavior. Do not loop indefinitely.
+
+Do not regenerate the image for a typography-only defect. Re-render
+typography and layout using code when possible.
+
+\---
+
+## 9\. Reference-first and brand-aware art direction
+
+Continue the 10A reference-first workflow and extend it to design
+references.
+
+Support, where technically available:
+
+* User-provided subject photographs.
+* User-provided location or product photographs.
+* Brand logo and approved brand assets.
+* Brand palette and licensed fonts.
+* Optional design references used for broad inspiration.
+
+Rules: - Confirm the user has rights to uploaded likenesses and assets
+where required. - Do not copy another creator's exact thumbnail, logo,
+or distinctive protected design. - Extract broad attributes from
+references (e.g. restrained editorial layout, warm palette, close crop),
+not exact protected expression. - Keep the subject's identity and
+important product details faithful when using reference images. - Brand
+consistency must not force every thumbnail into an identical layout.
+
+\---
+
+## 10\. Golden-set benchmark and evaluation plan
+
+The existing 10A golden set should be extended, not duplicated
+unnecessarily.
+
+### Initial benchmark
+
+Start with at least 30 diverse prompts for the first engineering
+experiment. Expand toward the 100+ prompt golden set specified in 10A
+before broad release.
+
+Include: - Travel and geography. - Documentary and investigative
+topics. - Tutorials and educational content. - Product reviews. - News
+and commentary. - Personal development. - Entertainment. -
+Typographic-led topics. - Prompts with user reference images. - Prompts
+with brand kits. - Prompts where a dramatic visual would be misleading.
+
+For each prompt, generate comparable variants:
+
+* **A:** Existing 10A pipeline.
+* **B:** 10A + creative direction and composition planning.
+* **C:** 10A + creative direction + composition planning + Design QA
+and targeted revision.
+
+Keep model, image settings, platform dimensions, and other variables
+controlled where practical. Record unavoidable differences.
+
+### Human evaluation
+
+Use blind comparison where possible: reviewers should not know which
+variant is A, B, or C.
+
+Collect: - Professional design quality (1--5). - Content specificity
+(1--5). - Originality (1--5). - Visual hierarchy (1--5). - Small-size
+readability (1--5). - Truthfulness / misleading implication tags. -
+"Would a professional designer approve this for publication?" (yes / no
+/ unsure). - Short reason for the rating.
+
+Use more than one reviewer for a meaningful subset. Measure inter-rater
+agreement and document disagreements.
+
+### Metrics
+
+Track: - Mean and distribution of each human rating. - Pairwise
+preference rate for B vs A and C vs A. - Design QA precision and recall
+against human defect labels. - False-block rate. - Retry rate and retry
+success rate. - Percentage of typography-only issues fixed without image
+regeneration. - Generation and QA cost per kept thumbnail. - User
+regenerate rate, download rate, and feedback where available.
+
+Do not claim CTR improvement without valid platform experiment data.
+
+### Initial experiment decision
+
+The first benchmark is an experiment, not a release certification. Do
+not ship a new automatic gate merely because the vision model gives high
+scores. Human evaluation is the reference for calibrating the evaluator.
+
+\---
+
+## 11\. Data model and observability
+
+Extend the existing `generation\\\_log` or equivalent rather than creating
+duplicate logging systems.
+
+Record, subject to existing privacy and retention rules:
+
+* Original user prompt and relevant settings.
+* Structured content brief.
+* Creative directions considered and selected.
+* Selection rationale.
+* Composition plan.
+* Prompt compiler version and final image prompt.
+* Model/provider identifier and capability snapshot.
+* Seed and relevant generation settings.
+* Raw image asset identifier.
+* Technical QA result.
+* Design QA result and schema version.
+* Cliché flags and evidence.
+* Typography renderer version and layout configuration.
+* Final composite asset identifier.
+* Retry count and targeted revision brief.
+* Human feedback / benchmark labels where available.
+* Cost and timing per stage.
+
+Use stable version identifiers for: - Brief schema. - Creative direction
+library. - Cliché lexicon. - Composition planner. - Design QA rubric. -
+Prompt compiler. - Typography renderer.
+
+This is necessary to reproduce regressions and compare experiments.
+
+\---
+
+## 12\. Configuration proposals
+
+Suggested files (adapt to the repository's actual conventions):
+
+``` text
+config/
+  creative\\\_direction\\\_presets.yaml
+  creative\\\_cliche\\\_lexicon.yaml
+  design\\\_qa\\\_config.yaml
+
+docs/
+  thumbnail-creative-direction.md
+  thumbnail-design-qa.md
+  thumbnail-benchmark-protocol.md
+```
+
+Keep owner-editable content separate from application logic.
+
+Example configuration shape:
+
+``` yaml
+design\\\_qa:
+  mode: shadow # shadow | enforce
+  schema\\\_version: "1.0"
+  thresholds:
+    content\\\_specificity: null
+    concept\\\_strength: null
+    composition\\\_hierarchy: null
+    typography\\\_layout: null
+    visual\\\_relevance: null
+    originality: null
+    restraint: null
+    small\\\_size\\\_readability: null
+    truthfulness: null
+  max\\\_automatic\\\_image\\\_retries: 1
+  require\\\_evidence\\\_for\\\_blocking\\\_flags: true
+
+creative\\\_direction:
+  enabled: true
+  allow\\\_user\\\_style\\\_override: true
+  avoid\\\_repeated\\\_direction\\\_when\\\_unjustified: true
+  preserve\\\_user\\\_intent: true
+```
+
+All null thresholds remain uncalibrated. Do not silently replace them
+with arbitrary defaults.
+
+\---
+
+## 13\. Implementation phases and acceptance criteria
+
+Implement incrementally. First inspect the repository, existing plan,
+architecture, model-provider abstractions, image pipeline, QA flow,
+logging, and tests. Reuse existing services and conventions. Do not
+assume the proposed filenames or technologies already exist.
+
+### Phase 0 --- Repository and architecture audit
+
+Tasks: - Locate the current 10A implementation and relevant plan
+sections. - Trace prompt input through generation, rendering, QA,
+billing/credits, storage, and delivery. - Identify where structured
+briefs and generation logs are stored. - Identify current vision model
+and JSON-schema validation approach. - Confirm whether typography is
+already code-rendered. - Identify available reference-image support. -
+Document gaps and propose the smallest compatible integration.
+
+Acceptance: - Architecture map and file-level implementation plan
+exist. - No duplicate service is introduced without a reason. - Existing
+behavior and credit accounting are documented. - Risks and unknowns are
+explicit.
+
+### Phase 1 --- Structured content brief and creative direction
+
+Tasks: - Add validated content-brief schema. - Add creative direction
+schema and initial direction families. - Generate and select a
+direction. - Persist the selected direction and rationale. - Add
+deterministic fixtures and unit tests.
+
+Acceptance: - Same input and seed can reproduce the same structured
+direction where determinism is required. - Direction is tied to the
+specific story. - User-selected style is respected where feasible. -
+Vague prompts do not cause fabricated facts.
+
+### Phase 2 --- Composition planning
+
+Tasks: - Add composition-plan schema. - Translate the direction into
+layout constraints. - Connect the plan to the existing prompt compiler
+and renderer. - Add validation for missing text region, focal point, or
+conflicting constraints.
+
+Acceptance: - The plan identifies a focal point and visual hierarchy. -
+Composition is not locked to one universal template. - Key objects,
+faces, and text are not placed in conflicting regions. - Platform
+configuration is sourced from verified presets.
+
+### Phase 3 --- Cliché detection and Design QA in shadow mode
+
+Tasks: - Add contextual cliché lexicon. - Add Design QA schema and
+evaluator prompt. - Validate model output and store evidence. - Run
+shadow evaluations without blocking delivery. - Collect human labels.
+
+Acceptance: - Malformed evaluator output is handled safely. - Technical
+QA and Design QA remain separately observable. - No uncalibrated Design
+QA score blocks delivery. - Flags include actionable evidence and
+revisions.
+
+### Phase 4 --- Targeted revision and renderer integration
+
+Tasks: - Route image defects to image revision. - Route layout and
+typography defects to the code renderer. - Route concept defects to
+creative direction / composition planning. - Add the single-retry policy
+and final-composite validation. - Verify billing and credit behavior.
+
+Acceptance: - Retry addresses a named defect. - Typography-only defects
+do not trigger unnecessary image regeneration. - No unbounded retry loop
+exists. - Credit and refund behavior follows owner-approved policy. -
+Final composite passes existing technical checks.
+
+### Phase 5 --- Benchmark, calibration, and controlled enforcement
+
+Tasks: - Build the initial 30-prompt comparison. - Expand the golden set
+toward 100+ prompts. - Collect blind human ratings. - Report QA
+precision, recall, false positives, and false negatives. - Tune
+thresholds and get owner approval before enforcement. - Add regression
+tests for benchmark cases.
+
+Acceptance: - Results compare A, B, and C under documented conditions. -
+Thresholds are supported by human-labeled data. - No material regression
+in existing 10A technical quality. - Release decision and known
+limitations are documented.
+
+\---
+
+## 14\. Engineering guardrails
+
+1. **Do not rewrite the entire thumbnail pipeline.** Integrate in
+small, reviewable changes.
+2. **Do not add another model or paid API by default.** First test the
+current provider with the improved brief and direction.
+3. **Do not hard-code unverified thresholds.** Keep them configurable
+and null until calibrated.
+4. **Do not use one overall LLM score as the only release gate.**
+5. **Do not automatically regenerate for every warning.** Distinguish
+blocking defects from subjective suggestions.
+6. **Do not let the evaluator override explicit user intent without a
+concrete reason.**
+7. **Do not use a cliché lexicon as a ban list.** Use contextual
+evaluation.
+8. **Do not send title text to the image model by default.** Use the
+code renderer.
+9. **Do not fabricate facts, people, locations, evidence, or events.**
+10. **Do not claim CTR improvements without platform experiments.**
+11. **Do not claim AI-undetectability or evade platform disclosure
+rules.**
+12. **Preserve privacy, reference-image permissions, provenance
+handling, and existing credit accounting.**
+13. **Every new stage must have tests, logs, failure handling, and a
+clear owner.**
+14. **If a proposed technology or capability is not present in the
+repository, verify it before adding it.**
+
+\---
+
+## 15\. Instructions for the implementation AI / coding agent
+
+Treat this document as a proposed specification, not permission to make
+broad assumptions.
+
+Before changing code:
+
+1. Read the complete existing `plan.md` and Section 10A.
+2. Inspect the repository and identify the real generation, prompt,
+rendering, QA, billing, and logging paths.
+3. Produce a concise implementation map with exact file paths and
+dependencies.
+4. Identify conflicts between this document and the existing
+architecture.
+5. List questions that require product-owner decisions.
+6. Propose a phased task list with tests and acceptance criteria.
+7. Do not start a large refactor until the owner approves the plan,
+unless the existing project instructions explicitly authorize
+implementation.
+
+During implementation:
+
+* Follow existing language, framework, naming, validation, and testing
+conventions.
+* Keep changes scoped to the current phase.
+* Reuse existing provider abstractions and logging.
+* Add migrations only when required and explain rollback.
+* Never expose API keys or secrets.
+* Run relevant tests and builds after each phase.
+* Report changed files, behavior changes, test results, known
+limitations, and next steps.
+* Do not mark a phase complete unless its acceptance criteria are met.
+
+### Required first response from the AI agent
+
+After reading this specification and the repository plan, the agent
+should return:
+
+1. Its understanding of the current 10A pipeline.
+2. The exact architectural gap this 10B section addresses.
+3. The existing files and services that should be reused.
+4. The proposed Phase 0 audit findings or, if not yet inspected, the
+inspection checklist.
+5. Any conflicts, risks, or owner decisions required.
+6. A phased implementation plan.
+7. Tests and benchmark evidence required for each phase.
+
+**Do not begin by generating code. Begin by inspecting the current plan
+and repository, then propose the smallest safe implementation.**
+
+\---
+
+## 16\. Product-owner decisions to confirm
+
+These decisions should be answered before the relevant implementation
+phase:
+
+* Is code-rendered typography already approved under 10A, and which
+renderer is selected?
+* Which platform presets are currently verified?
+* Which image and vision providers are available, and what are their
+structured-output capabilities and costs?
+* Should Design QA initially run in shadow mode? Recommended: yes.
+* Who supplies human benchmark ratings, and how many independent
+reviewers are available?
+* After one unsuccessful retry, should the system deliver the better
+result with a warning or refund? Reuse the existing owner decision
+in 10A if already made.
+* What reference-image and brand-kit capabilities are actually
+included in each subscription plan?
+* What are the existing privacy and retention rules for prompts,
+uploaded references, generated images, and QA logs?
+
+Do not invent answers. Record unresolved decisions and continue only
+with work that does not depend on them.
+
+\---
+
+## 17\. Definition of done
+
+The 10B system is ready for controlled release only when:
+
+* The existing 10A pipeline remains intact and its technical checks
+still pass.
+* A structured content brief, creative direction, and composition plan
+are integrated.
+* The direction is content-specific and not a fixed universal
+template.
+* Design QA runs independently from technical image QA.
+* Design QA has been compared against human labels.
+* Any enforced thresholds have documented calibration evidence and
+owner approval.
+* Typography and layout are evaluated on the final composite.
+* Revisions target the responsible stage and do not cause unnecessary
+image regeneration.
+* Retry and credit behavior is bounded and tested.
+* The golden-set comparison shows no unacceptable regression.
+* Logs make the output reproducible and debuggable.
+* Product claims remain honest and do not promise AI-undetectability
+or unverified CTR gains.
+
+**Final principle:** The objective is not to hide how an image was made.
+The objective is to make every thumbnail feel like someone made
+deliberate, content-specific design decisions.
+
+
 **Known source conflict (YouTube):** older and many third-party pages say 1280×720, 16:9, min width 640, max 2 MB. Some pages checked in Nov 2026 say YouTube's Help Center now recommends 3840×2160 (Shorts 2160×3840), with a 2 MB limit from a phone and 50 MB from a computer. **Do not pick one.** Read the official page, record the answer, and make export produce a primary file at the preset resolution plus a ≤2 MB JPG fallback.
 
 Other platforms: no verified values yet. All `null` until verified.

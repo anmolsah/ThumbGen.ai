@@ -1,0 +1,12 @@
+import express from "express";
+import { deleteThumbnail, editThumbnail, exportThumbnailVariant, generateThumbnail, getJobStatus, getThumbnailStatus, getShowcaseThumbnails, } from "../controllers/ThumbnailController.js";
+import protect from "../middlewares/auth.js";
+const ThumbnailRouter = express.Router();
+ThumbnailRouter.post("/generate", protect, generateThumbnail);
+ThumbnailRouter.post("/edit", protect, editThumbnail);
+ThumbnailRouter.get("/status/:id", protect, getThumbnailStatus);
+ThumbnailRouter.get("/jobs/:id", protect, getJobStatus);
+ThumbnailRouter.get("/export/:id", protect, exportThumbnailVariant);
+ThumbnailRouter.get("/showcase", getShowcaseThumbnails);
+ThumbnailRouter.delete("/delete/:id", protect, deleteThumbnail);
+export default ThumbnailRouter;

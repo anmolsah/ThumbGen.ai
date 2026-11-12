@@ -75,6 +75,10 @@ export interface StructuredGenerationEvent {
   status: "succeeded" | "failed";
   error_code?: string | null;
   request_params?: Record<string, unknown> | null;
+  content_brief?: Record<string, unknown> | null;
+  creative_direction?: Record<string, unknown> | null;
+  composition_plan?: Record<string, unknown> | null;
+  design_qa_result?: Record<string, unknown> | null;
   resolution_actual?: {
     width: number;
     height: number;
@@ -272,6 +276,10 @@ export class ObservabilityManager {
       status: event.status,
       error_code: event.error_code ?? null,
       request_params: sanitizedParams,
+      content_brief: event.content_brief ? (sanitizeLogPayload(event.content_brief) as Record<string, unknown>) : null,
+      creative_direction: event.creative_direction ? (sanitizeLogPayload(event.creative_direction) as Record<string, unknown>) : null,
+      composition_plan: event.composition_plan ? (sanitizeLogPayload(event.composition_plan) as Record<string, unknown>) : null,
+      design_qa_result: event.design_qa_result ? (sanitizeLogPayload(event.design_qa_result) as Record<string, unknown>) : null,
       resolution_actual: event.resolution_actual ?? null,
     };
 
@@ -299,6 +307,10 @@ export class ObservabilityManager {
           status: event.status,
           error_code: event.error_code ?? null,
           request_params: sanitizedParams,
+          content_brief: event.content_brief ?? undefined,
+          creative_direction: event.creative_direction ?? undefined,
+          composition_plan: event.composition_plan ?? undefined,
+          design_qa_result: event.design_qa_result ?? undefined,
           resolution_actual: event.resolution_actual,
         });
       } catch {

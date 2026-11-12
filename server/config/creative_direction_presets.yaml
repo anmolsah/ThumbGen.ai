@@ -1,0 +1,143 @@
+version: "1.0"
+library_name: "ThumbGen Creative Direction Presets"
+families:
+  editorial_photography:
+    id: "editorial_photography"
+    label: "Editorial Photography"
+    description: "Credible, authentic, magazine-cover realism with natural motivated lighting, deliberate negative space, and disciplined typography."
+    best_for_formats:
+      - "documentary"
+      - "essay"
+      - "interview"
+      - "biography"
+      - "travel"
+    emotional_tones:
+      - "curiosity"
+      - "authenticity"
+      - "reflection"
+      - "gravity"
+      - "calm"
+    visual_language: "authentic editorial photography with natural ambient light and realistic lens depth"
+    composition_intent: "asymmetric hero placement with deliberate negative space reserved for typography"
+    typography_intent: "understated editorial serif or high-contrast clean sans, strictly non-decorative"
+    palette_intent: "restrained contextual tones, warm or cool based on environment, avoiding saturated neon"
+    common_risks:
+      - "overly cinematic stock-photo polish that looks generic"
+      - "insufficient contrast between subject and background"
+
+  documentary_storytelling:
+    id: "documentary_storytelling"
+    label: "Documentary Storytelling"
+    description: "Scene-specific visual evidence and observational framing for real-world events, places, investigations, and experiences."
+    best_for_formats:
+      - "documentary"
+      - "history"
+      - "geography"
+      - "true_crime"
+      - "investigation"
+    emotional_tones:
+      - "urgency"
+      - "wonder"
+      - "concern"
+      - "intrigue"
+      - "historical_gravity"
+    visual_language: "observational documentary framing with environmental evidence and genuine texture"
+    composition_intent: "context-rich framing where the environment provides factual weight to the subject"
+    typography_intent: "authoritative clean sans-serif or archival stencil, placed in safe negative space"
+    palette_intent: "grounded documentary color grade derived from the authentic location"
+    common_risks:
+      - "inventing fake evidence or historical inaccuracies"
+      - "cluttering the frame with decorative overlays"
+
+  investigative_editorial:
+    id: "investigative_editorial"
+    label: "Investigative Editorial"
+    description: "Visual thesis built around a single meaningful clue, contrast, or reveal. Avoids decorative arrows, arbitrary circles, and cartoon warning signs."
+    best_for_formats:
+      - "investigation"
+      - "business_breakdown"
+      - "finance"
+      - "deep_dive"
+      - "commentary"
+    emotional_tones:
+      - "skepticism"
+      - "curiosity"
+      - "revelation"
+      - "analytical_clarity"
+    visual_language: "high-contrast conceptual still life or stark evidentiary subject composition"
+    composition_intent: "sharp visual contrast or juxtaposition between two states or one dominant clue"
+    typography_intent: "bold, high-impact headline with high contrast against clean negative space"
+    palette_intent: "monochromatic or dual-tone with one surgical accent color (e.g. warning yellow or crimson)"
+    common_risks:
+      - "arbitrary magnifying glasses, question marks, or red circles that insult viewer intelligence"
+      - "sensationalist claims unsupported by the content"
+
+  bold_graphic_design:
+    id: "bold_graphic_design"
+    label: "Bold Graphic Design"
+    description: "Graphic-first visual communication using strong typographic hierarchy, disciplined geometric framing, and intentional color blocking."
+    best_for_formats:
+      - "tutorial"
+      - "coding"
+      - "tech_explainer"
+      - "educational"
+      - "productivity"
+    emotional_tones:
+      - "clarity"
+      - "confidence"
+      - "energy"
+      - "focus"
+    visual_language: "flat or semi-flat graphic design with intentional geometric shapes and vector discipline"
+    composition_intent: "grid-aligned visual hierarchy balancing large typographic anchor with clean iconography"
+    typography_intent: "dominant geometric sans-serif (e.g. Archivo Black, Inter, Space Grotesk) with crisp tracking"
+    palette_intent: "controlled 2-to-3 color brand palette with strong WCAG contrast"
+    common_risks:
+      - "dated 3D bevels, glossy emboss, or neon drop-shadow slop"
+      - "visual chaos from too many competing shapes"
+
+  product_focused:
+    id: "product_focused"
+    label: "Product-Focused"
+    description: "Accurate, recognizable product presentation with subordinate background and truthful comparison framing for reviews and tech demos."
+    best_for_formats:
+      - "product_review"
+      - "hardware_comparison"
+      - "unboxing"
+      - "gear_guide"
+      - "commerce"
+    emotional_tones:
+      - "objectivity"
+      - "excitement"
+      - "practical_utility"
+      - "scrutiny"
+    visual_language: "crisp studio-grade or natural in-hand hero perspective showing authentic hardware texture"
+    composition_intent: "isolated or three-quarter hero angle with product at center-right; background softly blurred"
+    typography_intent: "clean technical sans-serif with short model moniker or key question"
+    palette_intent: "clean neutral backdrop (slate, charcoal, off-white) allowing product finishes to pop"
+    common_risks:
+      - "exaggerated fictional hardware features or misleading comparison cues"
+      - "cluttered spec badges that destroy mobile feed legibility"
+
+  typographic_led:
+    id: "typographic_led"
+    label: "Typographic-Led"
+    description: "The headline or core phrase is the dominant visual hook. Supporting imagery is minimal and strictly subordinate to the statement."
+    best_for_formats:
+      - "opinion"
+      - "manifesto"
+      - "podcast"
+      - "motivational"
+      - "thought_leadership"
+    emotional_tones:
+      - "provocation"
+      - "conviction"
+      - "urgency"
+      - "directness"
+    visual_language: "bold typography integrated into a minimalist or textured photographic backdrop"
+    composition_intent: "large headline anchoring 50-60% of canvas; single minimal visual anchor in remaining space"
+    typography_intent: "extra-bold display typography with precise line-height and letter-spacing"
+    palette_intent: "high-contrast binary or stark 2-color scheme (e.g. black/cream, deep sapphire/white)"
+    common_risks:
+      - "text collision with busy photographic elements"
+      - "multiple competing headlines or inconsistent font weights"
+

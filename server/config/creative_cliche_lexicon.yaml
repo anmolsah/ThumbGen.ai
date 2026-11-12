@@ -1,0 +1,72 @@
+# config/creative_cliche_lexicon.yaml
+# Section 10B.6 Contextual Creative Cliché Lexicon
+# Identifies recurring formulaic patterns without imposing universal bans.
+# Each entry is evaluated in context against the story and creative direction.
+
+version: "1.0"
+
+patterns:
+  - id: "SHOCKED_FACE_UNMOTIVATED"
+    label: "Exaggerated shocked face without story justification"
+    category: "subject_expression"
+    default_severity: "warning"
+    check_type: "contextual"
+    description: "Wide-eyed open-mouth exaggerated gasp applied to serious, corporate, or analytical topics."
+    suggested_fix: "Replace with authentic candid expression, focused gaze, or determined posture matching the content."
+
+  - id: "GOLD_3D_BEVEL_TEXT"
+    label: "Gold 3D bevel / glossy emboss typography"
+    category: "typography"
+    default_severity: "warning"
+    check_type: "aesthetic"
+    description: "Extruded 3D metallic or gold-embossed letterforms with artificial drop shadows and inner glow."
+    suggested_fix: "Use clean 2D typographic hierarchy with crisp letter-spacing and flat high-contrast fills."
+
+  - id: "UNMOTIVATED_PARTICLES_SPARKS"
+    label: "Floating particles, sparks, or glowing embers"
+    category: "decoration"
+    default_severity: "warning"
+    check_type: "contextual"
+    description: "Random glowing orbs, floating sparks, or embers drifting in scenes with no fire, electricity, or sci-fi context."
+    suggested_fix: "Remove decorative particles; let authentic scene lighting and subject texture create visual interest."
+
+  - id: "EXCESSIVE_VOLUMETRIC_FOG"
+    label: "Excessive volumetric smoke, fog, or god-rays"
+    category: "atmosphere"
+    default_severity: "informational"
+    check_type: "contextual"
+    description: "Heavy atmospheric smoke or god-rays added to ordinary indoor, office, or daylight settings."
+    suggested_fix: "Use natural motivated ambient light appropriate for the setting."
+
+  - id: "DECORATIVE_MAGNIFYING_GLASS"
+    label: "Decorative magnifying glass unrelated to topic"
+    category: "props"
+    default_severity: "warning"
+    check_type: "contextual"
+    description: "Stock 3D magnifying glass floating over random documents or subjects."
+    suggested_fix: "Highlight actual visual evidence or key contrast directly rather than using a cliché prop."
+
+  - id: "ARBITRARY_RED_ARROWS_CIRCLES"
+    label: "Arbitrary red arrows, circles, or question marks"
+    category: "graphic_elements"
+    default_severity: "warning"
+    check_type: "contextual"
+    description: "Neon or red arrows pointing to obvious objects or empty space to force synthetic urgency."
+    suggested_fix: "Guide viewer attention with lighting hierarchy, crop, and composition rather than artificial pointers."
+
+  - id: "GENERIC_CINEMATIC_BACKDROP"
+    label: "Generic cinematic neon/teal-orange backdrop"
+    category: "environment"
+    default_severity: "informational"
+    check_type: "contextual"
+    description: "Generic moody blue-and-orange studio background with no relationship to the video's actual location."
+    suggested_fix: "Anchor background in the authentic environment, workplace, or documentary setting of the story."
+
+  - id: "STOCK_PERSON_CUTOUT_COMPOSITE"
+    label: "Generic person cutout pasted over unrelated dramatic scene"
+    category: "composition"
+    default_severity: "warning"
+    check_type: "composition"
+    description: "Harshly cut-out person with heavy white or neon outline slapped onto an unrelated stock explosion or landscape."
+    suggested_fix: "Integrate subject naturally with environmental lighting, shared color grading, and realistic contact shadows."
+

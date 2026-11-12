@@ -5,16 +5,16 @@
   --font-outfit: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  /* Restrained Precision Brand Scale (Steel / Cyan-Blue Accent, Zero Violet) */
-  --color-brand-900: #0c1f38;
-  --color-brand-800: #122d52;
-  --color-brand-700: #1a3f70;
-  --color-brand-600: #2563eb;
-  --color-brand-500: #3b82f6;
-  --color-brand-400: #60a5fa;
-  --color-brand-300: #93c5fd;
-  --color-brand-200: #bfdbfe;
-  --color-brand-100: #dbeafe;
+  /* Precision Brand Scale matching ThumbGen logo (Deep Sapphire #143a61 to Vibrant Cerulean #3682bd) */
+  --color-brand-900: #0c233c;
+  --color-brand-800: #143a61;
+  --color-brand-700: #1b4974;
+  --color-brand-600: #255d8f;
+  --color-brand-500: #2c6da2;
+  --color-brand-400: #3682bd;
+  --color-brand-300: #559bd4;
+  --color-brand-200: #88bded;
+  --color-brand-100: #c6e1fa;
 }
 
 :root {
@@ -54,7 +54,7 @@ body {
 }
 
 ::selection {
-  background-color: rgba(59, 130, 246, 0.28);
+  background-color: rgba(54, 130, 189, 0.32);
   color: #ffffff;
 }
 

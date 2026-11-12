@@ -25,6 +25,11 @@ import {
   sanitizeThumbnailForPlan,
 } from "../services/postProcessService.js";
 import {
+  compileThumbnailBrief,
+  type ContentBrief,
+  type CreativeDirection,
+} from "../services/briefCompiler.js";
+import {
   normalizeResolutionTier,
   ProviderError,
   type GenerateInput,
@@ -135,6 +140,8 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
     );
 
     let prompt: string;
+    let compiledContentBrief: ContentBrief | null = null;
+    let compiledCreativeDirection: CreativeDirection | null = null;
     const referenceImages: string[] = [];
 
     if (job.data.source_image_url && job.data.edit_instructions) {
@@ -163,7 +170,7 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
       );
       prompt = `Edit this thumbnail image based on the following instructions: "${job.data.edit_instructions}". Keep the overall composition, style, colors, and theme of the original thumbnail intact, but apply the requested changes precisely.`;
     } else {
-      // ── STANDARD GENERATION JOB
+      // ── STANDARD GENERATION JOB (Section 10B.4 Content Understanding & Creative Direction)
       const canUseReferenceImage =
         userPlan === "creator" || userPlan === "pro";
 
@@ -185,28 +192,23 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
         }
       }
 
-      prompt = `Create a ${
-        stylePrompts[style] || stylePrompts["Bold & Graphic"]
-      } for: "${title}"`;
+      const userPromptCombined = user_prompt ? `${title}: ${user_prompt}` : title;
+      const compiled = await compileThumbnailBrief({
+        userPrompt: userPromptCombined,
+        titleText: title,
+        stylePreset: style,
+        platformPreset: platform === "youtube_shorts" ? "youtube_shorts" : "youtube_video",
+        hasReferenceImage: referenceImages.length > 0,
+        userId,
+      });
+
+      prompt = compiled.finalPrompt;
+      compiledContentBrief = compiled.contentBrief;
+      compiledCreativeDirection = compiled.creativeDirection;
 
       if (color_scheme && colorSchemeDescriptions[color_scheme]) {
-        prompt += ` Use a ${colorSchemeDescriptions[color_scheme]} color scheme.`;
+        prompt += ` Color Scheme: ${colorSchemeDescriptions[color_scheme]}.`;
       }
-
-      if (user_prompt) {
-        prompt += ` Additional details: ${user_prompt}.`;
-      }
-
-      if (referenceImages.length > 0) {
-        prompt += ` Incorporate the person/subject from the reference image prominently in the thumbnail, maintaining their likeness and features.`;
-      }
-
-      const platformSpec = platform ? PLATFORM_CONFIG[platform] : null;
-      if (platformSpec) {
-        prompt += ` ${platformSpec.promptHint}`;
-      }
-
-      prompt += ` The thumbnail should be ${aspect_ratio}, visually stunning, and designed to maximize click-through rate. Make it bold, professional, and impossible to ignore.`;
     }
 
     const modeId = resolveRequestedMode(
@@ -284,6 +286,8 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
       status: "succeeded",
       error_code: null,
       request_params: meta.request_params ?? undefined,
+      content_brief: compiledContentBrief as unknown as Record<string, unknown>,
+      creative_direction: compiledCreativeDirection as unknown as Record<string, unknown>,
       resolution_actual: meta.resolution_actual
         ? {
             width: meta.resolution_actual.width,
@@ -300,7 +304,11 @@ export const processThumbnailJob = async (job: Job<ThumbnailJobData>) => {
         original_url: assets.original_url ?? undefined,
         watermarked_url: assets.watermarked_url ?? undefined,
         preview_webp_url: assets.preview_webp_url ?? undefined,
-        generation_meta: meta as any,
+        generation_meta: {
+          ...(meta as any),
+          content_brief: compiledContentBrief,
+          creative_direction: compiledCreativeDirection,
+        },
         isGenerating: false,
         error: undefined,
         error_code: undefined,

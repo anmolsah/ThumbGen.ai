@@ -1,0 +1,27 @@
+# config/design_qa_config.yaml
+# Section 10B.12 Configuration for Stage 5 Creative Design QA & Art Direction Engine
+
+version: "1.0"
+
+design_qa:
+  mode: "shadow" # shadow | enforce (Started in shadow mode per Section 10B.7 & owner decision)
+  schema_version: "1.0"
+  thresholds:
+    content_specificity: null # null until calibrated against human benchmark ratings
+    concept_strength: null
+    composition_hierarchy: null
+    typography_layout: null
+    visual_relevance: null
+    originality: null
+    restraint: null
+    small_size_readability: null
+    truthfulness: null
+  max_automatic_image_retries: 1
+  require_evidence_for_blocking_flags: true
+
+creative_direction:
+  enabled: true
+  allow_user_style_override: true
+  avoid_repeated_direction_when_unjustified: true
+  preserve_user_intent: true
+
