@@ -140,34 +140,18 @@ function MagneticGridCard({
             }}
           />
 
-          {/* Top-left index & mode pill */}
-          <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-[#090a0c]/88 border border-white/[0.12] text-[10px] font-mono text-zinc-200 flex items-center gap-1.5 tabular-nums">
-            <span className="text-brand-400 font-semibold">
-              #{String(item.index).padStart(2, "0")}
-            </span>
-            <span className="text-white/20">·</span>
-            <span>{item.mode}</span>
-          </div>
-
           {/* Hover inspect icon */}
           <div className="absolute top-2.5 right-2.5 p-1.5 rounded-md bg-[#090a0c]/88 border border-white/[0.12] text-zinc-200 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
             <Maximize2Icon className="size-3.5" />
           </div>
-
-          {/* Bottom metadata bar */}
-          <div className="absolute inset-x-0 bottom-0 px-3 py-2.5 bg-gradient-to-t from-black/92 via-black/65 to-transparent flex items-end justify-between gap-2">
-            <div className="min-w-0">
-              <p className="text-xs font-medium text-zinc-100 truncate">
-                {item.title}
-              </p>
-              <p className="text-[10px] font-mono text-zinc-400 tabular-nums">
-                {item.category} · {item.dimensions}
-              </p>
-            </div>
-            <span className="text-[10px] font-mono font-semibold text-brand-300 bg-[#090a0c]/88 border border-white/[0.1] px-1.5 py-0.5 rounded shrink-0 tabular-nums">
-              {item.credits} cr
-            </span>
-          </div>
+        </div>
+        <div className="mt-2.5 px-1 flex items-center justify-between">
+          <p className="text-xs font-medium text-zinc-200 truncate group-hover:text-white transition-colors">
+            {item.title}
+          </p>
+          <span className="text-[11px] text-zinc-500 shrink-0 ml-2">
+            {item.category}
+          </span>
         </div>
       </motion.button>
     </motion.div>
@@ -253,32 +237,14 @@ export default function ShowcaseSection() {
               }
             }}
           />
-
-          <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-[#090a0c]/88 border border-white/[0.12] text-[10px] font-mono text-zinc-200 flex items-center gap-1.5 tabular-nums">
-            <span className="text-brand-400 font-semibold">
-              #{String(item.index).padStart(2, "0")}
-            </span>
-            <span className="text-white/20">·</span>
-            <span>{item.mode}</span>
-          </div>
-
-          <div className="absolute top-2.5 right-2.5 p-1.5 rounded-md bg-[#090a0c]/88 border border-white/[0.12] text-zinc-200 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-            <Maximize2Icon className="size-3.5" />
-          </div>
-
-          <div className="absolute inset-x-0 bottom-0 px-3 py-2 bg-gradient-to-t from-black/92 via-black/60 to-transparent flex items-end justify-between gap-2">
-            <div className="min-w-0">
-              <p className="text-xs font-medium text-zinc-100 truncate">
-                {item.title}
-              </p>
-              <p className="text-[10px] font-mono text-zinc-400 tabular-nums">
-                {item.category} · {item.dimensions}
-              </p>
-            </div>
-            <span className="text-[10px] font-mono font-semibold text-brand-300 bg-[#090a0c]/88 border border-white/[0.1] px-1.5 py-0.5 rounded shrink-0 tabular-nums">
-              {item.credits} cr
-            </span>
-          </div>
+        </div>
+        <div className="mt-2 px-1 flex items-center justify-between">
+          <p className="text-xs font-medium text-zinc-200 truncate">
+            {item.title}
+          </p>
+          <span className="text-[11px] text-zinc-500 shrink-0 ml-2">
+            {item.category}
+          </span>
         </div>
       </button>
     );
@@ -292,9 +258,9 @@ export default function ShowcaseSection() {
       <div className="max-w-7xl mx-auto px-6 mb-10">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
           <SectionTitle
-            text1="Cloudflare R2 Showcase (30 Renders)"
+            text1="Showcase"
             text2="Interactive Studio Gallery"
-            text3="Explore all 30 production thumbnails served directly from Cloudflare R2. Flick through the physics-driven Fanned Deck, watch the Dual Kinetic Stream, or filter the Choreographed Bento Matrix."
+            text3="Explore studio-crafted production thumbnails across every major content format. Flick through the Fanned Deck, watch the Kinetic Stream, or filter the Bento Matrix."
           />
 
           {/* 3-Way View Mode Switcher with Shared-Layout Pill (`layoutId="showcase-mode-pill"`) */}
@@ -304,17 +270,17 @@ export default function ShowcaseSection() {
                 [
                   {
                     id: "deck",
-                    label: "Fanned Deck (30)",
+                    label: "Fanned Deck",
                     icon: LayersIcon,
                   },
                   {
                     id: "stream",
-                    label: "Kinetic Stream (30)",
+                    label: "Kinetic Stream",
                     icon: Rows3Icon,
                   },
                   {
                     id: "matrix",
-                    label: "Bento Matrix (30)",
+                    label: "Bento Matrix",
                     icon: LayoutGridIcon,
                   },
                 ] as const
@@ -421,38 +387,12 @@ export default function ShowcaseSection() {
                     }}
                   />
 
-                  {/* Top badges on active card */}
-                  <div className="absolute top-3.5 left-3.5 px-3 py-1 rounded-lg bg-[#090a0c]/88 border border-white/[0.14] text-xs font-mono text-zinc-100 flex items-center gap-2 tabular-nums">
-                    <span className="text-brand-400 font-semibold">
-                      R2 #{String(item.index).padStart(2, "0")}
-                    </span>
-                    <span className="text-white/20">·</span>
-                    <span>{item.mode}</span>
-                    <span className="text-white/20">·</span>
-                    <span>{item.dimensions}</span>
-                  </div>
-
                   {isCenter && (
                     <div className="absolute top-3.5 right-3.5 px-2.5 py-1 rounded-lg bg-[#090a0c]/88 border border-white/[0.14] text-[11px] font-mono text-zinc-300 hidden sm:flex items-center gap-1.5">
                       <HandIcon className="size-3 text-brand-400" />
                       <span>Drag or Click to Inspect</span>
                     </div>
                   )}
-
-                  {/* Bottom caption overlay */}
-                  <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 bg-gradient-to-t from-black/95 via-black/70 to-transparent flex items-end justify-between gap-4">
-                    <div className="min-w-0">
-                      <span className="text-[11px] font-mono uppercase tracking-wider text-brand-400">
-                        {item.category}
-                      </span>
-                      <h3 className="text-sm sm:text-lg font-semibold text-zinc-100 truncate mt-0.5">
-                        {item.title}
-                      </h3>
-                    </div>
-                    <span className="px-2.5 py-1 rounded-lg bg-[#090a0c]/90 border border-white/[0.12] text-xs font-mono font-semibold text-brand-300 shrink-0 tabular-nums">
-                      {item.credits} cr
-                    </span>
-                  </div>
                 </motion.div>
               );
             })}
@@ -479,13 +419,8 @@ export default function ShowcaseSection() {
               </button>
             </div>
 
-            <div className="text-xs font-mono text-zinc-300 tabular-nums">
-              Card{" "}
-              <strong className="text-zinc-100">
-                {String(activeDeckItem.index).padStart(2, "0")}
-              </strong>{" "}
-              of <strong className="text-zinc-100">30</strong> ·{" "}
-              <span className="text-zinc-400">{activeDeckItem.category}</span>
+            <div className="text-xs font-medium text-zinc-200 truncate max-w-xs sm:max-w-md">
+              {activeDeckItem.title}
             </div>
 
             <button
@@ -498,12 +433,8 @@ export default function ShowcaseSection() {
             </button>
           </div>
 
-          {/* 30-Slot Interactive Filmstrip Dock Scrubber (`#01` to `#30`) */}
+          {/* 30-Slot Interactive Filmstrip Dock Scrubber */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400 px-1">
-              <span>ALL 30 CLOUDFLARE R2 RENDERS — CLICK OR HOVER TO SCRUB DECK</span>
-              <span className="tabular-nums">30 / 30 LOADED</span>
-            </div>
             <div className="grid grid-cols-6 sm:grid-cols-10 lg:grid-cols-15 gap-1.5 p-2.5 rounded-xl border border-white/[0.08] bg-[#111317]">
               {R2_SHOWCASE_30.map((item, idx) => {
                 const isSelected = idx === deckIndex;
@@ -624,8 +555,8 @@ export default function ShowcaseSection() {
                 );
               })}
             </div>
-            <span className="text-xs font-mono text-zinc-400 tabular-nums">
-              Showing {filteredMatrix.length} of 30 R2 renders · Hover for 3D tilt, click to inspect
+            <span className="text-xs text-zinc-400">
+              Click any thumbnail to inspect in full resolution
             </span>
           </div>
 
@@ -687,9 +618,8 @@ export default function ShowcaseSection() {
               <div className="px-5 py-3.5 border-b border-white/[0.08] bg-[#0d0f13] flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2.5 text-xs">
                   <LayersIcon className="size-4 text-brand-400" />
-                  <span className="font-mono text-zinc-200 tabular-nums">
-                    Cloudflare R2 #{String(selectedItem.index).padStart(2, "0")}{" "}
-                    of 30 · {selectedItem.category}
+                  <span className="text-zinc-200 font-medium truncate max-w-sm">
+                    {selectedItem.title}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -756,16 +686,17 @@ export default function ShowcaseSection() {
                   <h3 className="text-base font-semibold text-zinc-100">
                     {selectedItem.title}
                   </h3>
-                  <p className="text-xs font-mono text-zinc-400 mt-1 tabular-nums">
-                    Style: {selectedItem.category} · Mode: {selectedItem.mode} ·{" "}
-                    {selectedItem.dimensions} ({selectedItem.credits} credits) ·
-                    Use ←/→ keys or drag down to dismiss
+                  <p className="text-xs text-zinc-400 mt-1">
+                    {selectedItem.category}
                   </p>
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-xs font-mono text-emerald-300 tabular-nums shrink-0">
-                  <CheckCircle2Icon className="size-3.5 text-emerald-400" />
-                  <span>R2 Edge Verified · sRGB</span>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedItem(null)}
+                  className="px-3.5 py-1.5 rounded-lg bg-[#171a20] hover:bg-[#20242c] text-xs font-medium text-zinc-300 border border-white/[0.08] transition-colors"
+                >
+                  Close Preview
+                </button>
               </div>
             </motion.div>
           </motion.div>

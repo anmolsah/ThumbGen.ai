@@ -168,7 +168,7 @@ export default function HeroSection() {
           <div className="px-5 py-3.5 border-b border-white/[0.08] bg-[#0d0f13] flex flex-wrap items-center justify-between gap-4 text-xs">
             <div className="flex items-center gap-3 text-zinc-200 font-medium">
               <SlidersHorizontalIcon className="size-4 text-brand-400" />
-              <span>ThumbGen Studio — Interactive Stage Inspector (30 R2 Renders)</span>
+              <span>ThumbGen Studio Showcase</span>
             </div>
 
             {/* Category Filter Pills with Framer Shared-Layout Pill (`layoutId="hero-cat-pill"`) */}
@@ -273,21 +273,6 @@ export default function HeroSection() {
                     />
                   </AnimatePresence>
 
-                  {/* Top-left mode & R2 badge */}
-                  <div className="absolute top-3.5 left-3.5 px-3 py-1.5 rounded-lg bg-[#090a0c]/88 border border-white/[0.14] backdrop-blur-md text-xs font-medium text-zinc-100 flex items-center gap-2">
-                    <LayersIcon className="size-3.5 text-brand-400" />
-                    <span>{activeItem.mode}</span>
-                    <span className="text-white/20">·</span>
-                    <span className="font-mono text-[11px] text-zinc-300 tabular-nums">
-                      {activeItem.dimensions}
-                    </span>
-                  </div>
-
-                  {/* Top-right R2 slot counter */}
-                  <div className="absolute top-3.5 right-3.5 px-2.5 py-1 rounded-lg bg-[#090a0c]/88 border border-white/[0.12] text-[11px] font-mono text-zinc-200 tabular-nums">
-                    R2 #{String(activeItem.index).padStart(2, "0")} / 30
-                  </div>
-
                   {/* Prev / Next tactile controls */}
                   <div className="absolute bottom-3.5 right-3.5 flex items-center gap-1.5">
                     <button
@@ -328,9 +313,8 @@ export default function HeroSection() {
                   <p className="text-xs sm:text-sm font-semibold text-zinc-100 truncate">
                     {activeItem.title}
                   </p>
-                  <p className="text-[11px] font-mono text-zinc-400 mt-0.5 tabular-nums">
-                    Preset: {activeItem.category} · {activeItem.dimensions} ·{" "}
-                    {activeItem.credits} credits
+                  <p className="text-[11px] font-medium text-zinc-400 mt-0.5">
+                    {activeItem.category}
                   </p>
                 </div>
                 <button
@@ -393,12 +377,6 @@ export default function HeroSection() {
                             }
                           }}
                         />
-                        <div className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/80 text-[10px] font-mono text-zinc-200 tabular-nums">
-                          #{String(item.index).padStart(2, "0")}
-                        </div>
-                        <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/80 text-[10px] font-mono text-brand-300 tabular-nums">
-                          {item.credits}cr
-                        </div>
                       </div>
 
                       {/* Shared-Layout Selection Ring (`layoutId="hero-stage-ring"`) */}
